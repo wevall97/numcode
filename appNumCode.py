@@ -1,129 +1,261 @@
-import numCode as ts
-
-
-
-
+import numcode as ts
 
 
 print("Welcome to the numCode")
 
+print("enter .h for help")
+
+
 while True:
 
-    
+    try:
 
-    print("If you want to code your word prss (1) or prss (2) to code your file if you want to return your word or file prss (3)")
+        gg=input("1> ")
 
-    gg=input("> ")
-
-    if gg=='1':
-        
+        if gg==".h":
             
-                theInput=input("Enter your word:\n> ").lower()
+            print(".en      to encrypt one line of words\n.de      to decrypt one line of words\n.enf     to encrypt a file\n.def     to decrypt a file")
+        else:
+
+            while True:
+
                 
-                l=0
 
-                row=[]
-
-                for i in theInput:
-
-                    s=theInput[l]
-
-                    transform=ts.numCode(s)
-
-                    row.append(transform)
-
-                    numcode=''.join(map(str,row))
-
-                    l=l+1
-
-                print("Your code:")
-
-                print(numcode)
-
-
-
-    elif gg=='3':
-        
-            
-                theInput=(input("Enter your code: \n> "))
                 
-                y=len(theInput)
 
-                row=[]
+                
+                
+                if gg=='.en':
+                    
+                        try:
 
-                l1=0
-                l2=1
-                l3=2
+                            print("\n'.exit' to exit")
 
-                if y==3 or y>=3:
+                            theInput=input("Enter your words:\n> ").lower()
 
-                    u=y/3
+                            if theInput==".exit":
 
-                for i in range(int(u)):
+                                print("bye!!\n")
 
-                    x1=theInput[l1]
-                    x2=theInput[l2]
-                    x3=theInput[l3]
+                                break
+                            l=0
 
-                    p=x1+x2+x3
+                            row=[]
 
-                    transform=ts.numCode(p)
+                            for i in theInput:
 
-                    row.append(transform)
+                                s=theInput[l]
 
-                    numcode=''.join(map(str,row))
+                                transform=ts.numcode(s)
 
-                    l1=l1+3
-                    l2=l2+3
-                    l3=l3+3
-                print("Your word:")
+                                row.append(transform)
 
-                print(numcode)
+                                numcode=''.join(map(str,row))
+
+                                l=l+1
+
+                            print(f"Your code: {numcode}")
+
+                        
+                        except :
+
+                            print("you has been enter a ronge valu\ntry again")
+
+                            continue
+
+
+                elif gg=='.de':
+                    
+                        try:
+                            print("\n'.exit' to exit")
+
+                            theInput=(input("Enter your code:\n> "))
+
+                            if theInput==".exit":
+
+                                print("bye!!\n")
+
+                                break
+
+                            y=len(theInput)
+
+                            row=[]
+
+                            l1=0
+                            l2=1
+                            l3=2
+
+                            if y==3 or y>=3:
+
+                                u=y/3
+
+                            for i in range(int(u)):
+
+                                x1=theInput[l1]
+                                x2=theInput[l2]
+                                x3=theInput[l3]
+
+                                p=x1+x2+x3
+
+                                transform=ts.numcode(p)
+
+                                row.append(transform)
+
+                                numcode=''.join(map(str,row))
+
+                                l1=l1+3
+                                l2=l2+3
+                                l3=l3+3
+
+                            print(f"Your words: {numcode}")
+
+                        
+
+                        except :
+
+                            print("you has been enter a ronge valu\ntry again")
+
+                            continue
+
+                elif gg=='.enf':
+                    
+
+                    try:
+                        print("\n'.exit' to exit")
+
+                        theInput = input("Enter the url of your file:\n> ")
+
+                        if theInput==".exit":
+
+                            print("bye!!\n")
+
+                            break
+
+                        with open(theInput, "+a") as d:
+
+                            d.write("\n")
+
+                        with open(theInput, 'r') as d:
+                        
+                            lines = d.readlines()
+                        
+                        with open(theInput, 'w') as d:
+
+                            for line in lines:
+
+                                row = []
+
+                                for s in line:
+
+                                    if s=='\n':
+
+                                        d.write("\n")
+
+                                        continue
+
+                                    transform = ts.numcode(s.lower())
+
+                                    row.append(transform)
+
+                                numcode = ''.join(map(str,row))
+
+                                d.write(numcode )
+
+                            d.write("\n")
+
+                            print("Your file has been encrypted")
+
+                    except :
+
+                        print(f"{theInput} : can not found")
+                        
+                
+                elif gg==".def":
+
+                    try:
+
+                        print("\n'.exit' to exit")
+
+                        theInput=(input("Enter the url of your file: \n> "))
+
+                        if theInput==".exit":
+
+                            print("bye!!\n")
+
+                            break
+
+                        with open(theInput,'r') as f:
+
+                            lines=f.readlines()
+
+                        with open(theInput,'w') as f:
+
+                            rows=[]   
+                            
+                            for line in lines:
+
+                                if line=="\n":
+
+                                    f.write("\n")
+
+                                    continue
+
+                                y=len(line.strip())
+                                
+                                row=[]
+
+                                l1=0
+                                l2=1
+                                l3=2
+
+                                if y==3 or y>=3:
+
+                                    u=y/3
+
+                                for i in range(int(u)):
+
+                                    x1=line[l1]
+                                    x2=line[l2]
+                                    x3=line[l3]
+
+                                    p=x1+x2+x3
+
+                                    transform=ts.numcode(p)
+
+                                    row.append(transform)
+
+                                    numcode=''.join(map(str,row))
+                                    
+                                    l1=l1+3
+                                    l2=l2+3
+                                    l3=l3+3
+
+                                row.clear()
+
+                                rows.append(numcode)
+
+                                g=''.join(map(str,rows))
+
+                                f.write(g+'\n')
+
+                                rows.clear()
+
+                            print("Your file has been decrypted")
+
+                    except:
+
+                        print(f"{theInput} : can not found")                    
+
+                else:
+
+                    print(f"{gg} : it is not defined")
+
+                    break
+    except:
+
+        print("you has been enter a ronge valu\ntry again")
+
+        continue
 
 
 
-    elif gg=='2':
-           
-
-           try:
-
-            print("please enter your url of your file ")
-
-            print("example : \nnames/ali/etc/example")
-
-            theInput=input("Enter your file:\n> ").lower()
-
-            d=open(theInput)
-
-            f=d.read()
-            d=open(theInput,'w')
-            l=0
-
-            row=[]
-
-            for i in f:
-
-                s=f[l]
-
-                transform=ts.numCode(s)
-
-                row.append(d.write(transform))
-
-                numcode=''.join(map(str,row))
-
-                l=l+1
-
-           # print("Your code:")
-
-           # print(numcode)
-
-            d.close()
-
-           except Exception:
-
-            print(f"{theInput} : can not found")
-            
-    
-    
-    else:
-           print(f"{gg} : it is not defined")
