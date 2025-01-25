@@ -31,7 +31,7 @@ while True:
 
                             print("\n'.exit' to exit")
 
-                            theInput=input("Enter your words:\n> ").lower()
+                            theInput=input("Enter your words:\n> ")
 
                             if theInput==".exit":
 
