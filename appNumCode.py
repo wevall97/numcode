@@ -153,7 +153,7 @@ while True:
 
                                         continue
 
-                                    transform = ts.numcode(s.lower())
+                                    transform = ts.numcode(s)
 
                                     row.append(transform)
 
