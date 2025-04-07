@@ -2,7 +2,7 @@
 import random as rm
 import time as ti
 #the password is (رمز حساب احمد)
-dfd=input("enter the password:/n")
+dfd=input("enter the password:\n")
 if dfd=="Mohammed and ahmed":
         print("welcome")
 
