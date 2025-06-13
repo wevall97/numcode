@@ -298,8 +298,8 @@ try:
                         
                         continue
                     if data=="firewall is on":
-                        print("WORRINGE!!: firewall is on, you can`t use 'cmd' in this time\ntype 'exit' to use 'cmd' agen to ckick the firewall state")
-                        continue
+                        print("\nWORRINGE!!: firewall is on, you can`t use 'cmd' in this time use 'cmd' agen to ckick the firewall state\n")
+                        break
                     print(data) 
                 
 
