@@ -1,0 +1,9 @@
+{
+    "IP-S": "1.1.1.1",
+    "firstconn": "0",
+    "addid": "0",
+    "RemoteManagement": "Disable",
+    "UnicastResponseToMulticast": "Enable",
+    "Rolue": [],
+    "timer": []
+}
