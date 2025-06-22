@@ -1,5 +1,18 @@
 import socket as sk
+import json
 
+with open('sh.json', 'r') as f:
+    settings = json.load(f)
+    if settings["firstconn"]=="0":
+        ip=input("Enter IP server: ")
+        with open('sh.json', 'w') as f:
+            settings["IP-S"] = ip
+            settings["firstconn"] = "1"
+            json.dump(settings, f, indent=4)
+    if settings["firstconn"]=="1":
+        ip = settings["IP-S"]
+        addid = settings["addid"]
+        print(f"Using saved IP: {ip}")
 
 
 while True:
@@ -11,6 +24,20 @@ while True:
             break
     except Exception:
         continue
+
+
+addid=str(addid)
+c.sendall(addid.encode('utf-8'))
+di=c.recv(1024).decode('utf-8')
+with open('sh.json', 'r') as f:
+    settings = json.load(f)
+    with open('sh.json', 'w') as f:
+        settings["addid"]="1"
+        settings["id"]=di
+        json.dump(settings,f,indent=4)
+
+
+
 while True:
     masge=input("enter masge: ")
     if masge=="show password":

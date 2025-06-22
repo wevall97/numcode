@@ -1,7 +1,8 @@
 {
-    "IP-S": "1.1.1.1",
-    "firstconn": "0",
-    "addid": "0",
+    "IP-S": "192.168.1.13",
+    "id": "1x",
+    "firstconn": "1",
+    "addid": "1",
     "RemoteManagement": "Disable",
     "UnicastResponseToMulticast": "Enable",
     "Rolue": [],

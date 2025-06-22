@@ -1,6 +1,22 @@
 {
-    "len": "-1",
+    "len": "1",
     "USERS": [
-        ""
+        "limet",
+        {
+            "id": "0x",
+            "RemoteManagement": "Disable",
+            "UnicastResponseToMulticast": "Enable",
+            "active": false,
+            "Roule": [],
+            "timer": []
+        },
+        {
+            "id": "1x",
+            "RemoteManagement": "Disable",
+            "UnicastResponseToMulticast": "Enable",
+            "active": false,
+            "Roule": [],
+            "timer": []
+        }
     ]
 }

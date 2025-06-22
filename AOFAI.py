@@ -9,25 +9,42 @@ with open('settings.json', 'r') as f:
             settings["IP-S"] = ip
             settings["firstconn"] = "1"
             json.dump(settings, f, indent=4)
-    elif settings["firstconn"]=="1":
+    if settings["firstconn"]=="1":
         ip = settings["IP-S"]
         addid = settings["addid"]
         print(f"Using saved IP: {ip}")
-
+    
 
 
 while True:
     try:
         c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
-        c.connect(('192.168.1.13', 9999))
+        c.connect((ip, 9999))
+        
         check=c.recv(1024).decode('utf-8')
         if check=='1':
             break
     except Exception:
         continue
+
+
+addid=str(addid)
+c.sendall(addid.encode('utf-8'))
+
+di=c.recv(1024).decode('utf-8')
+
+with open('settings.json', 'r') as f:
+    settings = json.load(f)
+    with open('settings.json', 'w') as f:
+        settings["addid"]="1"
+        settings["id"]=di
+        json.dump(settings,f,indent=4)
+        
+        
+        
+    
 while True:
-    addid=str(addid)
-    c.sendall(addid.encode('utf-8'))
+    
     masge=input("enter masge: ")
     if masge == "show password":
         c.sendall(masge.encode('utf-8'))

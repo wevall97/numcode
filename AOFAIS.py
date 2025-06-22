@@ -2,38 +2,95 @@ import socket as sk
 import time
 import random
 import threading as th
+import json
 
+
+def generate_password():
+    global row1,password
+    row1 = []
+    while True:
+        for _ in range(6):
+            ran = random.randint(0, 9)
+            ran = str(ran)
+            row1.append(ran)
+            
+        password = ''.join(map(str,row1))
+        row1.clear()
+        time.sleep(30)
+th.Thread(target=generate_password).start()
 
 
 
 s=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
 s.bind(('0.0.0.0', 9999))
 s.listen(1)
-sip=sk.gethostbyname(sk.gethostname())
-
 conn, addr = s.accept()
+
+
+conn.sendall("1".encode('utf-8'))
 addId=conn.recv(1024).decode('utf-8')
 
-def generate_password():
-    global row,password
-    row = []
-    while True:
-        for _ in range(6):
-            ran = random.randint(0, 9)
-            ran = str(ran)
-            row.append(ran)
+
+if addId=="0":
+    for _ in range(1):    
+        rows=[]
+        row=[]
+        new=',{"id": "0x", "RemoteManagement": "Disable", "UnicastResponseToMulticast": "Enable", "active": False, "Roule": [], "timer": []}'
+
+        with open('UsersRolus.json', 'r') as f:
+            data = json.load(f)
+            if data["len"]=="9":
+                break
+            p=data["len"]
             
-        password = ''.join(map(str,row))
-        row.clear()
-        time.sleep(30)
-th.Thread(target=generate_password).start()
+            pp=int(p)
+            pp+=1
+            pp=str(pp)
+            data=str(data)
+            
+            n=new.replace("0x",pp+"x")
+            
+            l=len(data)
+            
+            for i in data:
+                if i=="'":
+                    i='"'
+                    row.append(i)
+                else:
+                    row.append(i)
+            
+            
+            for ii in n:
+                rows.append(ii)
+            row=row[:l-2]+rows+row[l-2:]
+            
+            d=''.join(row)
+            row.clear()
+            rows.clear()
+            dd=d.replace('True', 'true').replace('False', 'false')
+            
+            
+            
+            j=json.loads(dd)
+            j["len"]=pp
+            
+        with open('UsersRolus.json', 'w') as f:
+            json.dump(j, f, indent=4)
+        with open('UsersRolus.json', 'r') as f:
+            data=json.load(f)
+            pp=int(pp)
+            di=data["USERS"][pp+1]["id"]
+            di=str(di)
+            conn.sendall(di.encode('utf-8'))
+else:
+    pass    
 
 
 
 while True:
    
-        data = conn.recv(1024).decode('utf-8')
-        if data=='show password':
+        dat = conn.recv(1024).decode('utf-8')
+        if dat=='show password':
             check=conn.recv(1024).decode('utf-8')
             if check == '1':
                 conn.sendall(password.encode("utf-8"))
@@ -43,7 +100,7 @@ while True:
             # AI
             pass
         
-        if not data:
+        if not dat:
             break
     
 conn.close()
