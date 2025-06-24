@@ -1,18 +1,36 @@
 import socket as sk
 import json
+import EncDec as ed
+
+
 
 with open('settings.json', 'r') as f:
     settings = json.load(f)
-    if settings["firstconn"]=="0":
+    
+    
+    decode=ed.dec(settings["firstconn"])
+    decode1=ed.dec(settings["addid"])
+    if decode=="0":
+        encode=ed.enc(settings["RM"])
+        encode1=ed.enc(settings["URTM"])
+        settings["RM"]=encode
+        settings["URTM"]=encode1
         ip=input("Enter IP server: ")
-        with open('settings.json', 'w') as f:
-            settings["IP-S"] = ip
-            settings["firstconn"] = "1"
-            json.dump(settings, f, indent=4)
-    if settings["firstconn"]=="1":
-        ip = settings["IP-S"]
-        addid = settings["addid"]
         print(f"Using saved IP: {ip}")
+        encode4=ed.enc(ip)
+
+        with open('settings.json', 'w') as f:
+            settings["IP-S"] = encode4
+            encode5=ed.enc("1")
+            settings["firstconn"] = encode5
+            json.dump(settings, f, indent=4)
+    decode2=ed.dec(settings["firstconn"])
+    
+    if decode2=="1":
+        decode3=ed.dec(settings["IP-S"])
+        ip = decode3
+        addid = decode1
+        
     
 
 
@@ -27,18 +45,17 @@ while True:
     except Exception:
         continue
 
-
-addid=str(addid)
 c.sendall(addid.encode('utf-8'))
+if addid=="0":
+    di=c.recv(1024).decode('utf-8')
 
-di=c.recv(1024).decode('utf-8')
-
-with open('settings.json', 'r') as f:
-    settings = json.load(f)
-    with open('settings.json', 'w') as f:
-        settings["addid"]="1"
-        settings["id"]=di
-        json.dump(settings,f,indent=4)
+    with open('settings.json', 'r') as f:
+        settings = json.load(f)
+        with open('settings.json', 'w') as f:
+            encode6=ed.enc("1")
+            settings["addid"]=encode6
+            settings["id"]=di
+            json.dump(settings,f,indent=4)
         
         
         

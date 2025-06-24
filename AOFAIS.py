@@ -98,8 +98,7 @@ if addId=="0":
             di=data["USERS"][pp+1]["id"]
             di=str(di)
             conn.sendall(di.encode('utf-8'))
-else:
-    pass    
+  
 
 
 

@@ -1,10 +1,10 @@
 {
-    "IP-S": "192.168.1.13",
-    "id": "1x",
-    "firstconn": "1",
-    "addid": "1",
-    "RemoteManagement": "Disable",
-    "UnicastResponseToMulticast": "Enable",
+    "IP-S": "",
+    "id": "",
+    "firstconn": "611344",
+    "addid": "4099131",
+    "RM": "8081149978810410394100",
+    "URTM": "1999169111123122113119",
     "Rolue": [],
     "timer": []
 }
