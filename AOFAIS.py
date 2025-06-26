@@ -5,6 +5,8 @@ import threading as th
 import json
 import EncDec as ed
 
+
+rowId=['zero','one','two','..']
 def generate_password():
     global row1,password
     row1 = []
@@ -32,10 +34,11 @@ addId=conn.recv(1024).decode('utf-8')
 
 
 if addId=="0":
-    for _ in range(1):    
+    for _ in range(1): 
+
         rows=[]
         row=[]
-        new=',{"id": "0x", "RM": "Disable", "URTM": "Enable", "active": False, "Roule": [], "timer": []}'
+        
 
         with open('UsersRolus.json', 'r') as f:
             data = json.load(f)
@@ -46,10 +49,12 @@ if addId=="0":
             
             pp=int(p)
             pp+=1
+            new=',{"id": "0x", "FWS": "on", "RM": "Disable", "URTM": "Enable", "active": False, "Roule": [], "timer": []}'
+            n=new.replace("0x",rowId[pp])
+          
             pp=str(pp)
             data=str(data)
             
-            n=new.replace("0x",pp+"x")
             
             l=len(data)
             
@@ -78,11 +83,13 @@ if addId=="0":
             encode1=ed.enc(j["USERS"][pp+1]["RM"])
             encode2=ed.enc(j["USERS"][pp+1]["URTM"])
             encode3=ed.enc(str(j["USERS"][pp+1]["active"]))
-           
+            encode4=ed.enc(j["USERS"][pp+1]["FWS"])
+
             j["USERS"][pp+1]["id"]=encode0
             j["USERS"][pp+1]["RM"]=encode1
             j["USERS"][pp+1]["URTM"]=encode2
             j["USERS"][pp+1]["active"]=encode3
+            j["USERS"][pp+1]["FWS"]=encode4+'19'
             pp=str(pp)
             
             pp=ed.enc(pp)
