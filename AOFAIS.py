@@ -140,7 +140,27 @@ async def h(reder,writer):
             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                 smtp.login(email,password)
                 smtp.send_message(msg)
-                
+
+        if dat=="advance mode":
+            writer.write(password1.encode())
+            await writer.drain() 
+            msg= EmailMessage()
+            msg["Subject"]="advance mode"
+            msg["From"]="aofnotification@gmail.com"
+            msg["To"]="aliwevall77@gmail.com"
+            msg.set_content(f"the id '1x' want to be in 'advance mode'\n\nif you aply for this,send this password to id'1x'\n\npassword: {password1}")
+            email="aofnotification@gmail.com"
+            password="oqgspkawnyeftyjw"
+            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                smtp.login(email,password)
+                smtp.send_message(msg)
+
+
+
+
+
+
+
                
     writer.close()
     await writer.wait_closed()

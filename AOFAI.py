@@ -403,7 +403,67 @@ if checkpass==ppp:
                         json.dump(data,f,indent=4)
 
 
-            
+        elif masge=="advance mode":
+            c.sendall(masge.encode())
+            checkpass1=c.recv(1024).decode()
+            entpass=input("enter password: ")
+            if entpass==checkpass1:
+                while True:
+                    print("enter 'exit' to exit form 'advance mode'\n")
+                    masge=input("enter rule: ")
+                    if masge=="exit":
+                        break
+                    timer=input("enter timer: ")
+                    
+                    row=[]
+                    row1=[]
+
+
+                    for i in rolu:
+                        row1.append(i)
+                        if i =="'" or i=='"':
+                            break
+                    d=''.join(row1)
+                    e=rolu.removeprefix(d)
+                    for i in e:
+                        if i =="'" or i=='"':
+                            break
+                        row.append(i)
+                    rulename=''.join(row)
+                    row.clear()
+                    row1.clear()
+                
+                    
+                    
+                
+                    if timer.endswith("m"):
+                        lens=len(timer)
+                        timer=timer[:lens-1]
+                        timer=int(timer)
+                        timer*=60
+                        timer=str(timer)
+                        encode8=ed.enc(timer)
+
+
+                    elif timer.endswith("h"):
+                        lens=len(timer)
+                        timer=timer[:lens-1]
+                        timer=int(timer)
+                        timer*=3600
+                        timer=str(timer)
+                        encode8=ed.enc(timer)
+                    
+                    elif timer.endswith("s"):
+                        lens=len(timer)
+                        timer=timer[:lens-1]
+                        
+                    with open('settings.json', 'r') as f:
+                        data = json.load(f)
+                        data["ruleName"]=rulename
+                        data["timerR"]=timer
+                        data["Rolue"]=rolu
+                        with open('settings.json', 'w') as f:
+                            json.dump(data,f,indent=4)
 else:
     print("try agen")
     time.sleep(1)

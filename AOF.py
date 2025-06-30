@@ -128,7 +128,7 @@ async def check_files():
 
 
         
-                
+         # edit       
         lens=settings["ruleName"]
         lens=len(lens)
         rule=settings["Rolue"]
@@ -153,9 +153,9 @@ def do_ruls():
         print("end")
         l=1
         
-
+# edit
 def add__rule():
-    print("run")
+
     fs.add_rule(rulename,rule,timerr)
     with open('settings.json', 'r') as f:
         settings = json.load(f)
@@ -196,29 +196,29 @@ while True:
     async def main():
         await sa.sleep(5)
         sa.gather(check_files())
-        await sa.sleep(0)
-        if fws=="off" and l==1:
-            print("off")
-            th.Thread(target=do_ruls).start()
-        elif fws=="on":
-            # edit
-            print("on")
-            with open('settings.json', 'r') as f:
-                settings = json.load(f)
-                settings["FWS"]="609811010411211219"
-                with open('settings.json', 'w') as f:
-                    json.dump(settings,f,indent=4)
-        else:
-            print("null")
+        # await sa.sleep(0)
+        # if fws=="off" and l==1:
+        #     print("off")
+        #     th.Thread(target=do_ruls).start()
+        # elif fws=="on":
+        #     # edit
+        #     print("on")
+        #     with open('settings.json', 'r') as f:
+        #         settings = json.load(f)
+        #         settings["FWS"]="609811010411211219"
+        #         with open('settings.json', 'w') as f:
+        #             json.dump(settings,f,indent=4)
+        # else:
+        #     print("null")
     sa.run(main())
 
 
     # edit
     async def rules():
         
-        print("in")
+        
         if rule!="null":
-            print("in1")
+            
             th.Thread(target=add__rule).start()
             with open('settings.json', 'r') as f:
                 settings = json.load(f)
