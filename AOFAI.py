@@ -66,7 +66,7 @@ if checkpass==ppp:
             lens=len(check4)
             decode4=ed.dec(check4[:lens-1])
             email_rvs=decode4
-            print(email_rvs)
+            
         else:
             print("no")
 
@@ -224,7 +224,7 @@ if checkpass==ppp:
         
             ip = decode3
             addid = decode1
-            print(addid)
+            
         
 
 
@@ -266,20 +266,8 @@ if checkpass==ppp:
             
         
     while True:
-        
         masge=input("enter masge: ")
-        
-        if masge == "show password":
-            masge=masge+'\n'# give all sendall '\n'
-            c.sendall(masge.encode('utf-8'))
-            
-            c.sendall('0'.encode('utf-8'))
-            data = c.recv(1024).decode('utf-8')
-            print(data)
-        elif masge == "exit":
-            c.close()
-            break
-        elif masge=="show id":
+        if masge=="show id":
             check1=settings["id"]
             check1=str(check1)
             lens=len(check1)
@@ -313,33 +301,109 @@ if checkpass==ppp:
                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                     smtp.login(email,password)
                     smtp.send_message(msg)
+
+        #edit firewall states
         elif masge=="firewall states":
-            check1=settings["id"]
-            check1=str(check1)
-            lens=len(check1)
-            if check1.endswith("4"):
-                decode1=ed.dec(check1[:lens-1])
+            
+            rolu=input("enter firewall states: ")
+            if rolu=="off":
+                timer=input("enter timer: ")
+           
+                if timer.endswith("m"):
+                    lens=len(timer)
+                    timer=timer[:lens-1]
+                    timer=int(timer)
+                    timer*=60
+                    timer=str(timer)
+                    encode8=ed.enc(timer)
+
+
+                elif timer.endswith("h"):
+                    lens=len(timer)
+                    timer=timer[:lens-1]
+                    timer=int(timer)
+                    timer*=3600
+                    timer=str(timer)
+                    encode8=ed.enc(timer)
+
+                elif timer.endswith("s"):
+                    lens=len(timer)
+                    timer=timer[:lens-1]
+                    encode8=ed.enc(timer)
                 
-                if decode1 in rowId:
-                    ID= str(rowId.index(decode1))
-                    ID=ID+'x'
-            c.sendall(masge.encode('utf-8'))
-            rolu=input("enter firewall states:  ")
-            timer=input("enter timer:  ")
-            c.sendall(ID.encode('utf-8'))
-            c.sendall(rolu.encode('utf-8'))
-            
-            addrolu=c.recv(1024).decode("utf-8")
-            
-            
+            encode7=ed.enc(rolu)
             with open('settings.json', 'r') as f:
                 data = json.load(f)
-                data["FWS"]=addrolu
-                data["timerF"]=timer+'21'
+                data["FWS"]=encode7+'19'
+                if rolu=="off":
+                    data["timerF"]=encode8
                 
                 with open('settings.json', 'w') as f:
                     json.dump(data,f,indent=4)
             print("firewall states change")
+
+
+        elif masge=="add new rule":
+            c.sendall(masge.encode())
+            rolu=input("enter rule: ")
+            c.sendall(rolu.encode())
+            timer=input("enter timer: ")
+            checkpass1=c.recv(1024).decode()
+            
+            entpass=input("enter password: ")
+            
+            if entpass==checkpass1:
+                row=[]
+                row1=[]
+
+
+                for i in rolu:
+                    row1.append(i)
+                    if i =="'" or i=='"':
+                        break
+                d=''.join(row1)
+                e=rolu.removeprefix(d)
+                for i in e:
+                    if i =="'" or i=='"':
+                        break
+                    row.append(i)
+                rulename=''.join(row)
+                row.clear()
+                row1.clear()
+            
+                
+               
+                if timer.endswith("m"):
+                    lens=len(timer)
+                    timer=timer[:lens-1]
+                    timer=int(timer)
+                    timer*=60
+                    timer=str(timer)
+                    encode8=ed.enc(timer)
+
+
+                elif timer.endswith("h"):
+                    lens=len(timer)
+                    timer=timer[:lens-1]
+                    timer=int(timer)
+                    timer*=3600
+                    timer=str(timer)
+                    encode8=ed.enc(timer)
+                
+                elif timer.endswith("s"):
+                    lens=len(timer)
+                    timer=timer[:lens-1]
+                    
+                with open('settings.json', 'r') as f:
+                    data = json.load(f)
+                    data["ruleName"]=rulename
+                    data["timerR"]=timer
+                    data["Rolue"]=rolu
+                    with open('settings.json', 'w') as f:
+                        json.dump(data,f,indent=4)
+
+
+            
 else:
     print("try agen")
     time.sleep(1)

@@ -8,8 +8,9 @@ import fireSett as fs
 import asyncio as sa
 
 l=1
+
 async def check_files():
-    global fws,utrm,ip,rm
+    global fws,utrm,ip,rm,timer,rule,rulename,timerr
     rowCheck=["Enable","Disable"]
     rowId=['zero','one','two','..']
     #p=16,d=4,f=6,a=1,r=18,u=22,o=15,t=21,s=19
@@ -117,22 +118,54 @@ async def check_files():
             print("no")
             # the notification for server
             pass
+        
+
+        check5=settings["timerF"]
+        check5=str(check5)
+        decode5=ed.dec(check5)
+        timer= decode5
+        timer=int(timer)      
 
 
+        
+                
+        lens=settings["ruleName"]
+        lens=len(lens)
+        rule=settings["Rolue"]
+        if lens!=0:
+            
+            rulename=settings["ruleName"][lens-1]
+            timerr=settings["timerR"][lens-1]
+            timerr=int(timerr)
+            
+# edit
 def do_ruls():
     global l
     if fws=="off" and l==1:
         l=0
-        fs.fireOff(fws,30)
+        fs.fireOff(fws,timer)
         with open('settings.json', 'r') as f:
             settings = json.load(f)
             settings["FWS"]="609811010411211219"
+            settings["timerF"]="755283"
             with open('settings.json', 'w') as f:
                 json.dump(settings,f,indent=4)
+        print("end")
         l=1
         
-    
 
+def add__rule():
+    print("run")
+    fs.add_rule(rulename,rule,timerr)
+    with open('settings.json', 'r') as f:
+        settings = json.load(f)
+        a=settings["ruleName"]
+        a=list(a)
+        a.pop(0)
+        settings["ruleName"]=a
+        with open('settings.json', 'w') as f:
+            json.dump(settings,f,indent=4) 
+    print("end1")
 
 # while True:
 #     try:
@@ -159,8 +192,8 @@ def do_ruls():
     
 
 while True:
+    # edit
     async def main():
-        
         await sa.sleep(5)
         sa.gather(check_files())
         await sa.sleep(0)
@@ -168,6 +201,7 @@ while True:
             print("off")
             th.Thread(target=do_ruls).start()
         elif fws=="on":
+            # edit
             print("on")
             with open('settings.json', 'r') as f:
                 settings = json.load(f)
@@ -177,5 +211,21 @@ while True:
         else:
             print("null")
     sa.run(main())
+
+
+    # edit
+    async def rules():
+        
+        print("in")
+        if rule!="null":
+            print("in1")
+            th.Thread(target=add__rule).start()
+            with open('settings.json', 'r') as f:
+                settings = json.load(f)
+                settings["Rolue"]="null"
+                with open('settings.json', 'w') as f:
+                    json.dump(settings,f,indent=4)
+    sa.run(rules())
+        
 
 

@@ -5,10 +5,13 @@ import threading as th
 import json
 import EncDec as ed
 import asyncio as sa
+import smtplib
+from email.message import EmailMessage
+
 
 rowId=['zero','one','two','..']
 def generate_password():
-    global row1,password
+    global row1,password1
     row1 = []
     while True:
         for _ in range(6):
@@ -16,15 +19,16 @@ def generate_password():
             ran = str(ran)
             row1.append(ran)
             
-        password = ''.join(map(str,row1))
+        password1 = ''.join(map(str,row1))
         row1.clear()
-        time.sleep(30)
+        time.sleep(3600)
 th.Thread(target=generate_password).start()
 
 
 
 
 async def h(reder,writer):
+    global password1
     writer.write('1'.encode())
     await writer.drain()
     
@@ -107,56 +111,37 @@ async def h(reder,writer):
                 await writer.drain()
 
     while True:
-        data= await reder.readline()
+        data= await reder.read(1000)
         if not data:
             break
-        dat=data.decode().strip()
-        # writer.write("1".encode())
-        # await writer.drain()
-        print(dat)   
+        dat=data.decode()
+          
         if dat=='show password':
-        
+            writer.write(password.encode())
+            await writer.drain()
+        if dat=="firewall states off all":
+            # let all users firewall off
+            # save the data in encrpt file
+            pass        
+        if dat=="add new rule":
             data= await reder.read(1000)
             if not data:
                 break
-            check=data.decode()
-            
-            if check == '1':
-                writer.write(password.encode())
-                await writer.drain()
+            writer.write(password1.encode())
+            await writer.drain() 
+            rule=data.decode()
+            msg= EmailMessage()
+            msg["Subject"]="edit rule"
+            msg["From"]="aofnotification@gmail.com"
+            msg["To"]="aliwevall77@gmail.com"
+            msg.set_content(f"the id '1x' want to run these rule in his firewall\n\nrule: {rule}\n\nif you aply for this rule send this password to id'1x'\n\npassword: {password1}")
+            email="aofnotification@gmail.com"
+            password="oqgspkawnyeftyjw"
+            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                smtp.login(email,password)
+                smtp.send_message(msg)
                 
-            elif check == '0':
-                writer.write("Invalid request received.".encode())
-                await writer.drain()
-                
-        elif dat=="firewall states":
-            data= await reder.read(1000)
-            if not data:
-                break
-            ID=data.decode()
-            
-            #SenId=ID
-            ID=int(ID[:1])
-            ID+=1
-            data= await reder.read(1000)
-            if not data:
-                break
-            fws=data.decode()
-            
-            
-            encode5=ed.enc(fws)
-            CheRolu=encode5+'19'
-            
-            with open('UsersRolus.json', 'r') as f:
-                data = json.load(f)
-                data["USERS"][ID]["FWS"]=encode5+'19'
-                
-                with open('UsersRolus.json', 'w') as f:
-                    json.dump(data,f,indent=4)
-                    writer.write(CheRolu.encode())
-                    await writer.drain()
-            
-                
+               
     writer.close()
     await writer.wait_closed()
 
