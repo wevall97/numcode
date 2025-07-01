@@ -7,7 +7,7 @@ import EncDec as ed
 import asyncio as sa
 import smtplib
 from email.message import EmailMessage
-
+import pandas as pd
 
 rowId=['zero','one','two','..']
 def generate_password():
@@ -111,11 +111,98 @@ async def h(reder,writer):
                 await writer.drain()
 
     while True:
-        data= await reder.read(1000)
+        data= await reder.readline()
         if not data:
             break
-        dat=data.decode()
-          
+        dat=data.decode().strip()
+        
+        if dat=="off":
+            data= await reder.readline()
+            if not data:
+                break
+            timerlog=data.decode().strip()
+            
+            data= await reder.readline()
+            if not data:
+                break
+            ID=data.decode().strip()
+            
+            data= await reder.read(1000)
+            if not data:
+                break
+            ips=data.decode()
+            
+            try:
+                s=pd.read_csv(r"D:\projackt\tools\firewall log.csv")
+            except Exception:
+                datafrme={
+                    "ID":["ID"],
+                    "IP":["IP"],
+                    "FWS":["FWS"],
+                    "TIMER":["TIMER"]
+                }
+
+                d=pd.DataFrame(datafrme)
+                d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+            datafrme={
+                    "ID":[ID],
+                    "IP":[ips],
+                    "FWS":["off"],
+                    "TIMER":[timerlog]
+                }
+
+            d=pd.DataFrame(datafrme)
+            d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+        if dat=="on":
+            data= await reder.read(9000)
+            if not data:
+                break
+            rulename=data.decode()
+            writer.write("1".encode())
+            await writer.drain()
+            data= await reder.readline()
+            if not data:
+                break
+            timerlog=data.decode().strip()
+            data= await reder.readline()
+            if not data:
+                break
+            ID=data.decode().strip()
+            data= await reder.read(1000)
+            if not data:
+                break
+            ips=data.decode()
+            writer.write("1".encode())
+            await writer.drain()
+            data= await reder.read(900000)
+            if not data:
+                break
+            RULE=data.decode()
+            try:
+                s=pd.read_csv(r"D:\projackt\tools\add rule log.csv")
+            except Exception:
+                datafrme={
+                    "ID":["ID"],
+                    "IP":["IP"],
+                    "RuleN":["RuleN"],
+                    "RULE":["RULE"],
+                    "TIMER":["TIMER"]
+                }
+
+                d=pd.DataFrame(datafrme)
+                d.to_csv(r"D:\projackt\tools\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+
+
+            datafrme={
+                    "ID":[ID],
+                    "IP":[ips],
+                    "RuleN":[rulename],
+                    "RULE":[RULE],
+                    "TIMER":[timerlog]
+                }
+
+            d=pd.DataFrame(datafrme)
+            d.to_csv(r"D:\projackt\tools\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
         if dat=='show password':
             writer.write(password.encode())
             await writer.drain()

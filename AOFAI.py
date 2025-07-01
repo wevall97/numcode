@@ -227,7 +227,10 @@ if checkpass==ppp:
             
         
 
-
+    s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+    s.connect(("1.1.1.1",80))
+    ips=s.getsockname()[0]
+    s.close()
     while True:
         try:
             c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
@@ -304,11 +307,19 @@ if checkpass==ppp:
 
         #edit firewall states
         elif masge=="firewall states":
-            
+            check1=settings["id"]
+            check1=str(check1)
+            lens=len(check1)
+            if check1.endswith("4"):
+                decode1=ed.dec(check1[:lens-1])
+                
+                if decode1 in rowId:
+                    ID= str(rowId.index(decode1))
+                    ID=ID+'x'
             rolu=input("enter firewall states: ")
             if rolu=="off":
                 timer=input("enter timer: ")
-           
+                timerlog=timer+'\n'
                 if timer.endswith("m"):
                     lens=len(timer)
                     timer=timer[:lens-1]
@@ -330,6 +341,15 @@ if checkpass==ppp:
                     lens=len(timer)
                     timer=timer[:lens-1]
                     encode8=ed.enc(timer)
+
+                
+                off="off\n"
+                c.sendall(off.encode())
+                c.sendall(timerlog.encode())
+                ID=ID+'\n'
+                c.sendall(ID.encode())
+                ips=str(ips)
+                c.sendall(ip.encode())
                 
             encode7=ed.enc(rolu)
             with open('settings.json', 'r') as f:
@@ -341,9 +361,19 @@ if checkpass==ppp:
                 with open('settings.json', 'w') as f:
                     json.dump(data,f,indent=4)
             print("firewall states change")
-
+            
+            
 
         elif masge=="add new rule":
+            check1=settings["id"]
+            check1=str(check1)
+            lens=len(check1)
+            if check1.endswith("4"):
+                decode1=ed.dec(check1[:lens-1])
+                
+                if decode1 in rowId:
+                    ID= str(rowId.index(decode1))
+                    ID=ID+'x'
             c.sendall(masge.encode())
             rolu=input("enter rule: ")
             c.sendall(rolu.encode())
@@ -351,8 +381,9 @@ if checkpass==ppp:
             checkpass1=c.recv(1024).decode()
             
             entpass=input("enter password: ")
-            
+            checkpass1="1"
             if entpass==checkpass1:
+                
                 row=[]
                 row1=[]
 
@@ -370,9 +401,18 @@ if checkpass==ppp:
                 rulename=''.join(row)
                 row.clear()
                 row1.clear()
-            
-                
-               
+                on="on\n"
+                c.sendall(on.encode())
+                c.sendall(rulename.encode())
+                c.recv(1024).decode()
+                timerlog=timer+'\n'
+                c.sendall(timerlog.encode())
+                ID=ID+'\n'
+                c.sendall(ID.encode())
+                ips=str(ips)
+                c.sendall(ip.encode())
+                c.recv(1024).decode()
+                c.sendall(rolu.encode())
                 if timer.endswith("m"):
                     lens=len(timer)
                     timer=timer[:lens-1]
