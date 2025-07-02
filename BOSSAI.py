@@ -5,6 +5,11 @@ import random
 import smtplib
 from email.message import EmailMessage
 import time
+# copy all code from "AOFAI" and edit it to match with "BOSS"
+# remove "show password"
+# delete "Bsettings" and use "settings"
+
+
 
 
 # with open('settings.json', 'r') as f:
@@ -338,22 +343,22 @@ if checkpass==ppp:
 
 
         elif masge=="firewall states off all":
-            msg= EmailMessage()
-            msg["Subject"]="Enter password"
-            msg["From"]="aofnotification@gmail.com"
-            msg["To"]=email_rvs
-            msg.set_content(f"your password is: {password}")
-            email="aofnotification@gmail.com"
-            password="oqgspkawnyeftyjw"
-            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                smtp.login(email,password)
-                smtp.send_message(msg)
-            check_otb=input("enter password: ")
-            ppp=password
-            if check_otb==ppp:
-                c.sendall(masge.encode())
-                print("firewall will be off in '5' socned")
-                pass
+            # msg= EmailMessage()
+            # msg["Subject"]="Enter password"
+            # msg["From"]="aofnotification@gmail.com"
+            # msg["To"]=email_rvs
+            # msg.set_content(f"your password is: {password}")
+            # email="aofnotification@gmail.com"
+            # password="oqgspkawnyeftyjw"
+            # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+            #     smtp.login(email,password)
+            #     smtp.send_message(msg)
+            # check_otb=input("enter password: ")
+            # ppp=password
+            # if check_otb==ppp:
+            c.sendall(masge.encode())
+            print("firewall will be off in '5' socned")
+                
 else:
     print("try agen")
     time.sleep(1)

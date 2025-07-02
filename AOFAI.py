@@ -5,6 +5,10 @@ import random
 import smtplib
 from email.message import EmailMessage
 import time
+# recheck "email" form ".json"
+# added new shaep to the last lines
+
+
 
 
 # with open('settings.json', 'r') as f:
@@ -448,10 +452,19 @@ if checkpass==ppp:
             checkpass1=c.recv(1024).decode()
             entpass=input("enter password: ")
             if entpass==checkpass1:
+                check1=settings["id"]
+                check1=str(check1)
+                lens=len(check1)
+                if check1.endswith("4"):
+                    decode1=ed.dec(check1[:lens-1])
+                    
+                    if decode1 in rowId:
+                        ID= str(rowId.index(decode1))
+                        ID=ID+'x'
                 while True:
                     print("enter 'exit' to exit form 'advance mode'\n")
-                    masge=input("enter rule: ")
-                    if masge=="exit":
+                    rolu=input("enter rule: ")
+                    if rolu=="exit":
                         break
                     timer=input("enter timer: ")
                     
@@ -474,7 +487,18 @@ if checkpass==ppp:
                     row1.clear()
                 
                     
-                    
+                    on="on\n"
+                    c.sendall(on.encode())
+                    c.sendall(rulename.encode())
+                    c.recv(1024).decode()
+                    timerlog=timer+'\n'
+                    c.sendall(timerlog.encode())
+                    ID=ID+'\n'
+                    c.sendall(ID.encode())
+                    ips=str(ips)
+                    c.sendall(ip.encode())
+                    c.recv(1024).decode()
+                    c.sendall(rolu.encode())
                 
                     if timer.endswith("m"):
                         lens=len(timer)

@@ -6,9 +6,39 @@ import json
 import EncDec as ed
 import fireSett as fs
 import asyncio as sa
+import smtplib
+from email.message import EmailMessage
+# added "email" form ".json"
+#in line "269" check why "clos_fw" going into a loop
+
+
+
+
+
+# while True:
+#     try:
+#         c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
+#         try:
+#             c.connect(("192.168.1.13", 9999))
+#         except ConnectionRefusedError:
+#             print("the server is shot downe")
+#             break 
+#         except Exception:
+#             print(f"somethig hapned to the ip server it is change to ''")
+#             break
+        
+#         chck=c.recv(1024).decode('utf-8')
+#         if chck=='1':
+            
+#             c.sendall("add".encode())
+#             break
+#     except Exception:
+        
+#         continue
+# print("end")
+
 
 l=1
-
 async def check_files():
     global fws,utrm,ip,rm,timer,rule,rulename,timerr
     rowCheck=["Enable","Disable"]
@@ -167,65 +197,73 @@ def add__rule():
             json.dump(settings,f,indent=4) 
     print("end1")
 
-# while True:
-#     try:
-#         c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
-#         try:
-#             c.connect((ip, 9999))
-#         except ConnectionRefusedError:
-#             print("the server is shot downe")
-#             break 
-#         except Exception:
-#             print(f"somethig hapned to the ip server it is change to '{ip}'")
-#             break
-        
-#         chck=c.recv(1024).decode('utf-8')
-#         if chck=='1':
-            
-#             break
-#     except Exception:
-        
-#         continue
 
 
+
+
+# def clos_fw():# edit
+        
+#         ch=c.recv(1024).decode('utf-8')
+#         print(ch)
+#         # if ch=="off":
+#         print("off")
+            # su.run("netsh advfirewall set allprofiles states off",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
 
     
 
 while True:
+
     # edit
     async def main():
         await sa.sleep(5)
         sa.gather(check_files())
-        # await sa.sleep(0)
-        # if fws=="off" and l==1:
-        #     print("off")
-        #     th.Thread(target=do_ruls).start()
-        # elif fws=="on":
-        #     # edit
-        #     print("on")
-        #     with open('settings.json', 'r') as f:
-        #         settings = json.load(f)
-        #         settings["FWS"]="609811010411211219"
-        #         with open('settings.json', 'w') as f:
-        #             json.dump(settings,f,indent=4)
-        # else:
-        #     print("null")
+        await sa.sleep(0)
+        if fws=="off" and l==1:
+            print("off")
+            th.Thread(target=do_ruls).start()
+        elif fws=="on":
+            # edit
+            print("on")
+            with open('settings.json', 'r') as f:
+                settings = json.load(f)
+                settings["FWS"]="609811010411211219"
+                with open('settings.json', 'w') as f:
+                    json.dump(settings,f,indent=4)
+        else:
+            print("null")
+        #edit
+        a=su.run("netsh advfirewall show allprofiles",shell=True,text=True,capture_output=True)
+        a=a.stdout
+        if "State                                 OFF" in a or len(a) != 2094 and fws=="null" :
+            su.run('netsh advfirewall set allprofiles state on', shell=True)
+            msg= EmailMessage()
+            msg["Subject"]="closeing firewall"
+            msg["From"]="aofnotification@gmail.com"
+            # msg["To"]=email_rvs
+            msg.set_content(f"your firewall state has been off,we rutern it to be open.\ndo the protocol to check your devic if you had been hackt")
+            email="aofnotification@gmail.com"
+            password="oqgspkawnyeftyjw"
+            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                smtp.login(email,password)
+                smtp.send_message(msg)
+
     sa.run(main())
 
 
     # edit
-    async def rules():
+    # async def rules():
         
         
-        if rule!="null":
+    #     if rule!="null":
             
-            th.Thread(target=add__rule).start()
-            with open('settings.json', 'r') as f:
-                settings = json.load(f)
-                settings["Rolue"]="null"
-                with open('settings.json', 'w') as f:
-                    json.dump(settings,f,indent=4)
-    sa.run(rules())
+    #         th.Thread(target=add__rule).start()
+    #         with open('settings.json', 'r') as f:
+    #             settings = json.load(f)
+    #             settings["Rolue"]="null"
+    #             with open('settings.json', 'w') as f:
+    #                 json.dump(settings,f,indent=4)
+    # sa.run(rules())
         
 
-
+    
+    # th.Thread(target=clos_fw).start()

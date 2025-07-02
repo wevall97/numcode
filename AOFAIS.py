@@ -8,6 +8,13 @@ import asyncio as sa
 import smtplib
 from email.message import EmailMessage
 import pandas as pd
+# remove all codes of add data to "UsersRolus.json" and instaed add new way to gust read and give new id 
+# edit all "data= await reder.readline()" to be like "data= await reder.read(90000)"
+# remove "show password"
+# edit "generate_password()" to work when server want to send password
+
+
+
 
 rowId=['zero','one','two','..']
 def generate_password():
@@ -26,7 +33,7 @@ th.Thread(target=generate_password).start()
 
 
 
-
+rowse=set()
 async def h(reder,writer):
     global password1
     writer.write('1'.encode())
@@ -35,7 +42,11 @@ async def h(reder,writer):
     data= await reder.read(1000)
     
     addId=data.decode()
-    
+    if addId=="add":
+        
+        rowse.add(writer)
+        
+        
     if addId=="0":
         for _ in range(1): 
 
@@ -111,10 +122,10 @@ async def h(reder,writer):
                 await writer.drain()
 
     while True:
-        data= await reder.readline()
+        data= await reder.read(90000)
         if not data:
             break
-        dat=data.decode().strip()
+        dat=data.decode()
         
         if dat=="off":
             data= await reder.readline()
@@ -207,9 +218,18 @@ async def h(reder,writer):
             writer.write(password.encode())
             await writer.drain()
         if dat=="firewall states off all":
-            # let all users firewall off
-            # save the data in encrpt file
-            pass        
+            
+            for writer in range(1):# if something hapned rename 'writer' to "dgdgh"
+                print("1")
+                try:
+                    writer.write('off'.encode())#edit
+                    await writer.drain()
+                    rowse.remove(writer)
+                except Exception:
+                    rowse.remove(writer)
+
+
+
         if dat=="add new rule":
             data= await reder.read(1000)
             if not data:
