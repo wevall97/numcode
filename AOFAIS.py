@@ -1,16 +1,14 @@
-import time
 import random
-import threading as th
-import EncDec as ed
 import asyncio as sa
 import smtplib
 from email.message import EmailMessage
 import pandas as pd
-# remove all codes of add data to "UsersRolus.json" and instaed add new way to gust read and give new id 
+import json
+import time
 # edit all "data= await reder.readline()" to be like "data= await reder.read(90000)"
-# remove "show password"
-# edit "generate_password()" to work when server want to send password
-# in "add new rule" let the boss send his email so "AOFAIS" send the email to him
+
+
+
 
 
 
@@ -43,13 +41,26 @@ async def h(reder,writer):
         
         rowse.add(writer)
     
+    elif addId=="1":
+        pass
+    else:
+        with open('serverSetting.json', 'r') as f:
+            serverSetting = json.load(f)
+            if serverSetting["email"]=="":
+                serverSetting["email"]=addId
+                with open('serverSetting.json', 'w') as f:
+                    json.dump(serverSetting,f,indent=4)
+            else:
+                bossemail=serverSetting["email"]
 
     while True:
+        
         try:
-            data= await reder.read(1000)
+            data= await reder.read(90000)
             if not data:
                 break
             dat=data.decode()
+            print(dat)
         except Exception:
             pass
         try:
@@ -96,20 +107,26 @@ async def h(reder,writer):
                 d=pd.DataFrame(datafrme)
                 d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
             if dat=="on":
+                writer.write("1".encode())
+                await writer.drain()
                 data= await reder.read(9000)
                 if not data:
                     break
                 rulename=data.decode()
                 writer.write("1".encode())
                 await writer.drain()
-                data= await reder.readline()
+                data= await reder.read(9000)
                 if not data:
                     break
-                timerlog=data.decode().strip()
-                data= await reder.readline()
+                timerlog=data.decode()
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(9000)
                 if not data:
                     break
-                T=data.decode().strip()
+                T=data.decode()
+                writer.write("1".encode())
+                await writer.drain()
                 data= await reder.read(1000)
                 if not data:
                     break
@@ -147,9 +164,30 @@ async def h(reder,writer):
                 d.to_csv(r"D:\projackt\tools\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
             
             if dat=="firewall states off all":
-                
+                T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+                try:
+                    s=pd.read_csv(r"D:\projackt\tools\firewall log.csv")
+                except Exception:
+                    datafrme={
+                        "IP":["IP"],
+                        "FWS":["FWS"],
+                        "TIMER":["TIMER"],
+                        "TIME":["TIME"]
+                    }
+
+                    s=pd.DataFrame(datafrme)
+                    s.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                datafrme={
+                        "IP":["ALL"],
+                        "FWS":["off"],
+                        "TIMER":["null"],
+                        "TIME":[T]
+                    }
+
+                d=pd.DataFrame(datafrme)
+                d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
                 for writer in range(1):# if something hapned rename 'writer' to "dgdgh"
-                    print("1")
+                    
                     try:
                         writer.write('off'.encode())#edit
                         await writer.drain()
@@ -160,18 +198,27 @@ async def h(reder,writer):
 
 
             if dat=="add new rule":
-                data= await reder.read(1000)
+                with open('serverSetting.json', 'r') as f:
+                    serverSetting = json.load(f)
+                    bossemail=serverSetting["email"]
+                data= await reder.read(90000)
                 if not data:
                     break
                 p=generate_password()
                 writer.write(p.encode())
                 await writer.drain() 
                 rule=data.decode()
+                
+                data= await reder.read(9000)
+                if not data:
+                    break
+                ips=data.decode()
+                
                 msg= EmailMessage()
                 msg["Subject"]="edit rule"
                 msg["From"]="aofnotification@gmail.com"
-                msg["To"]="aliwevall77@gmail.com"
-                msg.set_content(f"the id '1x' want to run these rule in his firewall\n\nrule: {rule}\n\nif you aply for this rule send this password to id'1x'\n\npassword: {password1}")
+                msg["To"]=bossemail
+                msg.set_content(f"the IP '{ips}' want to run these rule in his firewall\n\nrule: {rule}\n\nif you aply for this rule send this password to id'1x'\n\npassword: {password1}")
                 email="aofnotification@gmail.com"
                 password="oqgspkawnyeftyjw"
                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -179,14 +226,21 @@ async def h(reder,writer):
                     smtp.send_message(msg)
 
             if dat=="advance mode":
+                with open('serverSetting.json', 'r') as f:
+                    serverSetting = json.load(f)
+                    bossemail=serverSetting["email"]
                 p=generate_password()
                 writer.write(p.encode())
-                await writer.drain() 
+                await writer.drain()
+                data= await reder.read(9000)
+                if not data:
+                    break
+                ips=data.decode()
                 msg= EmailMessage()
                 msg["Subject"]="advance mode"
                 msg["From"]="aofnotification@gmail.com"
-                msg["To"]="aliwevall77@gmail.com"
-                msg.set_content(f"the id '1x' want to be in 'advance mode'\n\nif you aply for this,send this password to id'1x'\n\npassword: {password1}")
+                msg["To"]=bossemail
+                msg.set_content(f"the IP '{ips}' want to be in 'advance mode'\n\nif you aply for this,send this password to id'1x'\n\npassword: {password1}")
                 email="aofnotification@gmail.com"
                 password="oqgspkawnyeftyjw"
                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:

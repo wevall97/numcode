@@ -5,35 +5,33 @@ import random
 import smtplib
 from email.message import EmailMessage
 import time
-# copy all code from "AOFAI" and edit it to match with "BOSS"
-# remove "show password"
-# delete "Bsettings" and use "settings"
+import os
+
+# add new method called "firewall states on all"
 
 
 
+pathfile=os.path.exists(r"D:\projackt\tools\settings.json")
+if pathfile==False:
+    s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": []}'
+    p=json.loads(s)
+    with open("settings.json","w")as f:
+        json.dump(p,f,indent=4)
 
-# with open('settings.json', 'r') as f:
-#         settings = json.load(f)
-#         if settings["email"]=="null":
-#             emai=input("enter your email: ")
-#             encode7=ed.enc(emai)
-#             settings["email"]=encode7+'5'
-#             with open('settings.json', 'w') as f:
-#                 json.dump(settings,f,indent=4)
-# with open('settings.json', 'r') as f:
-#     settings = json.load(f)
-#     check4=settings["email"]
-#     check4=str(check4)
-#     if check4.endswith("5"):
-#         lens=len(check4)
-#         decode4=ed.dec(check4[:lens-1])
-#         email_rvs=decode4
-#         print(email_rvs)
-#     else:
-#          print("no")
+with open('settings.json', 'r') as f:
+        settings = json.load(f)
+        if settings["email"]=="":
+            emai=input("enter your email: ")
+            settings["email"]=emai
+            with open('settings.json', 'w') as f:
+                json.dump(settings,f,indent=4)
+with open('settings.json', 'r') as f:
+    settings = json.load(f)
+    check4=settings["email"]
+   
 
 def generate_password():
-    global row1,password
+    
     row1 = []
     for _ in range(6):
         ran = random.randint(0, 9)
@@ -41,197 +39,63 @@ def generate_password():
         row1.append(ran)
     password = ''.join(map(str,row1))
     row1.clear()
-    
-generate_password()    
+    return password
+  
 
-ppp=password
+ppp=generate_password()
+# print("prepar to send the password to your email")
 # msg= EmailMessage()
 # msg["Subject"]="Enter password"
 # msg["From"]="aofnotification@gmail.com"
-# msg["To"]=email_rvs
-# msg.set_content(f"your password is: {password}")
+# msg["To"]=check4
+# msg.set_content(f"your password is: {ppp}")
 # email="aofnotification@gmail.com"
 # password="oqgspkawnyeftyjw"
 # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
 #     smtp.login(email,password)
 #     smtp.send_message(msg)
-
 checkpass=ppp
+# checkpass=input("enter password: ")
 if checkpass==ppp:
-    print("hi")
-    rowId=['zero','one','two','..']
-    rowChIpId=["zero","one"]
-    #p=16,d=4,f=6,a=1,r=18,u=22,o=15,t=21,e=5
     with open('settings.json', 'r') as f:
         settings = json.load(f)
         
-        check4=settings["email"]
-        check4=str(check4)
-        if check4.endswith("5"):
-            lens=len(check4)
-            decode4=ed.dec(check4[:lens-1])
-            email_rvs=decode4
-            
-        else:
-            print("no")
-
+        # check4=settings["email"]
+        
+        # email_rvs=check4
+        
         check=settings["firstconn"]
-        check=str(check)
-        lens=len(check)
-        if check.endswith("6"):
-            decode=ed.dec(check[:lens-1])
-            if decode in rowChIpId:
-                decode=str(rowChIpId.index(decode))
-            else:
-                decode="2"
-                msg= EmailMessage()
-                msg["Subject"]="edit file"
-                msg["From"]="aofnotification@gmail.com"
-                msg["To"]=email_rvs
-                msg.set_content(f"your file setting has been edit,it is them there are hacker in your devic,use the protocol to stop traking by hacker\n\nthe edit hapned in 'settings.json' line '5' ")
-                email="aofnotification@gmail.com"
-                password="oqgspkawnyeftyjw"
-                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    smtp.login(email,password)
-                    smtp.send_message(msg)
-                 
-        else:
-            decode="2"
-            msg= EmailMessage()
-            msg["Subject"]="edit file"
-            msg["From"]="aofnotification@gmail.com"
-            msg["To"]=email_rvs
-            msg.set_content(f"your file setting has been edit,it is them there are hacker in your devic,use the protocol to stop traking by hacker\n\nthe edit hapned in 'settings.json' line '5' ")
-            email="aofnotification@gmail.com"
-            password="oqgspkawnyeftyjw"
-            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                smtp.login(email,password)
-                smtp.send_message(msg)
-            pass
-
-        # if decode=="2":
-        #     print("error1")
-        #     # the notification for server
-        #     exit()
 
 
-        check1=settings["addid"]
-        check1=str(check1)
-        lens=len(check1)
-        if check1.endswith("1"):
-            decode1=ed.dec(check1[:lens-1])
-            if decode1 in rowChIpId:
-                decode1=str(rowChIpId.index(decode1))
-
-            else:
-                decode1="2"
-                msg= EmailMessage()
-                msg["Subject"]="edit file"
-                msg["From"]="aofnotification@gmail.com"
-                msg["To"]=email_rvs
-                msg.set_content(f"your file setting has been edit,it is them there are hacker in your devic,use the protocol to stop traking by hacker\n\nthe edit hapned in 'settings.json' line '6' ")
-                email="aofnotification@gmail.com"
-                password="oqgspkawnyeftyjw"
-                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    smtp.login(email,password)
-                    smtp.send_message(msg)
-                 
-        else:
-            decode1="2"
-            
-            msg= EmailMessage()
-            msg["Subject"]="edit file"
-            msg["From"]="aofnotification@gmail.com"
-            msg["To"]=email_rvs
-            msg.set_content(f"your file setting has been edit,it is them there are hacker in your devic,use the protocol to stop traking by hacker\n\nthe edit hapned in 'settings.json' line '6' ")
-            email="aofnotification@gmail.com"
-            password="oqgspkawnyeftyjw"
-            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                smtp.login(email,password)
-                smtp.send_message(msg)
-        # if decode1=="2":
-        #     print("error2")
-        #     # the notification for server
-        #     exit()
-
-
-        if decode=="0":
+        if check=="0":
     
             ip=input("Enter IP server: ")
             print(f"Using saved IP: {ip}")
             
-            encode4=ed.enc(ip)
-           
-
+            
             with open('settings.json', 'w') as f:
-                settings["IP-S"] = encode4+'16'
-                
-                encode5=ed.enc("one")
-                settings["firstconn"] = encode5+'6'
+                settings["IP-S"] =ip
+             
+                settings["firstconn"] = "1"
                 json.dump(settings, f, indent=4)
 
 
         check2=settings["firstconn"]
-        check2=str(check2)
-        lens=len(check2)
-        if check2.endswith("6"):
-            decode2=ed.dec(check2[:lens-1])
-            if decode2 in rowChIpId:
-                decode2=str(rowChIpId.index(decode2))
-            else:
-                decode2="2"
-                msg= EmailMessage()
-                msg["Subject"]="edit file"
-                msg["From"]="aofnotification@gmail.com"
-                msg["To"]=email_rvs
-                msg.set_content(f"your file setting has been edit,it is them there are hacker in your devic,use the protocol to stop traking by hacker\n\nthe edit hapned in 'settings.json' line '5' ")
-                email="aofnotification@gmail.com"
-                password="oqgspkawnyeftyjw"
-                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    smtp.login(email,password)
-                    smtp.send_message(msg)
-        else:
-            decode2="2"
-            msg= EmailMessage()
-            msg["Subject"]="edit file"
-            msg["From"]="aofnotification@gmail.com"
-            msg["To"]=email_rvs
-            msg.set_content(f"your file setting has been edit,it is them there are hacker in your devic,use the protocol to stop traking by hacker\n\nthe edit hapned in 'settings.json' line '5' ")
-            email="aofnotification@gmail.com"
-            password="oqgspkawnyeftyjw"
-            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                smtp.login(email,password)
-                smtp.send_message(msg)
-
-        # if decode2=="2":
-        #     print("error1")
-        #     # the notification for server
-        #     exit()
         
         
-        if decode2=="1":
+        
+        if check2=="1":
             check3=settings["IP-S"]
-            check3=str(check3)
-            lens=len(check3)
-            if check3.endswith("16"):
-                decode3=ed.dec(check3[:lens-2])
-            else:
-                msg= EmailMessage()
-                msg["Subject"]="edit file"
-                msg["From"]="aofnotification@gmail.com"
-                msg["To"]=email_rvs
-                msg.set_content(f"your file setting has been edit,it is them there are hacker in your devic,use the protocol to stop traking by hacker\n\nthe edit hapned in 'settings.json' line '2' ")
-                email="aofnotification@gmail.com"
-                password="oqgspkawnyeftyjw"
-                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    smtp.login(email,password)
-                    smtp.send_message(msg)
+            
         
-            ip = decode3
-            addid = decode1
+            ip = check3
             
         
 
+    s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+    s.connect(("1.1.1.1",80))
+    ips=s.getsockname()[0]
+    s.close()
 
     while True:
         try:
@@ -249,78 +113,37 @@ if checkpass==ppp:
             
             chck=c.recv(1024).decode('utf-8')
             if chck=='1':
-                
+                check4=str(check4)
+                c.sendall(check4.encode())
                 break
         except Exception:
             
             continue
     
-    c.sendall(addid.encode('utf-8'))
-    if addid=="0":
-        di=c.recv(1024).decode('utf-8')
-
-        with open('settings.json', 'r') as f:
-            settings = json.load(f)
-            with open('settings.json', 'w') as f:
-                encode6=ed.enc("one")
-                settings["addid"]=encode6+'1'
-                settings["id"]=di+'4'
-                json.dump(settings,f,indent=4)
+    
             
             
             
         
     while True:
         masge=input("enter masge: ")
-        if masge=="show id":
-            check1=settings["id"]
-            check1=str(check1)
-            lens=len(check1)
-            if check1.endswith("4"):
-                decode1=ed.dec(check1[:lens-1])
-                
-                if decode1 in rowId:
-                    ID= str(rowId.index(decode1))
-                    ID=ID+'x'
-                    print(ID)
-                else:
-                    msg= EmailMessage()
-                    msg["Subject"]="edit file"
-                    msg["From"]="aofnotification@gmail.com"
-                    msg["To"]=email_rvs
-                    msg.set_content(f"your file setting has been edit,it is them there are hacker in your devic,use the protocol to stop traking by hacker\n\nthe edit hapned in 'settings.json' line '3' ")
-                    email="aofnotification@gmail.com"
-                    password="oqgspkawnyeftyjw"
-                    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                        smtp.login(email,password)
-                        smtp.send_message(msg)
-                
-            else:
-                msg= EmailMessage()
-                msg["Subject"]="edit file"
-                msg["From"]="aofnotification@gmail.com"
-                msg["To"]=email_rvs
-                msg.set_content(f"your file setting has been edit,it is them there are hacker in your devic,use the protocol to stop traking by hacker\n\nthe edit hapned in 'settings.json' line '3' ")
-                email="aofnotification@gmail.com"
-                password="oqgspkawnyeftyjw"
-                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    smtp.login(email,password)
-                    smtp.send_message(msg)
+
+        
 
         #edit firewall states
-        elif masge=="firewall states":
+        if masge=="firewall states":
             
             rolu=input("enter firewall states: ")
             if rolu=="off":
                 timer=input("enter timer: ")
-           
+                timerlog=timer+'\n'
                 if timer.endswith("m"):
                     lens=len(timer)
                     timer=timer[:lens-1]
                     timer=int(timer)
                     timer*=60
                     timer=str(timer)
-                    encode8=ed.enc(timer)
+                    
 
 
                 elif timer.endswith("h"):
@@ -329,35 +152,239 @@ if checkpass==ppp:
                     timer=int(timer)
                     timer*=3600
                     timer=str(timer)
-                    encode8=ed.enc(timer)
-            encode7=ed.enc(rolu)
+                    
+
+                elif timer.endswith("s"):
+                    lens=len(timer)
+                    timer=timer[:lens-1]
+                    
+
+                
+                off="off"
+                c.sendall(off.encode())
+                c.recv(1024).decode()
+                c.sendall(timerlog.encode())
+                c.recv(1024).decode()
+                c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                c.recv(1024).decode()
+                ips=str(ips)
+                c.sendall(ip.encode())
+                
+            
             with open('settings.json', 'r') as f:
                 data = json.load(f)
-                data["FWS"]=encode7+'19'
+                data["FWS"]=rolu
                 if rolu=="off":
-                    data["timerF"]=encode8
+                    data["timerF"]=timer
                 
                 with open('settings.json', 'w') as f:
                     json.dump(data,f,indent=4)
             print("firewall states change")
 
 
+
+        elif masge=="add new rule":
+            
+            
+            rolu=input("enter rule: ")
+            timer=input("enter timer: ")
+            ppp=generate_password()
+            print("prepar to send the password to your email")
+            msg= EmailMessage()
+            msg["Subject"]="Enter password"
+            msg["From"]="aofnotification@gmail.com"
+            msg["To"]=check4
+            msg.set_content(f"your password is: {ppp}")
+            email="aofnotification@gmail.com"
+            password="oqgspkawnyeftyjw"
+            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                smtp.login(email,password)
+                smtp.send_message(msg)
+            entpass=input("enter password: ")
+            # checkpass1="1"
+            if entpass==ppp:
+                
+                row=[]
+                row1=[]
+
+
+                for i in rolu:
+                    row1.append(i)
+                    if i =="'" or i=='"':
+                        break
+                d=''.join(row1)
+                e=rolu.removeprefix(d)
+                for i in e:
+                    if i =="'" or i=='"':
+                        break
+                    row.append(i)
+                rulename=''.join(row)
+                row.clear()
+                row1.clear()
+                on="on"
+                c.sendall(on.encode())
+                c.recv(1024).decode()
+                c.sendall(rulename.encode())
+                c.recv(1024).decode()
+                timerlog=timer
+                c.sendall(timerlog.encode())
+                c.recv(1024).decode()
+                c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                c.recv(1024).decode()
+                ips=str(ips)
+                c.sendall(ip.encode())
+                c.recv(1024).decode()
+                c.sendall(rolu.encode())
+                if timer.endswith("m"):
+                    lens=len(timer)
+                    timer=timer[:lens-1]
+                    timer=int(timer)
+                    timer*=60
+                    timer=str(timer)
+                    # encode8=ed.enc(timer)
+
+
+                elif timer.endswith("h"):
+                    lens=len(timer)
+                    timer=timer[:lens-1]
+                    timer=int(timer)
+                    timer*=3600
+                    timer=str(timer)
+                    # encode8=ed.enc(timer)
+                
+                elif timer.endswith("s"):
+                    lens=len(timer)
+                    timer=timer[:lens-1]
+                    
+                with open('settings.json', 'r') as f:
+                    data = json.load(f)
+                    s=settings["ruleName"]
+                    s=list(s)
+                    s.append(rulename)
+                    settings["ruleName"]=s
+                    s.clear()
+                    s=settings["timerR"]
+                    s=list(s)
+                    s.append(timer)
+                    settings["timerR"]=s
+                    data["Rolue"]=rolu
+                    with open('settings.json', 'w') as f:
+                        json.dump(data,f,indent=4)
+
+
+
+
+        elif masge=="advance mode":
+            ppp=generate_password()
+            print("prepar to send the password to your email")
+            msg= EmailMessage()
+            msg["Subject"]="Enter password"
+            msg["From"]="aofnotification@gmail.com"
+            msg["To"]=check4
+            msg.set_content(f"your password is: {ppp}")
+            email="aofnotification@gmail.com"
+            password="oqgspkawnyeftyjw"
+            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                smtp.login(email,password)
+                smtp.send_message(msg)
+            entpass=input("enter password: ")
+            if entpass==ppp:
+                
+                while True:
+                    print("enter 'exit' to exit form 'advance mode'\n")
+                    rolu=input("enter rule: ")
+                    if rolu=="exit":
+                        break
+                    timer=input("enter timer: ")
+                    
+                    row=[]
+                    row1=[]
+
+
+                    for i in rolu:
+                        row1.append(i)
+                        if i =="'" or i=='"':
+                            break
+                    d=''.join(row1)
+                    e=rolu.removeprefix(d)
+                    for i in e:
+                        if i =="'" or i=='"':
+                            break
+                        row.append(i)
+                    rulename=''.join(row)
+                    row.clear()
+                    row1.clear()
+                
+                    on="on"
+                    c.sendall(on.encode())
+                    c.recv(1024).decode()
+                    c.sendall(rulename.encode())
+                    c.recv(1024).decode()
+                    timerlog=timer
+                    c.sendall(timerlog.encode())
+                    c.recv(1024).decode()
+                    c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                    c.recv(1024).decode()
+                    ips=str(ips)
+                    c.sendall(ip.encode())
+                    c.recv(1024).decode()
+                    c.sendall(rolu.encode())
+                
+                    if timer.endswith("m"):
+                        lens=len(timer)
+                        timer=timer[:lens-1]
+                        timer=int(timer)
+                        timer*=60
+                        timer=str(timer)
+                       
+
+
+                    elif timer.endswith("h"):
+                        lens=len(timer)
+                        timer=timer[:lens-1]
+                        timer=int(timer)
+                        timer*=3600
+                        timer=str(timer)
+                        
+                    
+                    elif timer.endswith("s"):
+                        lens=len(timer)
+                        timer=timer[:lens-1]
+                        
+                    with open('settings.json', 'r') as f:
+                        s=settings["ruleName"]
+                        s=list(s)
+                        s.append(rulename)
+                        settings["ruleName"]=s
+                        s.clear()
+                        s=settings["timerR"]
+                        s=list(s)
+                        s.append(timer)
+                        settings["timerR"]=s
+                        data["Rolue"]=rolu
+                        with open('settings.json', 'w') as f:
+                            json.dump(data,f,indent=4)
+
+
+
+
         elif masge=="firewall states off all":
-            # msg= EmailMessage()
-            # msg["Subject"]="Enter password"
-            # msg["From"]="aofnotification@gmail.com"
-            # msg["To"]=email_rvs
-            # msg.set_content(f"your password is: {password}")
-            # email="aofnotification@gmail.com"
-            # password="oqgspkawnyeftyjw"
-            # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-            #     smtp.login(email,password)
-            #     smtp.send_message(msg)
-            # check_otb=input("enter password: ")
-            # ppp=password
-            # if check_otb==ppp:
-            c.sendall(masge.encode())
-            print("firewall will be off in '5' socned")
+            ppp=generate_password()
+            print("prepar to send the password to your email")
+            msg= EmailMessage()
+            msg["Subject"]="Enter password"
+            msg["From"]="aofnotification@gmail.com"
+            msg["To"]=check4
+            msg.set_content(f"your password is: {ppp}")
+            email="aofnotification@gmail.com"
+            password="oqgspkawnyeftyjw"
+            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                smtp.login(email,password)
+                smtp.send_message(msg)
+            entpass=input("enter password: ")
+            if entpass==ppp:
+                c.sendall(masge.encode())
+                print("firewall will be off in '5' socned")
                 
 else:
     print("try agen")
