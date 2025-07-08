@@ -77,6 +77,7 @@ def clos_fw():
             c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
             c.connect((ip, 9991))
             c.sendall("client".encode())
+            
             close=c.recv(1024).decode('utf-8')
             print(close)
             # if close=="off":
