@@ -5,8 +5,10 @@ from email.message import EmailMessage
 import pandas as pd
 import json
 import time
+import threading as th
+import socket as so
 # edit all "data= await reder.readline()" to be like "data= await reder.read(90000)"
-
+# احاول افكك الكود الموجود في test.py و اشوف لي طرق لي توصيل كل شي مع بعضه
 
 
 
@@ -28,7 +30,7 @@ def generate_password():
 
 
 
-rowse=set()
+
 async def h(reder,writer):
     global password1
     writer.write('1'.encode())
@@ -37,11 +39,9 @@ async def h(reder,writer):
     data= await reder.read(1000)
     
     addId=data.decode()
-    if addId=="add":
-        
-        rowse.add(writer)
     
-    elif addId=="1":
+        
+    if addId=="1":
         pass
     else:
         with open('serverSetting.json', 'r') as f:
@@ -54,7 +54,7 @@ async def h(reder,writer):
                 bossemail=serverSetting["email"]
 
     while True:
-        
+        print("1")
         try:
             data= await reder.read(90000)
             if not data:
@@ -164,39 +164,74 @@ async def h(reder,writer):
                 d.to_csv(r"D:\projackt\tools\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
             
             if dat=="firewall states off all":
-                T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
-                try:
-                    s=pd.read_csv(r"D:\projackt\tools\firewall log.csv")
-                except Exception:
-                    datafrme={
-                        "IP":["IP"],
-                        "FWS":["FWS"],
-                        "TIMER":["TIMER"],
-                        "TIME":["TIME"]
-                    }
+            #     T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+            #     try:
+            #         s=pd.read_csv(r"D:\projackt\tools\firewall log.csv")
+            #     except Exception:
+            #         datafrme={
+            #             "IP":["IP"],
+            #             "FWS":["FWS"],
+            #             "TIMER":["TIMER"],
+            #             "TIME":["TIME"]
+            #         }
 
-                    s=pd.DataFrame(datafrme)
-                    s.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
-                datafrme={
-                        "IP":["ALL"],
-                        "FWS":["off"],
-                        "TIMER":["null"],
-                        "TIME":[T]
-                    }
+            #         s=pd.DataFrame(datafrme)
+            #         s.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+            #     datafrme={
+            #             "IP":["ALL"],
+            #             "FWS":["off"],
+            #             "TIMER":["null"],
+            #             "TIME":[T]
+            #         }
 
-                d=pd.DataFrame(datafrme)
-                d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
-                for writer in range(1):# if something hapned rename 'writer' to "dgdgh"
+            #     d=pd.DataFrame(datafrme)
+            #     d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                
+                
+                clients = []
+                lock = th.Lock()
+
+                def handle_client(conn,role):
                     
-                    try:
-                        writer.write('off'.encode())#edit
-                        await writer.drain()
-                        rowse.remove(writer)
-                    except Exception:
-                        rowse.remove(writer)
 
+                    if role == "client":
+                        
+                        with lock:
+                            clients.append(conn)
+                            
+                        try:
+                            command = "off"
+                            for c in clients:
+                                try:
+                                    
+                                    c.sendall(command.encode())
+                                except:
+                                    pass
+                        except Exception:
+                            with lock:
+                                clients.remove(conn)
+                        conn.close()
+                        server.close()      
+                    
+                        
+                try:
+                    def main():
+                        global addr,server
+                        server = so.socket(so.AF_INET, so.SOCK_STREAM)
+                        server.bind(("0.0.0.0", 9991))
+                        server.listen()
 
+                        
 
+                        while True:
+                            conn,addr= server.accept()
+                            role = conn.recv(1024).decode()
+                            thread = th.Thread(target=handle_client, args=(conn,role))
+                            thread.start()
+
+                    main()
+                except Exception:
+                    pass
             if dat=="add new rule":
                 with open('serverSetting.json', 'r') as f:
                     serverSetting = json.load(f)

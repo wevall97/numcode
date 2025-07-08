@@ -6,7 +6,7 @@ import smtplib
 from email.message import EmailMessage
 import time
 import os
-
+import threading as th
 # add new method called "firewall states on all"
 
 
@@ -92,10 +92,10 @@ if checkpass==ppp:
             
         
 
-    s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
-    s.connect(("1.1.1.1",80))
-    ips=s.getsockname()[0]
-    s.close()
+    # s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+    # s.connect(("1.1.1.1",80))
+    # ips=s.getsockname()[0]
+    # s.close()
 
     while True:
         try:
@@ -124,7 +124,7 @@ if checkpass==ppp:
             
             
             
-        
+    
     while True:
         masge=input("enter masge: ")
 
@@ -367,21 +367,22 @@ if checkpass==ppp:
 
 
 
-
+        
         elif masge=="firewall states off all":
             ppp=generate_password()
-            print("prepar to send the password to your email")
-            msg= EmailMessage()
-            msg["Subject"]="Enter password"
-            msg["From"]="aofnotification@gmail.com"
-            msg["To"]=check4
-            msg.set_content(f"your password is: {ppp}")
-            email="aofnotification@gmail.com"
-            password="oqgspkawnyeftyjw"
-            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                smtp.login(email,password)
-                smtp.send_message(msg)
-            entpass=input("enter password: ")
+            # print("prepar to send the password to your email")
+            # msg= EmailMessage()
+            # msg["Subject"]="Enter password"
+            # msg["From"]="aofnotification@gmail.com"
+            # msg["To"]=check4
+            # msg.set_content(f"your password is: {ppp}")
+            # email="aofnotification@gmail.com"
+            # password="oqgspkawnyeftyjw"
+            # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+            #     smtp.login(email,password)
+            #     smtp.send_message(msg)
+            entpass=ppp
+            # entpass=input("enter password: ")
             if entpass==ppp:
                 c.sendall(masge.encode())
                 print("firewall will be off in '5' socned")

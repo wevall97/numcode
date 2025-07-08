@@ -15,27 +15,28 @@ from email.message import EmailMessage
 
 
 
-# while True:
-#     try:
-#         c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
-#         try:
-#             c.connect(("192.168.1.13", 9999))
-#         except ConnectionRefusedError:
-#             print("the server is shot downe")
-#             break 
-#         except Exception:
-#             print(f"somethig hapned to the ip server it is change to ''")
-#             break
+while True:
+    try:
+        c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
+        try:
+            c.connect(("192.168.1.13", 9999))
+        except ConnectionRefusedError:
+            print("the server is shot downe")
+            break 
+        except Exception:
+            print(f"somethig hapned to the ip server it is change to ''")
+            break
         
-#         chck=c.recv(1024).decode('utf-8')
-#         if chck=='1':
+        chck=c.recv(1024).decode('utf-8')
+        if chck=='1':
             
-#             c.sendall("add".encode())
-#             break
-#     except Exception:
+            c.sendall("add".encode())
+            
+            break
+    except Exception:
         
-#         continue
-# print("end")
+        continue
+
 
 a=su.run("netsh advfirewall show allprofiles",shell=True,text=True,capture_output=True)
 a=a.stdout
@@ -65,85 +66,56 @@ with open('settings.json', 'r') as f:
         with open('settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
 l=1
-async def check_files():
-    global fws,utrm,ip,rm,timer,rule,rulename,timerr,lensrule
-    # rowCheck=["Enable","Disable"]
+ll=1
+def clos_fw():
     
-    #p=16,d=4,f=6,a=1,r=18,u=22,o=15,t=21,s=19
+    global ll
+    ll=0
+    while True:
+        try:
+            
+            c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
+            c.connect((ip, 9991))
+            c.sendall("client".encode())
+            close=c.recv(1024).decode('utf-8')
+            print(close)
+            # if close=="off":
+            #     print("the firewall is off")
+            ll=1
+            break
+        except Exception:
+            
+            continue
+
+
+
+
+async def check_files():
+    global fws,ip,timer,rule,rulename,timerr,lensrule
+    
     with open('settings.json', 'r') as f:
         settings = json.load(f)
         
 
         check=settings["IP-S"]
-        # check=str(check)
-        # lens=len(check)
-        # if check.endswith("16"):
-        #     decode=ed.dec(check[:lens-2])
+        
         ip = check
             
-        # else:
-        #     print("no")
-        #     # the notification for server
-        #     pass
-        
-                
-        # check2=settings["RM"]
-       
-        # rm= check2
-                
-        #     else:
-        #         print("non")
-        #         # the notification for server
-        #         pass
-        # else:
-        #     print("no")
-        #     # the notification for server
-        #     pass
-        
-        
-
-
-        # check3=settings["URTM"]
-        
-        # utrm= check3
-                
-        #     else:
-        #         print("non")
-        #         # the notification for server
-        #         pass
-            
-        # else:
-        #     print("no")
-        #     # the notification for server
-        #     pass
         
 
         rowFWS=["on","off","null"]
         check4=settings["FWS"]
-        # check4=str(check4)
-        # lens=len(check4)
-        # if check4.endswith("19"):
-        #     decode4=ed.dec(check4[:lens-2])
+        
         
         if check4 in rowFWS:
             fws= check4
                 
                 
-        #     else:
-        #         print("non")
-        #         # the notification for server
-        #         pass
-            
-        # else:
-        #     print("no")
-        #     # the notification for server
-        #     pass
+        
         
 
         check5=settings["timerF"]
-        # check5=str(check5)
-        # decode5=ed.dec(check5)
-        # timer= decode5
+        
         timer=int(check5)      
 
 
@@ -195,23 +167,19 @@ def add__rule():
 
 
 
-# def clos_fw():# edit
-        
-#         ch=c.recv(1024).decode('utf-8')
-#         print(ch)
-#         # if ch=="off":
-#         print("off")
-            # su.run("netsh advfirewall set allprofiles states off",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+
 
     
 
 while True:
-
+    print("run")
     # edit
     async def main():
-        global l
+        global l,ll
         await sa.sleep(5)
         sa.gather(check_files())
+        if ll==1:
+            th.Thread(target=clos_fw).start()
         await sa.sleep(0)
         if fws=="off" and l==1:
             
@@ -298,10 +266,11 @@ while True:
                 
             with open("check.txt","w")as f:
                     f.write("")
-    sa.run(check_len_rule())
+    # sa.run(check_len_rule())
 
 
+    
+            
+    
 
-
-
-    # th.Thread(target=clos_fw).start()
+    
