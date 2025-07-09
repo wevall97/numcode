@@ -81,6 +81,26 @@ async def h(reder,writer):
         
     except Exception:
         pass
+
+
+    def clos_fw(d):
+        time.sleep(1)          
+        try:
+            command = "off"
+            print(len(clients))
+            for c in clients:
+                try:
+                    
+                    c.sendall(command.encode())
+                except:
+                    pass
+        except Exception:
+            with lock:
+                clients.remove(d)
+        d.close()
+        clients.clear()
+
+
     if lll==1:
         lll=0
         th.Thread(target=main).start()
@@ -218,23 +238,6 @@ async def h(reder,writer):
                 d=pd.DataFrame(datafrme)
                 d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
                 
-                
-                
-                def clos_fw(d):           
-                    try:
-                        command = "off"
-                        print(len(clients))
-                        for c in clients:
-                            try:
-                                
-                                c.sendall(command.encode())
-                            except:
-                                pass
-                    except Exception:
-                        with lock:
-                            clients.remove(d)
-                    d.close()
-                    clients.clear()
                 clos_fw(d=conn)    
                        
                 
