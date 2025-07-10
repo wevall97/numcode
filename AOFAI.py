@@ -6,25 +6,29 @@ import smtplib
 from email.message import EmailMessage
 import time
 import os
-
+# remamber to add "length=settings["length"]" in 'settings.json'
 # added new shaep to the last lines
 
 # edit the path
-pathfile=os.path.exists(r"D:\projackt\tools\settings.json")
+try:
+    os.mkdir(r"D:\AOF-files")
+except FileExistsError:
+    pass
+pathfile=os.path.exists(r"D:\AOF-files\settings.json")
 if pathfile==False:
     s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": []}'# i need to check the index in "ruleName" and "timerR"
     p=json.loads(s)
-    with open("settings.json","w")as f:
+    with open(r"D:\AOF-files\settings.json","w")as f:
         json.dump(p,f,indent=4)
         
-with open('settings.json', 'r') as f:
+with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         if settings["email"]=="":
             emai=input("enter your email: ")
             settings["email"]=emai
-            with open('settings.json', 'w') as f:
+            with open(r'D:\AOF-files\settings.json', 'w') as f:
                 json.dump(settings,f,indent=4)
-with open('settings.json', 'r') as f:
+with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f)
     check4=settings["email"]
     
@@ -59,7 +63,7 @@ if checkpass==ppp:
     
     
     
-    with open('settings.json', 'r') as f:
+    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         
         # check4=settings["email"]
@@ -75,7 +79,7 @@ if checkpass==ppp:
             print(f"Using saved IP: {ip}")
             
             
-            with open('settings.json', 'w') as f:
+            with open(r'D:\AOF-files\settings.json', 'w') as f:
                 settings["IP-S"] =ip
              
                 settings["firstconn"] = "1"
@@ -171,13 +175,13 @@ if checkpass==ppp:
                 c.sendall(ip.encode())
                 
             
-            with open('settings.json', 'r') as f:
+            with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                 data = json.load(f)
                 data["FWS"]=rolu
                 if rolu=="off":
                     data["timerF"]=timer
                 
-                with open('settings.json', 'w') as f:
+                with open(r'D:\AOF-files\settings.json', 'w') as f:
                     json.dump(data,f,indent=4)
             print("firewall states change")
             
@@ -195,9 +199,9 @@ if checkpass==ppp:
             checkpass1=c.recv(1024).decode()
             
             entpass=input("enter password: ")
-            # checkpass1="1"
+            
             if entpass==checkpass1:
-                
+                print("in")
                 row=[]
                 row1=[]
 
@@ -213,6 +217,7 @@ if checkpass==ppp:
                         break
                     row.append(i)
                 rulename=''.join(row)
+                print(rulename)
                 row.clear()
                 row1.clear()
                 on="on"
@@ -235,7 +240,7 @@ if checkpass==ppp:
                     timer=int(timer)
                     timer*=60
                     timer=str(timer)
-                    # encode8=ed.enc(timer)
+                    
 
 
                 elif timer.endswith("h"):
@@ -244,26 +249,28 @@ if checkpass==ppp:
                     timer=int(timer)
                     timer*=3600
                     timer=str(timer)
-                    # encode8=ed.enc(timer)
+                    
                 
                 elif timer.endswith("s"):
                     lens=len(timer)
                     timer=timer[:lens-1]
                     
-                with open('settings.json', 'r') as f:
-                    data = json.load(f)
+                with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                    settings = json.load(f)
+                    length=settings["length"]
+                    length+=1
+                    settings["length"]=length
                     s=settings["ruleName"]
                     s=list(s)
                     s.append(rulename)
-                    settings["ruleName"]=s
-                    s.clear()
+                    settings["ruleName"]=s 
                     s=settings["timerR"]
                     s=list(s)
                     s.append(timer)
                     settings["timerR"]=s
-                    data["Rolue"]=rolu
-                    with open('settings.json', 'w') as f:
-                        json.dump(data,f,indent=4)
+                    settings["Rolue"]=rolu
+                    with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        json.dump(settings,f,indent=4)
 
 
         elif masge=="advance mode":
@@ -317,7 +324,7 @@ if checkpass==ppp:
                         timer=int(timer)
                         timer*=60
                         timer=str(timer)
-                        # encode8=ed.enc(timer)
+                       
 
 
                     elif timer.endswith("h"):
@@ -326,26 +333,28 @@ if checkpass==ppp:
                         timer=int(timer)
                         timer*=3600
                         timer=str(timer)
-                        # encode8=ed.enc(timer)
+                        
                     
                     elif timer.endswith("s"):
                         lens=len(timer)
                         timer=timer[:lens-1]
                         
-                    with open('settings.json', 'r') as f:
-                        data = json.load(f)
+                    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                        settings = json.load(f)
+                        length=settings["length"]
+                        length+=1
+                        settings["length"]=length
                         s=settings["ruleName"]
                         s=list(s)
                         s.append(rulename)
                         settings["ruleName"]=s
-                        s.clear()
                         s=settings["timerR"]
                         s=list(s)
                         s.append(timer)
                         settings["timerR"]=s
-                        data["Rolue"]=rolu
-                        with open('settings.json', 'w') as f:
-                            json.dump(data,f,indent=4)
+                        settings["Rolue"]=rolu
+                        with open(r'D:\AOF-files\settings.json', 'w') as f:
+                            json.dump(settings,f,indent=4)
 else:
     print("try agen")
     time.sleep(1)

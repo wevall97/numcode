@@ -10,22 +10,25 @@ import threading as th
 # add new method called "firewall states on all"
 
 
-
-pathfile=os.path.exists(r"D:\projackt\tools\settings.json")
+try:
+    os.mkdir(r"D:\AOF-files")
+except FileExistsError:
+    pass
+pathfile=os.path.exists(r"D:\AOF-files\settings.json")
 if pathfile==False:
     s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": []}'
     p=json.loads(s)
-    with open("settings.json","w")as f:
+    with open(r"D:\AOF-files","w")as f:
         json.dump(p,f,indent=4)
 
-with open('settings.json', 'r') as f:
+with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         if settings["email"]=="":
             emai=input("enter your email: ")
             settings["email"]=emai
-            with open('settings.json', 'w') as f:
+            with open(r'D:\AOF-files\settings.json', 'w') as f:
                 json.dump(settings,f,indent=4)
-with open('settings.json', 'r') as f:
+with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f)
     check4=settings["email"]
    
@@ -57,7 +60,7 @@ ppp=generate_password()
 checkpass=ppp
 # checkpass=input("enter password: ")
 if checkpass==ppp:
-    with open('settings.json', 'r') as f:
+    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         
         # check4=settings["email"]
@@ -73,7 +76,7 @@ if checkpass==ppp:
             print(f"Using saved IP: {ip}")
             
             
-            with open('settings.json', 'w') as f:
+            with open(r'D:\AOF-files\settings.json', 'w') as f:
                 settings["IP-S"] =ip
              
                 settings["firstconn"] = "1"
@@ -92,10 +95,10 @@ if checkpass==ppp:
             
         
 
-    # s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
-    # s.connect(("1.1.1.1",80))
-    # ips=s.getsockname()[0]
-    # s.close()
+    s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+    s.connect(("1.1.1.1",80))
+    ips=s.getsockname()[0]
+    s.close()
 
     while True:
         try:
@@ -171,13 +174,13 @@ if checkpass==ppp:
                 c.sendall(ip.encode())
                 
             
-            with open('settings.json', 'r') as f:
+            with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                 data = json.load(f)
                 data["FWS"]=rolu
                 if rolu=="off":
                     data["timerF"]=timer
                 
-                with open('settings.json', 'w') as f:
+                with open(r'D:\AOF-files\settings.json', 'w') as f:
                     json.dump(data,f,indent=4)
             print("firewall states change")
 
@@ -201,7 +204,7 @@ if checkpass==ppp:
                 smtp.login(email,password)
                 smtp.send_message(msg)
             entpass=input("enter password: ")
-            # checkpass1="1"
+            
             if entpass==ppp:
                 
                 row=[]
@@ -241,7 +244,7 @@ if checkpass==ppp:
                     timer=int(timer)
                     timer*=60
                     timer=str(timer)
-                    # encode8=ed.enc(timer)
+                    
 
 
                 elif timer.endswith("h"):
@@ -250,13 +253,13 @@ if checkpass==ppp:
                     timer=int(timer)
                     timer*=3600
                     timer=str(timer)
-                    # encode8=ed.enc(timer)
+                    
                 
                 elif timer.endswith("s"):
                     lens=len(timer)
                     timer=timer[:lens-1]
                     
-                with open('settings.json', 'r') as f:
+                with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                     data = json.load(f)
                     s=settings["ruleName"]
                     s=list(s)
@@ -268,7 +271,7 @@ if checkpass==ppp:
                     s.append(timer)
                     settings["timerR"]=s
                     data["Rolue"]=rolu
-                    with open('settings.json', 'w') as f:
+                    with open(r'D:\AOF-files\settings.json', 'w') as f:
                         json.dump(data,f,indent=4)
 
 
@@ -351,7 +354,7 @@ if checkpass==ppp:
                         lens=len(timer)
                         timer=timer[:lens-1]
                         
-                    with open('settings.json', 'r') as f:
+                    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                         s=settings["ruleName"]
                         s=list(s)
                         s.append(rulename)
@@ -362,7 +365,7 @@ if checkpass==ppp:
                         s.append(timer)
                         settings["timerR"]=s
                         data["Rolue"]=rolu
-                        with open('settings.json', 'w') as f:
+                        with open(r'D:\AOF-files\settings.json', 'w') as f:
                             json.dump(data,f,indent=4)
 
 

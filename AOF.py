@@ -8,17 +8,33 @@ import asyncio as sa
 import smtplib
 from email.message import EmailMessage
 import os
+# check whats roung in "check_len_rule()"
 
 
 
+try:
+    os.mkdir(r"D:\AOF-files")
+except FileExistsError:
+    pass
+with open(r"D:\AOF-files\check.txt","w")as f:
+        f.write("")
+su.run("netsh advfirewall firewall show rule name=all > D:\AOF-files\check.txt",shell=True,text=True,capture_output=False,stdout=su.DEVNULL,stderr=su.DEVNULL)
+with open(r"D:\AOF-files\check.txt","r",encoding='utf-8')as f:
+    a=f.readlines()
+    ld=0
+    for line in a:
+        if "Rule Name:" in line:
+            ld+=1
+    rellen=ld
+    
 
-pathfile=os.path.exists(r"D:\projackt\tools\settings.json")
+pathfile=os.path.exists(r"D:\AOF-files\settings.json")
 if pathfile==False:
     s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": []}'
     p=json.loads(s)
-    with open("settings.json","w")as f:
+    with open(r"D:\AOF-files\settings.json","w")as f:
         json.dump(p,f,indent=4)
-with open('settings.json', 'r') as f:
+with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f) 
     ip=settings["IP-S"]
 while True:
@@ -46,31 +62,33 @@ a=a.stdout
 if "State                                 OFF" in a or len(a) != 2094:
     su.run('netsh advfirewall set allprofiles state on', shell=True)
 
-with open('settings.json', 'r') as f:
+with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f) 
     if settings["FWS"]=="":
         settings["FWS"]="null"
-        with open('settings.json', 'w') as f:
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["timerF"]=="":
         settings["timerF"]="0"
-        with open('settings.json', 'w') as f:
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["Rolue"]=="":
         settings["Rolue"]="null"
-        with open('settings.json', 'w') as f:
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["FWS"]=="off" or settings["FWS"]=="on" or settings["FWS"]=="off-all":
         settings["FWS"]="null"
-        with open('settings.json', 'w') as f:
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["timerF"]!="0":
         settings["timerF"]="0"
-        with open('settings.json', 'w') as f:
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     email_rvs=settings["email"]
 l=1
 ll=1
+l1=1
+adad=0
 def clos_fw():
     
     global ll
@@ -83,11 +101,11 @@ def clos_fw():
             close=c.recv(1024).decode('utf-8')
             if close=="off":
                 su.run("netsh advfirewall set allprofiles state off",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
-                with open('settings.json', 'r') as f:
+                with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     settings["FWS"]="off-all"
                     settings["timerF"]="0"
-                    with open('settings.json', 'w') as f:
+                    with open(r'D:\AOF-files\settings.json', 'w') as f:
                         json.dump(settings,f,indent=4)
             ll=1
             break
@@ -101,7 +119,7 @@ def clos_fw():
 async def check_files():
     global fws,ip,timer,rule,rulename,timerr,lensrule
     
-    with open('settings.json', 'r') as f:
+    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         
 
@@ -141,11 +159,11 @@ def do_ruls():
     if fws=="off" and l==1:
         l=0
         fs.fireOff(fws,timer)
-        with open('settings.json', 'r') as f:
+        with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f)
             settings["FWS"]="null"
             settings["timerF"]="0"
-            with open('settings.json', 'w') as f:
+            with open(r'D:\AOF-files\settings.json', 'w') as f:
                 json.dump(settings,f,indent=4)
         l=1
         
@@ -153,7 +171,7 @@ def do_ruls():
 def add__rule():
 
     
-    with open('settings.json', 'r') as f:
+    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         a=settings["ruleName"]
         w=settings["timerR"]
@@ -163,17 +181,21 @@ def add__rule():
         w.pop(0)
         settings["ruleName"]=a
         settings["timerR"]=w
-        with open('settings.json', 'w') as f:
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4) 
     fs.add_rule(rulename,rule,timerr)
-    
+    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+        settings = json.load(f)
+        settings["length"]=settings["length"]-1
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
+            json.dump(settings,f,indent=4)
 
 while True:
     print("run")
     # edit
     async def main():
         global l,ll,email_rvs
-        await sa.sleep(5)
+        await sa.sleep(10)
         sa.gather(check_files())
         if ll==1:
             th.Thread(target=clos_fw).start()
@@ -184,11 +206,11 @@ while True:
         elif fws=="on":
             # edit
             su.run("netsh advfirewall set allprofiles state on",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
-            with open('settings.json', 'r') as f:
+            with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 settings["FWS"]="null"
                 settings["timerF"]="0"
-                with open('settings.json', 'w') as f:
+                with open(r'D:\AOF-files\settings.json', 'w') as f:
                     json.dump(settings,f,indent=4)
             l=1
         
@@ -219,28 +241,32 @@ while True:
         if rule!="null":
             
             
-            with open('settings.json', 'r') as f:
+            with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 settings["Rolue"]="null"
-                with open('settings.json', 'w') as f:
+                with open(r'D:\AOF-files\settings.json', 'w') as f:
                     json.dump(settings,f,indent=4)
             th.Thread(target=add__rule).start()
     sa.run(rules())
         
 
     async def check_len_rule():
-        global email_rvs
-        with open("check.txt","w")as f:
+        global email_rvs,rellen,l1
+        with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                settings = json.load(f)
+                adad=settings["length"]
+        with open(r"D:\AOF-files\check.txt","w")as f:
             f.write("")
-        su.run("netsh advfirewall firewall show rule name=all > check.txt",shell=True,text=True,capture_output=True)
-        with open("check.txt","r")as f:
+        su.run("netsh advfirewall firewall show rule name=all > D:\AOF-files\check.txt",shell=True,text=True,capture_output=True)
+        with open(r"D:\AOF-files\check.txt","r",encoding='utf-8')as f:
             a=f.readlines()
-            ld=0
+            ld=adad
+            rellen=rellen+adad
             for line in a:
                 if "Rule Name:" in line:
                     ld+=1
-            if ld>792 and lensrule==0:
-                
+            if ld>rellen:
+                l1=0
                 msg= EmailMessage()
                 msg["Subject"]="add strange rule"
                 msg["From"]="aofnotification@gmail.com"
@@ -251,9 +277,10 @@ while True:
                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                     smtp.login(email,password)
                     smtp.send_message(msg)
-                
-            elif ld<792 and lensrule==0:
-                
+                time.sleep(1800)
+                l1=1
+            elif ld<rellen:
+                l1=0
                 msg= EmailMessage()
                 msg["Subject"]="delete strange rule"
                 msg["From"]="aofnotification@gmail.com"
@@ -264,8 +291,11 @@ while True:
                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                     smtp.login(email,password)
                     smtp.send_message(msg)
+                time.sleep(1800)
+                l1=1
                 
-            with open("check.txt","w")as f:
-                    f.write("")
-    sa.run(check_len_rule())
+            with open(r"D:\AOF-files\check.txt","w")as f:
+                f.write("")
+    # if l1==1:
+    #     sa.run(check_len_rule())
   

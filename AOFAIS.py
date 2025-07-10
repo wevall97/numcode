@@ -7,12 +7,18 @@ import json
 import time
 import threading as th
 import socket as so
+import os
 # edit all "data= await reder.readline()" to be like "data= await reder.read(90000)"
 # احاول افكك الكود الموجود في test.py و اشوف لي طرق لي توصيل كل شي مع بعضه
 
 
 
-
+pathfile=os.path.exists("serverSetting.json")
+if pathfile==False:
+    s='{"email": ""}'
+    p=json.loads(s)
+    with open("serverSetting.json","w")as f:
+        json.dump(p,f,indent=4)
 lll=1
 
 def generate_password():
@@ -87,7 +93,6 @@ async def h(reder,writer):
         time.sleep(1)          
         try:
             command = "off"
-            print(len(clients))
             for c in clients:
                 try:
                     
