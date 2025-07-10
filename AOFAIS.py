@@ -8,8 +8,8 @@ import time
 import threading as th
 import socket as so
 import os
-# edit all "data= await reder.readline()" to be like "data= await reder.read(90000)"
-# احاول افكك الكود الموجود في test.py و اشوف لي طرق لي توصيل كل شي مع بعضه
+
+
 
 
 
@@ -41,12 +41,13 @@ async def h(reder,writer):
     global password1,lll
     writer.write('1'.encode())
     await writer.drain()
-    
-    data= await reder.read(1000)
-    
+    # try:
+    data= await reder.read(9000)
+    # except Exception:
+    #     data = b''
     addId=data.decode()
     
-        
+       
     if addId=="1":
         pass
     else:
@@ -110,12 +111,12 @@ async def h(reder,writer):
         lll=0
         th.Thread(target=main).start()
     while True:
-        print("1")
+        
         try:
             data= await reder.read(90000)
             if not data:
                 break
-            dat=data.decode()
+            dat=data.decode().strip()
             print(dat)
         except Exception:
             pass
@@ -124,19 +125,19 @@ async def h(reder,writer):
                 
                 writer.write("1".encode())
                 await writer.drain()
-                data= await reder.read(1000)
+                data= await reder.read(90000)
                 if not data:
                     break
                 timerlog=data.decode()
                 writer.write("1".encode())
                 await writer.drain()
-                data= await reder.read(1000)
+                data= await reder.read(90000)
                 if not data:
                     break
                 T=data.decode()
                 writer.write("1".encode())
                 await writer.drain()
-                data= await reder.read(1000)
+                data= await reder.read(90000)
                 if not data:
                     break
                 ips=data.decode()
@@ -165,31 +166,31 @@ async def h(reder,writer):
             if dat=="on":
                 writer.write("1".encode())
                 await writer.drain()
-                data= await reder.read(9000)
+                data= await reder.read(90000)
                 if not data:
                     break
                 rulename=data.decode()
                 writer.write("1".encode())
                 await writer.drain()
-                data= await reder.read(9000)
+                data= await reder.read(90000)
                 if not data:
                     break
                 timerlog=data.decode()
                 writer.write("1".encode())
                 await writer.drain()
-                data= await reder.read(9000)
+                data= await reder.read(90000)
                 if not data:
                     break
                 T=data.decode()
                 writer.write("1".encode())
                 await writer.drain()
-                data= await reder.read(1000)
+                data= await reder.read(90000)
                 if not data:
                     break
                 ips=data.decode()
                 writer.write("1".encode())
                 await writer.drain()
-                data= await reder.read(900000)
+                data= await reder.read(90000)
                 if not data:
                     break
                 RULE=data.decode()
@@ -258,7 +259,7 @@ async def h(reder,writer):
                 await writer.drain() 
                 rule=data.decode()
                 
-                data= await reder.read(9000)
+                data= await reder.read(90000)
                 if not data:
                     break
                 ips=data.decode()
@@ -281,7 +282,7 @@ async def h(reder,writer):
                 p=generate_password()
                 writer.write(p.encode())
                 await writer.drain()
-                data= await reder.read(9000)
+                data= await reder.read(90000)
                 if not data:
                     break
                 ips=data.decode()

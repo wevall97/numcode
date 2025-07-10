@@ -8,7 +8,7 @@ import asyncio as sa
 import smtplib
 from email.message import EmailMessage
 import os
-# check whats roung in "check_len_rule()"
+
 
 
 
@@ -30,7 +30,7 @@ with open(r"D:\AOF-files\check.txt","r",encoding='utf-8')as f:
 
 pathfile=os.path.exists(r"D:\AOF-files\settings.json")
 if pathfile==False:
-    s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": []}'
+    s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": [],"length": 0,"length2": 0}'
     p=json.loads(s)
     with open(r"D:\AOF-files\settings.json","w")as f:
         json.dump(p,f,indent=4)
@@ -84,11 +84,16 @@ with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings["timerF"]="0"
         with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
+    if settings["length"]!=0:
+        settings["length"]=0
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
+            json.dump(settings,f,indent=4)
     email_rvs=settings["email"]
 l=1
 ll=1
 l1=1
 adad=0
+
 def clos_fw():
     
     global ll
@@ -117,7 +122,7 @@ def clos_fw():
 
 
 async def check_files():
-    global fws,ip,timer,rule,rulename,timerr,lensrule
+    global fws,ip,timer,rule,rulename,timerr
     
     with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
@@ -145,12 +150,11 @@ async def check_files():
 
         lens=settings["ruleName"]
         lens=len(lens)
-        lensrule=lens
         rule=settings["Rolue"]
         if lens!=0:
             
-            rulename=settings["ruleName"][lens-1]
-            timerr=settings["timerR"][lens-1]
+            rulename=settings["ruleName"][0]
+            timerr=settings["timerR"][0]
             timerr=int(timerr)
             
 # edit
@@ -169,7 +173,6 @@ def do_ruls():
         
 # edit
 def add__rule():
-
     
     with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
@@ -189,6 +192,7 @@ def add__rule():
         settings["length"]=settings["length"]-1
         with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
+        
 
 while True:
     print("run")
@@ -250,23 +254,40 @@ while True:
     sa.run(rules())
         
 
-    async def check_len_rule():
-        global email_rvs,rellen,l1
+    def check_len_rule():
+        print("in")
+        global email_rvs,rellen,l1,adad
         with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 adad=settings["length"]
+                adad2=settings["length2"]
+                if adad2<adad:
+                    adad2=adad
+                    with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        settings["length2"]=adad2
+                        json.dump(settings,f,indent=4)
+                    rellen=rellen+adad2
+                if adad2>adad:
+                    adad2=adad
+                    with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        settings["length2"]=adad2
+                        json.dump(settings,f,indent=4)
+                    rellen=rellen-adad2
         with open(r"D:\AOF-files\check.txt","w")as f:
             f.write("")
         su.run("netsh advfirewall firewall show rule name=all > D:\AOF-files\check.txt",shell=True,text=True,capture_output=True)
         with open(r"D:\AOF-files\check.txt","r",encoding='utf-8')as f:
             a=f.readlines()
             ld=adad
-            rellen=rellen+adad
+            
             for line in a:
                 if "Rule Name:" in line:
                     ld+=1
+            print(ld)
+            print(rellen)
             if ld>rellen:
                 l1=0
+                
                 msg= EmailMessage()
                 msg["Subject"]="add strange rule"
                 msg["From"]="aofnotification@gmail.com"
@@ -281,6 +302,7 @@ while True:
                 l1=1
             elif ld<rellen:
                 l1=0
+                
                 msg= EmailMessage()
                 msg["Subject"]="delete strange rule"
                 msg["From"]="aofnotification@gmail.com"
@@ -296,6 +318,6 @@ while True:
                 
             with open(r"D:\AOF-files\check.txt","w")as f:
                 f.write("")
-    # if l1==1:
-    #     sa.run(check_len_rule())
+    if l1==1:
+        th.Thread(target=check_len_rule).start()
   

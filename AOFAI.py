@@ -16,7 +16,7 @@ except FileExistsError:
     pass
 pathfile=os.path.exists(r"D:\AOF-files\settings.json")
 if pathfile==False:
-    s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": []}'# i need to check the index in "ruleName" and "timerR"
+    s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": [],"length": 0,"length2": 0}'# i need to check the index in "ruleName" and "timerR"
     p=json.loads(s)
     with open(r"D:\AOF-files\settings.json","w")as f:
         json.dump(p,f,indent=4)
@@ -193,15 +193,109 @@ if checkpass==ppp:
             rolu=input("enter rule: ")
             c.sendall(rolu.encode())
             timer=input("enter timer: ")
-            print("wait antel the boss check your rule and he will send a password to you")
             ips=str(ips)
             c.sendall(ip.encode())
+            print("wait antel the boss check your rule and he will send a password to you")
             checkpass1=c.recv(1024).decode()
             
-            entpass=input("enter password: ")
+            while True:
+                entpass=input("enter password: ")
+                if entpass!=checkpass1:
+                    print("try agen")
+                    continue
+                if entpass==checkpass1:
+                    break
+                
+            row=[]
+            row1=[]
+
+
+            for i in rolu:
+                row1.append(i)
+                if i =="'" or i=='"':
+                    break
+            d=''.join(row1)
+            e=rolu.removeprefix(d)
+            for i in e:
+                if i =="'" or i=='"':
+                    break
+                row.append(i)
+            rulename=''.join(row)
+            print(rulename)
+            row.clear()
+            row1.clear()
+            on="on"
+            c.sendall(on.encode())
+            c.recv(1024).decode()
+            c.sendall(rulename.encode())
+            c.recv(1024).decode()
+            timerlog=timer
+            c.sendall(timerlog.encode())
+            c.recv(1024).decode()
+            c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+            c.recv(1024).decode()
+            ips=str(ips)
+            c.sendall(ip.encode())
+            c.recv(1024).decode()
+            c.sendall(rolu.encode())
+            if timer.endswith("m"):
+                lens=len(timer)
+                timer=timer[:lens-1]
+                timer=int(timer)
+                timer*=60
+                timer=str(timer)
+                
+
+
+            elif timer.endswith("h"):
+                lens=len(timer)
+                timer=timer[:lens-1]
+                timer=int(timer)
+                timer*=3600
+                timer=str(timer)
+                
             
-            if entpass==checkpass1:
-                print("in")
+            elif timer.endswith("s"):
+                lens=len(timer)
+                timer=timer[:lens-1]
+                
+            with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                settings = json.load(f)
+                length=settings["length"]
+                length+=1
+                settings["length"]=length
+                s=settings["ruleName"]
+                s=list(s)
+                s.append(rulename)
+                settings["ruleName"]=s 
+                s=settings["timerR"]
+                s=list(s)
+                s.append(timer)
+                settings["timerR"]=s
+                settings["Rolue"]=rolu
+                with open(r'D:\AOF-files\settings.json', 'w') as f:
+                    json.dump(settings,f,indent=4)
+
+
+        elif masge=="advance mode":
+            c.sendall(masge.encode())
+            checkpass1=c.recv(1024).decode()
+            ips=str(ips)
+            c.sendall(ip.encode())
+            while True:
+                entpass=input("enter password: ")
+                if entpass!=checkpass1:
+                    print("try agen")
+                    continue
+                if entpass==checkpass1:
+                    break
+            print("enter 'exit' to exit form 'advance mode'\n")
+            while True:
+                
+                rolu=input("enter rule: ")
+                if rolu=="exit":
+                    break
+                timer=input("enter timer: ")
                 row=[]
                 row1=[]
 
@@ -217,7 +311,6 @@ if checkpass==ppp:
                         break
                     row.append(i)
                 rulename=''.join(row)
-                print(rulename)
                 row.clear()
                 row1.clear()
                 on="on"
@@ -263,7 +356,7 @@ if checkpass==ppp:
                     s=settings["ruleName"]
                     s=list(s)
                     s.append(rulename)
-                    settings["ruleName"]=s 
+                    settings["ruleName"]=s
                     s=settings["timerR"]
                     s=list(s)
                     s.append(timer)
@@ -271,90 +364,6 @@ if checkpass==ppp:
                     settings["Rolue"]=rolu
                     with open(r'D:\AOF-files\settings.json', 'w') as f:
                         json.dump(settings,f,indent=4)
-
-
-        elif masge=="advance mode":
-            c.sendall(masge.encode())
-            checkpass1=c.recv(1024).decode()
-            ips=str(ips)
-            c.sendall(ip.encode())
-            entpass=input("enter password: ")
-            if entpass==checkpass1:
-                print("enter 'exit' to exit form 'advance mode'\n")
-                while True:
-                    
-                    rolu=input("enter rule: ")
-                    if rolu=="exit":
-                        break
-                    timer=input("enter timer: ")
-                    row=[]
-                    row1=[]
-
-
-                    for i in rolu:
-                        row1.append(i)
-                        if i =="'" or i=='"':
-                            break
-                    d=''.join(row1)
-                    e=rolu.removeprefix(d)
-                    for i in e:
-                        if i =="'" or i=='"':
-                            break
-                        row.append(i)
-                    rulename=''.join(row)
-                    row.clear()
-                    row1.clear()
-                    on="on"
-                    c.sendall(on.encode())
-                    c.recv(1024).decode()
-                    c.sendall(rulename.encode())
-                    c.recv(1024).decode()
-                    timerlog=timer
-                    c.sendall(timerlog.encode())
-                    c.recv(1024).decode()
-                    c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                    c.recv(1024).decode()
-                    ips=str(ips)
-                    c.sendall(ip.encode())
-                    c.recv(1024).decode()
-                    c.sendall(rolu.encode())
-                    if timer.endswith("m"):
-                        lens=len(timer)
-                        timer=timer[:lens-1]
-                        timer=int(timer)
-                        timer*=60
-                        timer=str(timer)
-                       
-
-
-                    elif timer.endswith("h"):
-                        lens=len(timer)
-                        timer=timer[:lens-1]
-                        timer=int(timer)
-                        timer*=3600
-                        timer=str(timer)
-                        
-                    
-                    elif timer.endswith("s"):
-                        lens=len(timer)
-                        timer=timer[:lens-1]
-                        
-                    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
-                        settings = json.load(f)
-                        length=settings["length"]
-                        length+=1
-                        settings["length"]=length
-                        s=settings["ruleName"]
-                        s=list(s)
-                        s.append(rulename)
-                        settings["ruleName"]=s
-                        s=settings["timerR"]
-                        s=list(s)
-                        s.append(timer)
-                        settings["timerR"]=s
-                        settings["Rolue"]=rolu
-                        with open(r'D:\AOF-files\settings.json', 'w') as f:
-                            json.dump(settings,f,indent=4)
 else:
     print("try agen")
     time.sleep(1)
