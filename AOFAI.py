@@ -14,7 +14,9 @@ try:
     os.mkdir(r"D:\AOF-files")
 except FileExistsError:
     pass
+
 pathfile=os.path.exists(r"D:\AOF-files\settings.json")
+
 if pathfile==False:
     s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": [],"length": 0,"length2": 0}'# i need to check the index in "ruleName" and "timerR"
     p=json.loads(s)
@@ -24,10 +26,18 @@ if pathfile==False:
 with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         if settings["email"]=="":
-            emai=input("enter your email: ")
-            settings["email"]=emai
-            with open(r'D:\AOF-files\settings.json', 'w') as f:
-                json.dump(settings,f,indent=4)
+            while True:
+                emai=input("enter your email: ")
+                if "@" in emai and ".com" in emai:
+                    
+                    emai=emai.strip()
+                    settings["email"]=emai
+                    with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        json.dump(settings,f,indent=4)
+                        break
+                else:
+                    print("enter a valid email")
+                    continue
 with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f)
     check4=settings["email"]
@@ -59,6 +69,8 @@ ppp=generate_password()
 #     smtp.send_message(msg)
 checkpass=ppp
 # checkpass=input("enter password: ")
+# checkpass=checkpass.strip()
+
 if checkpass==ppp:
     
     
@@ -66,18 +78,26 @@ if checkpass==ppp:
     with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         
-        # check4=settings["email"]
         
-        # email_rvs=check4
         
         check=settings["firstconn"]
       
 
         if check=="0":
-    
-            ip=input("Enter IP server: ")
-            print(f"Using saved IP: {ip}")
-            
+            while True:
+                ip=input("Enter IP server: ")
+                ip=ip.strip()
+                row=[]
+                for i in ip:
+                    if i==".":
+                        row.append(i)
+                if len(row)!=3:
+                    print("Invalid IP address")
+                    row.clear()
+                    continue
+                else:
+                    row.clear()
+                    break
             
             with open(r'D:\AOF-files\settings.json', 'w') as f:
                 settings["IP-S"] =ip
@@ -133,14 +153,28 @@ if checkpass==ppp:
     while True:
         masge=input("enter masge: ")
        
-
+        masge=masge.strip()
         #edit firewall states
         if masge=="firewall states":
-            
-            rolu=input("enter firewall states: ")
+            while True:
+                rolu=input("enter firewall states: ")
+                rolu=rolu.strip()
+                if rolu=="on" or rolu=="off":
+                    
+                    break
+                else:
+                    print("enter 'on' or 'off'")
+                    continue
             if rolu=="off":
-                timer=input("enter timer: ")
-                timerlog=timer+'\n'
+                while True:
+                    timer=input("enter timer: ")
+                    timer=timer.strip()
+                    if timer.endswith("m") or timer.endswith("h") or timer.endswith("s"):
+                        break
+                    else:
+                        print("enter a valid timer")
+                        continue
+                timerlog=timer
                 if timer.endswith("m"):
                     lens=len(timer)
                     timer=timer[:lens-1]
@@ -173,7 +207,7 @@ if checkpass==ppp:
                 c.recv(1024).decode()
                 ips=str(ips)
                 c.sendall(ip.encode())
-                
+            
             
             with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                 data = json.load(f)
@@ -190,9 +224,18 @@ if checkpass==ppp:
         elif masge=="add new rule":
             
             c.sendall(masge.encode())
-            rolu=input("enter rule: ")
-            c.sendall(rolu.encode())
-            timer=input("enter timer: ")
+            rol=input("enter rule: ")
+            rol=rol.strip()
+            rule=rol.replace("'",'"')
+            c.sendall(rule.encode())
+            while True:
+                timer=input("enter timer: ")
+                timer=timer.strip()
+                if timer.endswith("m") or timer.endswith("h") or timer.endswith("s"):
+                    break
+                else:
+                    print("enter a valid timer")
+                    continue
             ips=str(ips)
             c.sendall(ip.encode())
             print("wait antel the boss check your rule and he will send a password to you")
@@ -200,6 +243,7 @@ if checkpass==ppp:
             
             while True:
                 entpass=input("enter password: ")
+                entpass=entpass.strip()
                 if entpass!=checkpass1:
                     print("try agen")
                     continue
@@ -210,12 +254,12 @@ if checkpass==ppp:
             row1=[]
 
 
-            for i in rolu:
+            for i in rule:
                 row1.append(i)
                 if i =="'" or i=='"':
                     break
             d=''.join(row1)
-            e=rolu.removeprefix(d)
+            e=rule.removeprefix(d)
             for i in e:
                 if i =="'" or i=='"':
                     break
@@ -237,7 +281,7 @@ if checkpass==ppp:
             ips=str(ips)
             c.sendall(ip.encode())
             c.recv(1024).decode()
-            c.sendall(rolu.encode())
+            c.sendall(rule.encode())
             if timer.endswith("m"):
                 lens=len(timer)
                 timer=timer[:lens-1]
@@ -272,7 +316,7 @@ if checkpass==ppp:
                 s=list(s)
                 s.append(timer)
                 settings["timerR"]=s
-                settings["Rolue"]=rolu
+                settings["Rolue"]=rule
                 with open(r'D:\AOF-files\settings.json', 'w') as f:
                     json.dump(settings,f,indent=4)
 
@@ -284,6 +328,7 @@ if checkpass==ppp:
             c.sendall(ip.encode())
             while True:
                 entpass=input("enter password: ")
+                entpass=entpass.strip()
                 if entpass!=checkpass1:
                     print("try agen")
                     continue
@@ -293,19 +338,28 @@ if checkpass==ppp:
             while True:
                 
                 rolu=input("enter rule: ")
+                rolu=rolu.strip()
+                rule=rolu.replace("'",'"')
                 if rolu=="exit":
                     break
-                timer=input("enter timer: ")
+                while True:
+                    timer=input("enter timer: ")
+                    timer=timer.strip()
+                    if timer.endswith("m") or timer.endswith("h") or timer.endswith("s"):
+                        break
+                    else:
+                        print("enter a valid timer")
+                        continue
                 row=[]
                 row1=[]
 
 
-                for i in rolu:
+                for i in rule:
                     row1.append(i)
                     if i =="'" or i=='"':
                         break
                 d=''.join(row1)
-                e=rolu.removeprefix(d)
+                e=rule.removeprefix(d)
                 for i in e:
                     if i =="'" or i=='"':
                         break
@@ -326,7 +380,7 @@ if checkpass==ppp:
                 ips=str(ips)
                 c.sendall(ip.encode())
                 c.recv(1024).decode()
-                c.sendall(rolu.encode())
+                c.sendall(rule.encode())
                 if timer.endswith("m"):
                     lens=len(timer)
                     timer=timer[:lens-1]
@@ -361,7 +415,7 @@ if checkpass==ppp:
                     s=list(s)
                     s.append(timer)
                     settings["timerR"]=s
-                    settings["Rolue"]=rolu
+                    settings["Rolue"]=rule
                     with open(r'D:\AOF-files\settings.json', 'w') as f:
                         json.dump(settings,f,indent=4)
 else:

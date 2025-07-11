@@ -14,7 +14,9 @@ try:
     os.mkdir(r"D:\AOF-files")
 except FileExistsError:
     pass
+
 pathfile=os.path.exists(r"D:\AOF-files\settings.json")
+
 if pathfile==False:
     s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": [],"length": 0,"length2": 0}'
     p=json.loads(s)
@@ -25,6 +27,7 @@ with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         if settings["email"]=="":
             emai=input("enter your email: ")
+            emai=emai.strip()
             settings["email"]=emai
             with open(r'D:\AOF-files\settings.json', 'w') as f:
                 json.dump(settings,f,indent=4)
@@ -59,13 +62,12 @@ ppp=generate_password()
 #     smtp.send_message(msg)
 checkpass=ppp
 # checkpass=input("enter password: ")
+# checkpass=checkpass.strip()
 if checkpass==ppp:
     with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         
-        # check4=settings["email"]
         
-        # email_rvs=check4
         
         check=settings["firstconn"]
 
@@ -73,7 +75,7 @@ if checkpass==ppp:
         if check=="0":
     
             ip=input("Enter IP server: ")
-            print(f"Using saved IP: {ip}")
+            ip=ip.strip()
             
             
             with open(r'D:\AOF-files\settings.json', 'w') as f:
@@ -130,6 +132,7 @@ if checkpass==ppp:
     
     while True:
         masge=input("enter masge: ")
+        masge=masge.strip()
 
         
 
@@ -137,9 +140,11 @@ if checkpass==ppp:
         if masge=="firewall states":
             
             rolu=input("enter firewall states: ")
+            rolu=rolu.strip()
             if rolu=="off":
                 timer=input("enter timer: ")
-                timerlog=timer+'\n'
+                timer=timer.strip()
+                timerlog=timer
                 if timer.endswith("m"):
                     lens=len(timer)
                     timer=timer[:lens-1]
@@ -190,7 +195,9 @@ if checkpass==ppp:
             
             
             rolu=input("enter rule: ")
+            rolu=rolu.strip()
             timer=input("enter timer: ")
+            timer=timer.strip()
             ppp=generate_password()
             print("prepar to send the password to your email")
             msg= EmailMessage()
@@ -205,6 +212,7 @@ if checkpass==ppp:
                 smtp.send_message(msg)
             while True:
                 entpass=input("enter password: ")
+                entpass=entpass.strip()
                 if entpass==ppp:
                     break
                 else:
@@ -299,18 +307,21 @@ if checkpass==ppp:
                 smtp.send_message(msg)
             while True:
                 entpass=input("enter password: ")
+                entpass=entpass.strip()
                 if entpass==ppp:
                     break
                 else:
                     print("try agen")
                     continue
-                
+            print("enter 'exit' to exit form 'advance mode'\n")    
             while True:
-                print("enter 'exit' to exit form 'advance mode'\n")
+                
                 rolu=input("enter rule: ")
+                rolu=rolu.strip()
                 if rolu=="exit":
                     break
                 timer=input("enter timer: ")
+                timer=timer.strip()
                 
                 row=[]
                 row1=[]
@@ -402,13 +413,14 @@ if checkpass==ppp:
                 smtp.send_message(msg)
             while True:
                 entpass=input("enter password: ")
+                entpass=entpass.strip()
                 if entpass==ppp:
                     break
                 else:
                     print("try agen")
                     continue
             c.sendall(masge.encode())
-            print("firewall will be off in '5' socned")
+            print("firewall will be off in '10' socned")
                 
 else:
     print("try agen")

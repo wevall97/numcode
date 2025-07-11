@@ -88,6 +88,10 @@ with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings["length"]=0
         with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
+    if settings["length2"]!=0:
+        settings["length2"]=0
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
+            json.dump(settings,f,indent=4)
     email_rvs=settings["email"]
 l=1
 ll=1
@@ -173,7 +177,8 @@ def do_ruls():
         
 # edit
 def add__rule():
-    
+    print("yes")
+    time.sleep(1)
     with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         a=settings["ruleName"]
@@ -186,7 +191,9 @@ def add__rule():
         settings["timerR"]=w
         with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4) 
+    print("start")
     fs.add_rule(rulename,rule,timerr)
+    print("done")
     with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         settings["length"]=settings["length"]-1
@@ -195,12 +202,14 @@ def add__rule():
         
 
 while True:
-    print("run")
+    
     # edit
     async def main():
         global l,ll,email_rvs
-        await sa.sleep(10)
+        await sa.sleep(7)
+        print("run")
         sa.gather(check_files())
+        print("run1")
         if ll==1:
             th.Thread(target=clos_fw).start()
         await sa.sleep(0)
@@ -255,24 +264,26 @@ while True:
         
 
     def check_len_rule():
-        print("in")
+        
         global email_rvs,rellen,l1,adad
         with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 adad=settings["length"]
                 adad2=settings["length2"]
                 if adad2<adad:
+                    
                     adad2=adad
                     with open(r'D:\AOF-files\settings.json', 'w') as f:
                         settings["length2"]=adad2
                         json.dump(settings,f,indent=4)
-                    rellen=rellen+adad2
+                    rellen=rellen+1
                 if adad2>adad:
+                    
                     adad2=adad
                     with open(r'D:\AOF-files\settings.json', 'w') as f:
                         settings["length2"]=adad2
                         json.dump(settings,f,indent=4)
-                    rellen=rellen-adad2
+                    rellen=rellen-1
         with open(r"D:\AOF-files\check.txt","w")as f:
             f.write("")
         su.run("netsh advfirewall firewall show rule name=all > D:\AOF-files\check.txt",shell=True,text=True,capture_output=True)
@@ -319,5 +330,5 @@ while True:
             with open(r"D:\AOF-files\check.txt","w")as f:
                 f.write("")
     if l1==1:
-        th.Thread(target=check_len_rule).start()
+        check_len_rule()
   

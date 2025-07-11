@@ -258,7 +258,7 @@ async def h(reder,writer):
                 writer.write(p.encode())
                 await writer.drain() 
                 rule=data.decode()
-                
+                print(rule)
                 data= await reder.read(90000)
                 if not data:
                     break
