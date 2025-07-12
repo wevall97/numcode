@@ -18,7 +18,7 @@ except FileExistsError:
 pathfile=os.path.exists(r"D:\AOF-files\settings.json")
 
 if pathfile==False:
-    s='{"email": "","IP-S": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": [],"length": 0,"length2": 0}'# i need to check the index in "ruleName" and "timerR"
+    s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": [],"length": 0,"length2": 0}'# i need to check the index in "ruleName" and "timerR"
     p=json.loads(s)
     with open(r"D:\AOF-files\settings.json","w")as f:
         json.dump(p,f,indent=4)
@@ -87,6 +87,10 @@ if checkpass==ppp:
             while True:
                 ip=input("Enter IP server: ")
                 ip=ip.strip()
+                s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+                s.connect(("1.1.1.1",80))
+                ips=s.getsockname()[0]
+                s.close()
                 row=[]
                 for i in ip:
                     if i==".":
@@ -101,7 +105,7 @@ if checkpass==ppp:
             
             with open(r'D:\AOF-files\settings.json', 'w') as f:
                 settings["IP-S"] =ip
-             
+                settings["IP-U"] =ips
                 settings["firstconn"] = "1"
                 json.dump(settings, f, indent=4)
 
@@ -119,10 +123,7 @@ if checkpass==ppp:
             
         
     
-    s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
-    s.connect(("1.1.1.1",80))
-    ips=s.getsockname()[0]
-    s.close()
+    
     
     while True:
         try:
@@ -148,9 +149,13 @@ if checkpass==ppp:
   
             
             
-            
+    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+        settings = json.load(f)
+        ips=settings["IP-U"]        
         
     while True:
+        
+
         masge=input("enter masge: ")
        
         masge=masge.strip()

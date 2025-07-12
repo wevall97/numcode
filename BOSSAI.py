@@ -421,7 +421,10 @@ if checkpass==ppp:
                     continue
             c.sendall(masge.encode())
             print("firewall will be off in '10' socned")
-                
+
+        elif masge=="firewall states on all":
+            c.sendall(masge.encode())
+            print("firewall will be on in '10' socned")
 else:
     print("try agen")
     time.sleep(1)

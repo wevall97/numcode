@@ -90,10 +90,10 @@ async def h(reder,writer):
         pass
 
 
-    def clos_fw(d):
+    def clos_fw(d,command):
         time.sleep(1)          
         try:
-            command = "off"
+            
             for c in clients:
                 try:
                     
@@ -244,9 +244,124 @@ async def h(reder,writer):
                 d=pd.DataFrame(datafrme)
                 d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
                 
-                clos_fw(d=conn)    
+                clos_fw(d=conn,command="off")    
                        
+
+            if dat=="firewall states on all":
+                T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+                try:
+                    s=pd.read_csv(r"D:\projackt\tools\firewall log.csv")
+                except Exception:
+                    datafrme={
+                        "IP":["IP"],
+                        "FWS":["FWS"],
+                        "TIMER":["TIMER"],
+                        "TIME":["TIME"]
+                    }
+
+                    s=pd.DataFrame(datafrme)
+                    s.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                datafrme={
+                        "IP":["ALL"],
+                        "FWS":["on"],
+                        "TIMER":["null"],
+                        "TIME":[T]
+                    }
+
+                d=pd.DataFrame(datafrme)
+                d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
                 
+                clos_fw(d=conn,command="on")
+
+            
+            if dat=="hackOff":
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                ips=data.decode()
+                T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+                try:
+                    s=pd.read_csv(r"D:\projackt\tools\issue FWS.csv")
+                except Exception:
+                    datafrme={
+                        "IP":["IP"],
+                        "STATE":["STATE"],
+                        "TIME":["TIME"]
+                    }
+
+                    s=pd.DataFrame(datafrme)
+                    s.to_csv(r"D:\projackt\tools\issue FWS.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                datafrme={
+                        "IP":[ips],
+                        "STATE":["off"],
+                        "TIME":[T]
+                    }
+
+                d=pd.DataFrame(datafrme)
+                d.to_csv(r"D:\projackt\tools\issue FWS.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+
+            
+
+            if dat=="hackAdd":
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                ips=data.decode()
+                T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+                try:
+                    s=pd.read_csv(r"D:\projackt\tools\issue rule.csv")
+                except Exception:
+                    datafrme={
+                        "IP":["IP"],
+                        "STATE":["STATE"],
+                        "TIME":["TIME"]
+                    }
+
+                    s=pd.DataFrame(datafrme)
+                    s.to_csv(r"D:\projackt\tools\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                datafrme={
+                        "IP":[ips],
+                        "STATE":["add"],
+                        "TIME":[T]
+                    }
+
+                d=pd.DataFrame(datafrme)
+                d.to_csv(r"D:\projackt\tools\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+
+
+            if dat=="hackDel":
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                ips=data.decode()
+                T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+                try:
+                    s=pd.read_csv(r"D:\projackt\tools\issue rule.csv")
+                except Exception:
+                    datafrme={
+                        "IP":["IP"],
+                        "STATE":["STATE"],
+                        "TIME":["TIME"]
+                    }
+
+                    s=pd.DataFrame(datafrme)
+                    s.to_csv(r"D:\projackt\tools\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                datafrme={
+                        "IP":[ips],
+                        "STATE":["delete"],
+                        "TIME":[T]
+                    }
+
+                d=pd.DataFrame(datafrme)
+                d.to_csv(r"D:\projackt\tools\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+
+
             if dat=="add new rule":
                 with open('serverSetting.json', 'r') as f:
                     serverSetting = json.load(f)

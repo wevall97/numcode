@@ -116,6 +116,14 @@ def clos_fw():
                     settings["timerF"]="0"
                     with open(r'D:\AOF-files\settings.json', 'w') as f:
                         json.dump(settings,f,indent=4)
+            elif close=="on":
+                su.run("netsh advfirewall set allprofiles state on",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+                with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                    settings = json.load(f)
+                    settings["FWS"]="null"
+                    settings["timerF"]="0"
+                    with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        json.dump(settings,f,indent=4)
             ll=1
             break
         except Exception:
@@ -126,7 +134,7 @@ def clos_fw():
 
 
 async def check_files():
-    global fws,ip,timer,rule,rulename,timerr
+    global fws,ip,timer,rule,rulename,timerr,ips
     
     with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
@@ -136,7 +144,7 @@ async def check_files():
         
         ip = check
             
-        
+        ips=settings["IP-U"]
 
         rowFWS=["on","off","null"]
         check4=settings["FWS"]
@@ -205,7 +213,7 @@ while True:
     
     # edit
     async def main():
-        global l,ll,email_rvs
+        global l,ll,email_rvs,ips
         await sa.sleep(7)
         print("run")
         sa.gather(check_files())
@@ -233,6 +241,10 @@ while True:
         if "State                                 OFF" in a or len(a) != 2094 and fws=="null" :
            
             su.run('netsh advfirewall set allprofiles state on', shell=True)
+            c.sendall("hackOff".encode())
+            c.recv(1024).decode()
+            ips=str(ips)
+            c.sendall(ips.encode())
             msg= EmailMessage()
             msg["Subject"]="closeing firewall"
             msg["From"]="aofnotification@gmail.com"
@@ -265,7 +277,7 @@ while True:
 
     def check_len_rule():
         
-        global email_rvs,rellen,l1,adad
+        global email_rvs,rellen,l1,adad,ips
         with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 adad=settings["length"]
@@ -298,32 +310,38 @@ while True:
             print(rellen)
             if ld>rellen:
                 l1=0
-                
-                msg= EmailMessage()
-                msg["Subject"]="add strange rule"
-                msg["From"]="aofnotification@gmail.com"
-                msg["To"]=email_rvs
-                msg.set_content(f"there are strange rule had been add to your firewall\ndo the protocol to check your devic if you had been hackt")
-                email="aofnotification@gmail.com"
-                password="oqgspkawnyeftyjw"
-                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    smtp.login(email,password)
-                    smtp.send_message(msg)
+                c.sendall("hackAdd".encode())
+                c.recv(1024).decode()
+                ips=str(ips)
+                c.sendall(ips.encode())
+                # msg= EmailMessage()
+                # msg["Subject"]="add strange rule"
+                # msg["From"]="aofnotification@gmail.com"
+                # msg["To"]=email_rvs
+                # msg.set_content(f"there are strange rule had been add to your firewall\ndo the protocol to check your devic if you had been hackt")
+                # email="aofnotification@gmail.com"
+                # password="oqgspkawnyeftyjw"
+                # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                #     smtp.login(email,password)
+                #     smtp.send_message(msg)
                 time.sleep(1800)
                 l1=1
             elif ld<rellen:
                 l1=0
-                
-                msg= EmailMessage()
-                msg["Subject"]="delete strange rule"
-                msg["From"]="aofnotification@gmail.com"
-                msg["To"]=email_rvs
-                msg.set_content(f"there are some rule had been delete from your firewall\ndo the protocol to check your devic if you had been hackt")
-                email="aofnotification@gmail.com"
-                password="oqgspkawnyeftyjw"
-                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    smtp.login(email,password)
-                    smtp.send_message(msg)
+                c.sendall("hackDel".encode())
+                c.recv(1024).decode()
+                ips=str(ips)
+                c.sendall(ips.encode())
+                # msg= EmailMessage()
+                # msg["Subject"]="delete strange rule"
+                # msg["From"]="aofnotification@gmail.com"
+                # msg["To"]=email_rvs
+                # msg.set_content(f"there are some rule had been delete from your firewall\ndo the protocol to check your devic if you had been hackt")
+                # email="aofnotification@gmail.com"
+                # password="oqgspkawnyeftyjw"
+                # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                #     smtp.login(email,password)
+                #     smtp.send_message(msg)
                 time.sleep(1800)
                 l1=1
                 
