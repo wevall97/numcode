@@ -33,24 +33,53 @@ def generate_password():
     row1.clear()
     return password1   
 
+clients = []
+lock = th.Lock()
 
+def handle_client(conn,role):
+    
 
+    if role == "client":
+        
+        with lock:
+            clients.append(conn)
+            print(clients)
+try:
+    def main():
+        
+        global addr,server,conn
+        server = so.socket(so.AF_INET, so.SOCK_STREAM)
+        server.bind(("0.0.0.0", 9991))
+        server.listen()
 
+        
 
+        while True:
+            conn,addr= server.accept()
+            role = conn.recv(1024).decode()
+            thread = th.Thread(target=handle_client, args=(conn,role))
+            thread.start()
+
+    
+except Exception:
+    pass
+
+th.Thread(target=main).start()
 async def h(reder,writer):
     global password1,lll
     writer.write('1'.encode())
     await writer.drain()
-    # try:
-    data= await reder.read(9000)
-    # except Exception:
-    #     data = b''
+    try:
+        data= await reder.read(9000)
+    except Exception:
+        data = b''
     addId=data.decode()
     
        
     if addId=="1":
         pass
-    else:
+    
+    elif addId!="add":
         with open('serverSetting.json', 'r') as f:
             serverSetting = json.load(f)
             if serverSetting["email"]=="":
@@ -59,39 +88,12 @@ async def h(reder,writer):
                     json.dump(serverSetting,f,indent=4)
             else:
                 bossemail=serverSetting["email"]
-    clients = []
-    lock = th.Lock()
-
-    def handle_client(conn,role):
-        
-
-        if role == "client":
-            
-            with lock:
-                clients.append(conn)
-                
-    try:
-        def main():
-            global addr,server,conn
-            server = so.socket(so.AF_INET, so.SOCK_STREAM)
-            server.bind(("0.0.0.0", 9991))
-            server.listen()
-
-            
-
-            while True:
-                conn,addr= server.accept()
-                role = conn.recv(1024).decode()
-                thread = th.Thread(target=handle_client, args=(conn,role))
-                thread.start()
-
-        
-    except Exception:
-        pass
+    
+    
 
 
-    def clos_fw(d,command):
-        time.sleep(1)          
+    def clos_fw(command):
+                 
         try:
             
             for c in clients:
@@ -103,24 +105,22 @@ async def h(reder,writer):
         except Exception:
             with lock:
                 clients.remove(d)
-        d.close()
-        clients.clear()
-
-
-    if lll==1:
-        lll=0
-        th.Thread(target=main).start()
-    while True:
         
+    while True:
+        print("1")
         try:
             data= await reder.read(90000)
             if not data:
                 break
             dat=data.decode().strip()
-            print(dat)
+            
         except Exception:
             pass
         try:
+
+            if dat=="gg":
+                print("gg hier")
+                break
             if dat=="off":
                 
                 writer.write("1".encode())
@@ -194,6 +194,12 @@ async def h(reder,writer):
                 if not data:
                     break
                 RULE=data.decode()
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                constan=data.decode()
                 try:
                     s=pd.read_csv(r"D:\projackt\tools\add rule log.csv")
                 except Exception:
@@ -202,6 +208,7 @@ async def h(reder,writer):
                         "RuleN":["RuleN"],
                         "RULE":["RULE"],
                         "TIMER":["TIMER"],
+                        "CONSTAN":["CONSTAN"],
                         "TIME":["TIME"]
                     }
 
@@ -214,6 +221,7 @@ async def h(reder,writer):
                         "RuleN":[rulename],
                         "RULE":[RULE],
                         "TIMER":[timerlog],
+                        "CONSTAN":[constan],
                         "TIME":[T]
                     }
 
@@ -243,8 +251,9 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
-                
-                clos_fw(d=conn,command="off")    
+                writer.write("1".encode())
+                await writer.drain()
+                clos_fw(command="off")    
                        
 
             if dat=="firewall states on all":
@@ -270,8 +279,9 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
-                
-                clos_fw(d=conn,command="on")
+                writer.write("1".encode())
+                await writer.drain()
+                clos_fw(command="on")
 
             
             if dat=="hackOff":
@@ -373,7 +383,7 @@ async def h(reder,writer):
                 writer.write(p.encode())
                 await writer.drain() 
                 rule=data.decode()
-                print(rule)
+                
                 data= await reder.read(90000)
                 if not data:
                     break
@@ -413,6 +423,7 @@ async def h(reder,writer):
                     smtp.send_message(msg)
 
         except Exception:
+            print("yes hier")
             break
 
 

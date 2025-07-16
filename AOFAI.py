@@ -1,15 +1,15 @@
 import socket as sk
 import json
-import EncDec as ed
+
 import random
 import smtplib
 from email.message import EmailMessage
 import time
 import os
-# remamber to add "length=settings["length"]" in 'settings.json'
-# added new shaep to the last lines
 
-# edit the path
+
+
+
 try:
     os.mkdir(r"D:\AOF-files")
 except FileExistsError:
@@ -18,7 +18,7 @@ except FileExistsError:
 pathfile=os.path.exists(r"D:\AOF-files\settings.json")
 
 if pathfile==False:
-    s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","timerR": [],"length": 0,"length2": 0}'# i need to check the index in "ruleName" and "timerR"
+    s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
     p=json.loads(s)
     with open(r"D:\AOF-files\settings.json","w")as f:
         json.dump(p,f,indent=4)
@@ -56,20 +56,20 @@ def generate_password():
   
 
 ppp=generate_password()
-# print("prepar to send the password to your email")
-# msg= EmailMessage()
-# msg["Subject"]="Enter password"
-# msg["From"]="aofnotification@gmail.com"
-# msg["To"]=check4
-# msg.set_content(f"your password is: {ppp}")
-# email="aofnotification@gmail.com"
-# password="oqgspkawnyeftyjw"
-# with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-#     smtp.login(email,password)
-#     smtp.send_message(msg)
-checkpass=ppp
-# checkpass=input("enter password: ")
-# checkpass=checkpass.strip()
+print("prepar to send the password to your email")
+msg= EmailMessage()
+msg["Subject"]="Enter password"
+msg["From"]="aofnotification@gmail.com"
+msg["To"]=check4
+msg.set_content(f"your password is: {ppp}")
+email="aofnotification@gmail.com"
+password="oqgspkawnyeftyjw"
+with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+    smtp.login(email,password)
+    smtp.send_message(msg)
+
+checkpass=input("enter password: ")
+checkpass=checkpass.strip()
 
 if checkpass==ppp:
     
@@ -242,7 +242,7 @@ if checkpass==ppp:
                     print("enter a valid timer")
                     continue
             ips=str(ips)
-            c.sendall(ip.encode())
+            c.sendall(ips.encode())
             print("wait antel the boss check your rule and he will send a password to you")
             checkpass1=c.recv(1024).decode()
             
@@ -284,7 +284,7 @@ if checkpass==ppp:
             c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
             c.recv(1024).decode()
             ips=str(ips)
-            c.sendall(ip.encode())
+            c.sendall(ips.encode())
             c.recv(1024).decode()
             c.sendall(rule.encode())
             if timer.endswith("m"):
@@ -330,7 +330,7 @@ if checkpass==ppp:
             c.sendall(masge.encode())
             checkpass1=c.recv(1024).decode()
             ips=str(ips)
-            c.sendall(ip.encode())
+            c.sendall(ips.encode())
             while True:
                 entpass=input("enter password: ")
                 entpass=entpass.strip()
@@ -383,7 +383,7 @@ if checkpass==ppp:
                 c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
                 c.recv(1024).decode()
                 ips=str(ips)
-                c.sendall(ip.encode())
+                c.sendall(ips.encode())
                 c.recv(1024).decode()
                 c.sendall(rule.encode())
                 if timer.endswith("m"):
