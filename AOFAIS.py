@@ -43,7 +43,7 @@ def handle_client(conn,role):
         
         with lock:
             clients.append(conn)
-            print(clients)
+            
 try:
     def main():
         
@@ -107,7 +107,7 @@ async def h(reder,writer):
                 clients.remove(d)
         
     while True:
-        print("1")
+        
         try:
             data= await reder.read(90000)
             if not data:
@@ -119,7 +119,7 @@ async def h(reder,writer):
         try:
 
             if dat=="gg":
-                print("gg hier")
+                
                 break
             if dat=="off":
                 
@@ -163,6 +163,52 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+            
+
+
+            if dat=="del":
+
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                deleteR=data.decode()
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                timerlog=data.decode()
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                ips=data.decode()
+                
+                try:
+                    s=pd.read_csv(r"D:\projackt\tools\delete rule log.csv")
+                except Exception:
+                    datafrme={
+                        "IP":["IP"],
+                        "deleteR":["deleteR"],
+                        "TIME":["TIME"]
+                    }
+
+                    d=pd.DataFrame(datafrme)
+                    d.to_csv(r"D:\projackt\tools\delete rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+
+
+                datafrme={
+                        "IP":[ips],
+                        "deleteR":[deleteR],
+                        "TIME":[timerlog]
+                    }
+
+                d=pd.DataFrame(datafrme)
+                d.to_csv(r"D:\projackt\tools\delete rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+
             if dat=="on":
                 writer.write("1".encode())
                 await writer.drain()
@@ -423,7 +469,7 @@ async def h(reder,writer):
                     smtp.send_message(msg)
 
         except Exception:
-            print("yes hier")
+           
             break
 
 

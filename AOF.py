@@ -3,7 +3,7 @@ import subprocess as su
 import socket as sk
 import threading as th
 import json
-import fireSett as fs
+import FWSetting as fs
 import asyncio as sa
 import smtplib
 from email.message import EmailMessage
@@ -30,15 +30,17 @@ with open(r"D:\AOF-files\check.txt","r",encoding='utf-8')as f:
 
 pathfile=os.path.exists(r"D:\AOF-files\settings.json")
 if pathfile==False:
-    s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
+    s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
     p=json.loads(s)
     with open(r"D:\AOF-files\settings.json","w")as f:
         json.dump(p,f,indent=4)
-with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
-    settings = json.load(f) 
-    ip=settings["IP-S"]
+
+    
 while True:
     try:
+        with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+            settings = json.load(f) 
+            ip=settings["IP-S"]
         
         c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
         c.connect((ip, 9999))
@@ -72,7 +74,7 @@ with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings["timerF"]="0"
         with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
-    if settings["Rolue"]=="":
+    if settings["Rolue"]!="null":
         settings["Rolue"]="null"
         with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
@@ -90,6 +92,22 @@ with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
             json.dump(settings,f,indent=4)
     if settings["length2"]!=0:
         settings["length2"]=0
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
+            json.dump(settings,f,indent=4)
+    if settings["timerR"]!=[]:
+        settings["timerR"]=[]
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
+            json.dump(settings,f,indent=4)
+    if settings["ruleName"]!=[]:
+        settings["ruleName"]=[]
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
+            json.dump(settings,f,indent=4)
+    if settings["constan"]!="no":
+        settings["constan"]="no"
+        with open(r'D:\AOF-files\settings.json', 'w') as f:
+            json.dump(settings,f,indent=4)
+    if settings["deleteR"]!="null":
+        settings["deleteR"]="null"
         with open(r'D:\AOF-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     email_rvs=settings["email"]
@@ -127,14 +145,14 @@ def clos_fw():
                         json.dump(settings,f,indent=4)
             
         except Exception:
-            print("error in clos_fw")
+            
             continue
 
 
 
 
 async def check_files():
-    global fws,ip,timer,rule,rulename,timerr,ips,constan
+    global fws,ip,timer,rule,rulename,timerr,ips,constan,deleteR,adad,adad2,rellen
     
     with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
@@ -149,7 +167,8 @@ async def check_files():
         rowFWS=["on","off","null"]
         check4=settings["FWS"]
         
-        
+        deleteR=settings["deleteR"]
+
         if check4 in rowFWS:
             fws= check4
                 
@@ -170,6 +189,26 @@ async def check_files():
             rulename=settings["ruleName"][0]
             timerr=settings["timerR"][0]
             timerr=int(timerr)
+
+
+
+        
+        adad=settings["length"]
+        adad2=settings["length2"]
+        if adad2<adad:
+            
+            adad2=adad
+            with open(r'D:\AOF-files\settings.json', 'w') as f:
+                settings["length2"]=adad2
+                json.dump(settings,f,indent=4)
+            rellen=rellen+1
+        elif adad2>adad:
+            
+            adad2=adad
+            with open(r'D:\AOF-files\settings.json', 'w') as f:
+                settings["length2"]=adad2
+                json.dump(settings,f,indent=4)
+            rellen=rellen-1
             
 # edit
 def do_ruls():
@@ -217,7 +256,7 @@ while True:
     # edit
     async def main():
         global l,ll,email_rvs,ips,email_rvs,rellen,adad,ips,l3,l4,lw
-        print("run")
+        
         if ll==1:
             th.Thread(target=clos_fw).start()
         
@@ -267,7 +306,22 @@ while True:
                     smtp.login(email,password)
                     smtp.send_message(msg)
 
+
+
+        if deleteR!="null":
+            su.run(f'netsh advfirewall firewall delete rule name="{deleteR}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+            rellen=rellen-1
+            with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                settings = json.load(f)
+                settings["deleteR"]="null"
+                with open(r'D:\AOF-files\settings.json', 'w') as f:
+                    json.dump(settings,f,indent=4)
+
+
+
+
         if rule!="null":
+            
             if constan=="yes":
                 su.run(rule,shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
                 rellen=rellen+1
@@ -283,27 +337,11 @@ while True:
                 th.Thread(target=add__rule).start()
 
 
-        with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
-                settings = json.load(f)
-                adad=settings["length"]
-                adad2=settings["length2"]
-                if adad2<adad:
-                    
-                    adad2=adad
-                    with open(r'D:\AOF-files\settings.json', 'w') as f:
-                        settings["length2"]=adad2
-                        json.dump(settings,f,indent=4)
-                    rellen=rellen+1
-                elif adad2>adad:
-                    
-                    adad2=adad
-                    with open(r'D:\AOF-files\settings.json', 'w') as f:
-                        settings["length2"]=adad2
-                        json.dump(settings,f,indent=4)
-                    rellen=rellen-1
+        
+        
         with open(r"D:\AOF-files\check.txt","w")as f:
             f.write("")
-        print(lw)
+        
         if lw==0:
             time.sleep(3)
         su.run("netsh advfirewall firewall show rule name=all > D:\AOF-files\check.txt",shell=True,text=True,capture_output=True)
@@ -314,8 +352,7 @@ while True:
             for line in a:
                 if "Rule Name:" in line:
                     ld+=1
-        print(ld)
-        print(rellen)
+        
         if ld>rellen:
             
         

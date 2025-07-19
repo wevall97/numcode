@@ -19,7 +19,7 @@ while True:
         pathfile=os.path.exists(r"D:\AOF-files\settings.json")
 
         if pathfile==False:
-            s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
+            s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
             p=json.loads(s)
             with open(r"D:\AOF-files\settings.json","w")as f:
                 json.dump(p,f,indent=4)
@@ -28,7 +28,7 @@ while True:
                 settings = json.load(f)
                 if settings["email"]=="":
                     while True:
-                        emai=input("enter your email: ")
+                        emai=input("Email Address: ")
                         if "@" in emai and ".com" in emai:
                             
                             emai=emai.strip()
@@ -37,7 +37,7 @@ while True:
                                 json.dump(settings,f,indent=4)
                                 break
                         else:
-                            print("enter a valid email")
+                            print("Please enter a valid email address.")
                             continue
                     with open(r'D:\AOF-files\settings.json', 'w') as f:
                         json.dump(settings,f,indent=4)
@@ -60,7 +60,7 @@ while True:
         if l==1:
             l=0
             ppp=generate_password()
-            # print("prepar to send the password to your email")
+            # print("Preparing to send the password to your email.")
             # msg= EmailMessage()
             # msg["Subject"]="Enter password"
             # msg["From"]="aofnotification@gmail.com"
@@ -72,7 +72,7 @@ while True:
             #     smtp.login(email,password)
             #     smtp.send_message(msg)
             checkpass=ppp
-            # checkpass=input("enter password: ")
+            # checkpass=input("Enter password: ")
             # checkpass=checkpass.strip()
         if checkpass==ppp or l==0:
             with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
@@ -86,7 +86,7 @@ while True:
                 if check=="0":
             
                     while True:
-                        ip=input("Enter IP server: ")
+                        ip=input("Server IP address: ")
                         ip=ip.strip()
                         s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
                         s.connect(("1.1.1.1",80))
@@ -97,7 +97,7 @@ while True:
                             if i==".":
                                 row.append(i)
                         if len(row)!=3:
-                            print("Invalid IP address")
+                            print("Invalid IP address entered.")
                             row.clear()
                             continue
                         else:
@@ -132,11 +132,11 @@ while True:
                     try:
                         c.connect((ip, 9999))
                     except ConnectionRefusedError:
-                        print("the server is shot downe")
+                        print("The server is shut down.")
                         exit()
                         break 
                     except Exception:
-                        print(f"somethig hapned to the ip server it is change to '{ip}'")
+                        print(f"Something happened to the server IP; it has been changed to '{ip}'.")
                         exit()
                         break
                     
@@ -144,7 +144,7 @@ while True:
                     if chck=='1':
                         
                         check4=str(check4)
-                        print(check4)
+                        
                         c.sendall(check4.encode())
                         break
                 except Exception:
@@ -159,32 +159,34 @@ while True:
                 settings = json.load(f)
                 ips=settings["IP-U"] 
             while True:
-                print("yes")
-                masge=input("enter masge: ")
+                
+                masge=input("Enter your message: ")
                 masge=masge.strip()
-
+                masge=masge.lower()
                 
 
                 #edit firewall states
                 if masge=="firewall states":
                     
                     while True:
-                        rolu=input("enter firewall states: ")
+                        rolu=input("Enter firewall status (on to enable, off to disable): ")
                         rolu=rolu.strip()
+                        rolu=rolu.lower()
                         if rolu=="on" or rolu=="off":
                             
                             break
                         else:
-                            print("enter 'on' or 'off'")
+                            print("Enter 'on' or 'off'")
                             continue
                     if rolu=="off":
                         while True:
-                            timer=input("enter timer: ")
+                            timer=input("Enter the timer value: ")
                             timer=timer.strip()
-                            if timer.endswith("m") or timer.endswith("h") or timer.endswith("s"):
+                            timer=timer.lower()
+                            if timer.endswith("m") or timer.endswith("h"):
                                 break
                             else:
-                                print("enter a valid timer")
+                                print("Please enter a valid timer value.")
                                 continue
                         timerlog=timer
                         if timer.endswith("m"):
@@ -204,9 +206,7 @@ while True:
                             timer=str(timer)
                             
 
-                        elif timer.endswith("s"):
-                            lens=len(timer)
-                            timer=timer[:lens-1]
+                        
                             
 
                         
@@ -218,7 +218,7 @@ while True:
                         c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
                         c.recv(1024).decode()
                         ips=str(ips)
-                        c.sendall(ip.encode())
+                        c.sendall(ips.encode())
                         
                     
                     with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
@@ -229,26 +229,27 @@ while True:
                         
                         with open(r'D:\AOF-files\settings.json', 'w') as f:
                             json.dump(data,f,indent=4)
-                    print("firewall states change")
+                    print("Firewall state has been changed.")
 
 
 
                 elif masge=="add new rule":
                     
                     
-                    rolu=input("enter rule: ")
+                    rolu=input("Enter the rule: ")
                     rolu=rolu.strip()
                     rule=rolu.replace("'",'"')
                     while True:
-                        timer=input("enter timer: ")
+                        timer=input("Enter the timer value: ")
                         timer=timer.strip()
-                        if timer.endswith("m") or timer.endswith("h") or timer.endswith("s") :
+                        timer=timer.lower()
+                        if timer.endswith("m") or timer.endswith("h"):
                             break
                         else:
-                            print("enter a valid timer")
+                            print("Please enter a valid timer value.")
                             continue
                     ppp=generate_password()
-                    print("prepar to send the password to your email")
+                    print("Preparing to send the password to your email.")
                     msg= EmailMessage()
                     msg["Subject"]="Enter password"
                     msg["From"]="aofnotification@gmail.com"
@@ -260,12 +261,12 @@ while True:
                         smtp.login(email,password)
                         smtp.send_message(msg)
                     while True:
-                        entpass=input("enter password: ")
+                        entpass=input("Enter password: ")
                         entpass=entpass.strip()
                         if entpass==ppp:
                             break
                         else:
-                            print("try agen")
+                            print("Try again.")
                             continue
                         
                     row=[]
@@ -296,9 +297,11 @@ while True:
                     c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
                     c.recv(1024).decode()
                     ips=str(ips)
-                    c.sendall(ip.encode())
+                    c.sendall(ips.encode())
                     c.recv(1024).decode()
                     c.sendall(rule.encode())
+                    c.recv(1024).decode()
+                    c.sendall("no".encode())
                     if timer.endswith("m"):
                         lens=len(timer)
                         timer=timer[:lens-1]
@@ -315,10 +318,7 @@ while True:
                         timer*=3600
                         timer=str(timer)
                         
-                    
-                    elif timer.endswith("s"):
-                        lens=len(timer)
-                        timer=timer[:lens-1]
+                   
                         
                     with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
@@ -336,13 +336,53 @@ while True:
                         settings["Rolue"]=rule
                         with open(r'D:\AOF-files\settings.json', 'w') as f:
                             json.dump(settings,f,indent=4)
+                    print("Rule added successfully.")
 
 
 
+                elif masge=="delete rule":
+                    ppp=generate_password()
+                    print("Preparing to send the password to your email.")
+                    msg= EmailMessage()
+                    msg["Subject"]="Enter password"
+                    msg["From"]="aofnotification@gmail.com"
+                    msg["To"]=check4
+                    msg.set_content(f"your password is: {ppp}")
+                    email="aofnotification@gmail.com"
+                    password="oqgspkawnyeftyjw"
+                    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                        smtp.login(email,password)
+                        smtp.send_message(msg)
+                    while True:
+                        
+                        entpass=input("Enter password: ")
+                        entpass=entpass.strip()
+                        if entpass==ppp:
+                            break
+                        else:
+                            print("Try again.")
+                            continue
+                    delrule=input("Enter the rule name: ")
+                    delrule=delrule.strip()
+                    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                        settings = json.load(f)
+                        settings["deleteR"]=delrule
+                        with open(r'D:\AOF-files\settings.json', 'w') as f:
+                            json.dump(settings,f,indent=4)
+                    on="del"
+                    c.sendall(on.encode())
+                    c.recv(1024).decode()
+                    c.sendall(delrule.encode())
+                    c.recv(1024).decode()
+                    c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                    c.recv(1024).decode()
+                    ips=str(ips)
+                    c.sendall(ips.encode())
+                    print(f"Rule '{delrule}' deleted successfully.")
 
                 elif masge=="advance mode":
                     ppp=generate_password()
-                    # print("prepar to send the password to your email")
+                    # print("Preparing to send the password to your email.")
                     # msg= EmailMessage()
                     # msg["Subject"]="Enter password"
                     # msg["From"]="aofnotification@gmail.com"
@@ -353,29 +393,46 @@ while True:
                     # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                     #     smtp.login(email,password)
                     #     smtp.send_message(msg)
+                    entpass=ppp
                     while True:
-                        entpass=ppp
-                        # entpass=input("enter password: ")
+                        
+                        # entpass=input("Enter password: ")
                         # entpass=entpass.strip()
                         if entpass==ppp:
                             break
                         else:
-                            print("try agen")
+                            print("Try again.")
                             continue
-                    print("enter 'exit' to exit form 'advance mode'\n")    
+                    print("Enter 'exit' to leave 'advanced mode'.\n")    
                     while True:
                         
-                        rolu=input("enter rule: ")
+                        rolu=input("Enter the rule or (exit): ")
                         rolu=rolu.strip()
                         
                         rule=rolu.replace("'",'"')
                         if rolu=="exit":
                             break
-                        constan=input("enter state constan: ")
+                        while True:
+                            constan=input("Enter state constant (yes for permanent rule, no for temporary): ")
+                            constan=constan.strip()
+                            constan=constan.lower()
+                            if constan=="yes" or constan=="no":
+                                break
+                            else:
+                                print("enter 'yes' or 'no'")
+                                continue
                         constan=constan.strip()
                         if constan=="no":
-                            timer=input("enter timer: ")
-                            timer=timer.strip()
+                            while True:
+                                timer=input("Enter the timer value: ")
+                                timer=timer.strip()
+                                timer=timer.lower()
+                                if timer.endswith("h") or timer.endswith("m"):
+                                    break
+                                else:
+                                    print("Try again.")
+                                    continue
+
                         
                         row=[]
                         row1=[]
@@ -414,6 +471,7 @@ while True:
                         c.sendall(rule.encode())
                         c.recv(1024).decode()
                         c.sendall(constan.encode())
+                        
                         if constan=="no":
                             if timer.endswith("m"):
                                 lens=len(timer)
@@ -454,6 +512,7 @@ while True:
                             settings["Rolue"]=rule
                             with open(r'D:\AOF-files\settings.json', 'w') as f:
                                 json.dump(settings,f,indent=4)
+                        print("Rule added successfully.")
 
 
 
@@ -461,40 +520,40 @@ while True:
                 elif masge=="firewall states off all":
                     
                     ppp=generate_password()
-                    # print("prepar to send the password to your email")
-                    # msg= EmailMessage()
-                    # msg["Subject"]="Enter password"
-                    # msg["From"]="aofnotification@gmail.com"
-                    # msg["To"]=check4
-                    # msg.set_content(f"your password is: {ppp}")
-                    # email="aofnotification@gmail.com"
-                    # password="oqgspkawnyeftyjw"
-                    # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    #     smtp.login(email,password)
-                    #     smtp.send_message(msg)
-                    entpass=ppp
+                    print("Preparing to send the password to your email.")
+                    msg= EmailMessage()
+                    msg["Subject"]="Enter password"
+                    msg["From"]="aofnotification@gmail.com"
+                    msg["To"]=check4
+                    msg.set_content(f"your password is: {ppp}")
+                    email="aofnotification@gmail.com"
+                    password="oqgspkawnyeftyjw"
+                    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                        smtp.login(email,password)
+                        smtp.send_message(msg)
+                    
                     while True:
-                        # entpass=input("enter password: ")
-                        # entpass=entpass.strip()
+                        entpass=input("Enter password: ")
+                        entpass=entpass.strip()
                         if entpass==ppp:
                             break
                         else:
-                            print("try agen")
+                            print("Try again.")
                             continue
                     c.sendall(masge.encode())
                     c.recv(1024).decode()
                     c.sendall("gg".encode())
-                    print("firewall will be off in '10' socned")
+                    print("The firewall will be off in '10' seconds.")
                     break
                 elif masge=="firewall states on all":
                     c.sendall(masge.encode())
                     c.recv(1024).decode()
                     c.sendall("gg".encode())
-                    print("firewall will be on in '10' socned")
+                    print("The firewall will be on in '10' seconds.")
                     break
         else:
-            print("try agen")
-            time.sleep(1)
-            exit()
+            print("Try again.")
+            continue
+            
     except  Exception:
         continue
