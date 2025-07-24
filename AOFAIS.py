@@ -8,7 +8,9 @@ import time
 import threading as th
 import socket as so
 import os
-
+import imaplib
+import email as email1
+from email.header import decode_header
 
 
 
@@ -66,7 +68,7 @@ except Exception:
 
 th.Thread(target=main).start()
 async def h(reder,writer):
-    global password1,lll
+    global password1,lll,status,from_
     writer.write('1'.encode())
     await writer.drain()
     try:
@@ -86,9 +88,10 @@ async def h(reder,writer):
                 serverSetting["email"]=addId
                 with open('serverSetting.json', 'w') as f:
                     json.dump(serverSetting,f,indent=4)
-            else:
-                bossemail=serverSetting["email"]
-    
+
+    with open('serverSetting.json', 'r') as f:
+        serverSetting = json.load(f)        
+        bossemail=serverSetting["email"]
     
 
 
@@ -165,7 +168,60 @@ async def h(reder,writer):
                 d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
             
 
+            if dat=="chderu":
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                chderu=data.decode()
+                
+                chderu=str(chderu)
+                msg= EmailMessage()
+                msg["Subject"]="edit rule"
+                msg["From"]="aofnotification@gmail.com"
+                msg["To"]=bossemail
+                msg.set_content(chderu)
+                email="aofnotification@gmail.com"
+                password="oqgspkawnyeftyjw"
+                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                    smtp.login(email,password)
+                    smtp.send_message(msg)
+                
+                await sa.sleep(2)
+                while True:
+                    IMAP_SERVER = "imap.gmail.com"
+                    EMAIL_ACCOUNT = "aofnotification@gmail.com"
+                    EMAIL_PASSWORD = "oqgspkawnyeftyjw"
 
+
+                    mail = imaplib.IMAP4_SSL(IMAP_SERVER)
+                    mail.login(EMAIL_ACCOUNT, EMAIL_PASSWORD)
+                    mail.select("inbox")
+
+                    
+                    status, messages = mail.search(None, f'(UNSEEN FROM "{bossemail}")')  
+
+
+                    status, data = mail.fetch(messages[0], '(RFC822)')
+                    msg1 = email1.message_from_bytes(data[0][1])
+
+                    subject = decode_header(msg1["Subject"])[0][0]
+                    if isinstance(subject, bytes):
+                        subject = subject.decode()
+
+                    from_ = msg1.get("From")
+
+
+                    if msg1.is_multipart():
+                        for part in msg1.walk():
+                            if part.get_content_type() == "text/plain":
+                                body = part.get_payload(decode=True).decode()
+                                firest=body.strip().splitlines()[0]
+                                firest=str(firest)
+                                writer.write(firest.encode())
+                                await writer.drain()
+                                break
             if dat=="del":
 
                 writer.write("1".encode())

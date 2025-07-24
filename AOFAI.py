@@ -5,7 +5,8 @@ import smtplib
 from email.message import EmailMessage
 import time
 import os
-
+import subprocess as su
+import threading as th
 
 
 l=1
@@ -331,47 +332,42 @@ while True:
 
 
                 elif masge=="delete rule":
-                    ppp=generate_password()
-                    print("Preparing to send the password to your email.")
-                    msg= EmailMessage()
-                    msg["Subject"]="Enter password"
-                    msg["From"]="aofnotification@gmail.com"
-                    msg["To"]=check4
-                    msg.set_content(f"your password is: {ppp}")
-                    email="aofnotification@gmail.com"
-                    password="oqgspkawnyeftyjw"
-                    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                        smtp.login(email,password)
-                        smtp.send_message(msg)
-                    while True:
-                        
-                        entpass=input("Enter password: ")
-                        entpass=entpass.strip()
-                        if entpass==ppp:
-                            break
-                        else:
-                            print("Try again.")
-                            continue
+                    
+                    
+                    
                     delrule=input("Enter the rule name: ")
                     delrule=delrule.strip()
-                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
-                        settings = json.load(f)
-                        settings["deleteR"]=delrule
-                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
-                            json.dump(settings,f,indent=4)
-                    on="del"
-                    c.sendall(on.encode())
+                    chderu=su.run(f'netsh advfirewall firewall show rule name="{delrule}"',shell=True,capture_output=True,text=True)
+                    c.sendall("chderu".encode())
                     c.recv(1024).decode()
-                    c.sendall(delrule.encode())
-                    c.recv(1024).decode()
-                    c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                    c.recv(1024).decode()
-                    ips=str(ips)
-                    c.sendall(ips.encode())
-                    print(f"Rule '{delrule}' deleted successfully.")
-
-
-
+                    chderuu=chderu.stdout
+                    c.sendall(chderuu.encode())
+                    #send user email
+                    #send user ip
+                    print("wait antel the adminstretor check your rule\nif the adminstretor respons we will send email to you\n")
+                    def delete():
+                        chres=c.recv(1024).decode()
+                        if chres=="approved":
+                            with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                settings = json.load(f)
+                                settings["deleteR"]=delrule
+                                with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                    json.dump(settings,f,indent=4)
+                            on="del"
+                            c.sendall(on.encode())
+                            c.recv(1024).decode()
+                            c.sendall(delrule.encode())
+                            c.recv(1024).decode()
+                            c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                            c.recv(1024).decode()
+                            ips=str(ips)
+                            c.sendall(ips.encode())
+                            #send email
+                        else:
+                            #send email
+                            pass
+                    th.Thread(target=delete).start()
+                    
 
 
                 elif masge=="advance mode":
