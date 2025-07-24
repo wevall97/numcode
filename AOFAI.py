@@ -12,19 +12,19 @@ l=1
 while True:
     try:
         try:
-            os.mkdir(r"D:\AOF-files")
+            os.mkdir(r"D:\FWSH-files")
         except FileExistsError:
             pass
 
-        pathfile=os.path.exists(r"D:\AOF-files\settings.json")
+        pathfile=os.path.exists(r"D:\FWSH-files\settings.json")
 
         if pathfile==False:
             s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
             p=json.loads(s)
-            with open(r"D:\AOF-files\settings.json","w")as f:
+            with open(r"D:\FWSH-files\settings.json","w")as f:
                 json.dump(p,f,indent=4)
                 
-        with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 if settings["email"]=="":
                     while True:
@@ -33,13 +33,13 @@ while True:
                             
                             emai=emai.strip()
                             settings["email"]=emai
-                            with open(r'D:\AOF-files\settings.json', 'w') as f:
+                            with open(r'D:\FWSH-files\settings.json', 'w') as f:
                                 json.dump(settings,f,indent=4)
                                 break
                         else:
                             print("Please enter a valid email address.")
                             continue
-        with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f)
             check4=settings["email"]
             
@@ -77,7 +77,7 @@ while True:
             
             
             
-            with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 
                 
@@ -105,7 +105,7 @@ while True:
                             row.clear()
                             break
                     
-                    with open(r'D:\AOF-files\settings.json', 'w') as f:
+                    with open(r'D:\FWSH-files\settings.json', 'w') as f:
                         settings["IP-S"] =ip
                         settings["IP-U"] =ips
                         settings["firstconn"] = "1"
@@ -151,7 +151,7 @@ while True:
         
                     
                     
-            with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 ips=settings["IP-U"]        
                 
@@ -161,7 +161,7 @@ while True:
                 masge=input("Enter your message: ")
                 masge=masge.lower()
                 masge=masge.strip()
-                #edit firewall states
+                
                 if masge=="firewall states":
                     while True:
                         rolu=input("Enter firewall status (on to enable, off to disable): ")
@@ -216,13 +216,13 @@ while True:
                         c.sendall(ips.encode())
                     
                     
-                    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         data = json.load(f)
                         data["FWS"]=rolu
                         if rolu=="off":
                             data["timerF"]=timer
                         
-                        with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
                             json.dump(data,f,indent=4)
                     print("Firewall state has been changed.")
                     
@@ -310,7 +310,7 @@ while True:
                     
                 
                         
-                    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         length=settings["length"]
                         length+=1
@@ -324,7 +324,7 @@ while True:
                         s.append(timer)
                         settings["timerR"]=s
                         settings["Rolue"]=rule
-                        with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
                             json.dump(settings,f,indent=4)
                     print("Rule added successfully.")
 
@@ -354,10 +354,10 @@ while True:
                             continue
                     delrule=input("Enter the rule name: ")
                     delrule=delrule.strip()
-                    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         settings["deleteR"]=delrule
-                        with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
                             json.dump(settings,f,indent=4)
                     on="del"
                     c.sendall(on.encode())
@@ -475,7 +475,7 @@ while True:
                         
                         
                             
-                        with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                        with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
                             settings["constan"]=constan
                             if constan=="no":
@@ -493,7 +493,7 @@ while True:
                                 s.append(timer)
                                 settings["timerR"]=s
                             settings["Rolue"]=rule
-                            with open(r'D:\AOF-files\settings.json', 'w') as f:
+                            with open(r'D:\FWSH-files\settings.json', 'w') as f:
                                 json.dump(settings,f,indent=4)
                         print("Rule added successfully.")
         else:

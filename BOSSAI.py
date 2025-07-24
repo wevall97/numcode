@@ -12,19 +12,19 @@ l=1
 while True:
     try:
         try:
-            os.mkdir(r"D:\AOF-files")
+            os.mkdir(r"D:\FWSH-files")
         except FileExistsError:
             pass
 
-        pathfile=os.path.exists(r"D:\AOF-files\settings.json")
+        pathfile=os.path.exists(r"D:\FWSH-files\settings.json")
 
         if pathfile==False:
             s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
             p=json.loads(s)
-            with open(r"D:\AOF-files\settings.json","w")as f:
+            with open(r"D:\FWSH-files\settings.json","w")as f:
                 json.dump(p,f,indent=4)
 
-        with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 if settings["email"]=="":
                     while True:
@@ -33,15 +33,15 @@ while True:
                             
                             emai=emai.strip()
                             settings["email"]=emai
-                            with open(r'D:\AOF-files\settings.json', 'w') as f:
+                            with open(r'D:\FWSH-files\settings.json', 'w') as f:
                                 json.dump(settings,f,indent=4)
                                 break
                         else:
                             print("Please enter a valid email address.")
                             continue
-                    with open(r'D:\AOF-files\settings.json', 'w') as f:
+                    with open(r'D:\FWSH-files\settings.json', 'w') as f:
                         json.dump(settings,f,indent=4)
-        with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f)
             check4=settings["email"]
         
@@ -60,22 +60,21 @@ while True:
         if l==1:
             l=0
             ppp=generate_password()
-            # print("Preparing to send the password to your email.")
-            # msg= EmailMessage()
-            # msg["Subject"]="Enter password"
-            # msg["From"]="aofnotification@gmail.com"
-            # msg["To"]=check4
-            # msg.set_content(f"your password is: {ppp}")
-            # email="aofnotification@gmail.com"
-            # password="oqgspkawnyeftyjw"
-            # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-            #     smtp.login(email,password)
-            #     smtp.send_message(msg)
-            checkpass=ppp
-            # checkpass=input("Enter password: ")
-            # checkpass=checkpass.strip()
+            print("Preparing to send the password to your email.")
+            msg= EmailMessage()
+            msg["Subject"]="Enter password"
+            msg["From"]="aofnotification@gmail.com"
+            msg["To"]=check4
+            msg.set_content(f"your password is: {ppp}")
+            email="aofnotification@gmail.com"
+            password="oqgspkawnyeftyjw"
+            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                smtp.login(email,password)
+                smtp.send_message(msg)
+            checkpass=input("Enter password: ")
+            checkpass=checkpass.strip()
         if checkpass==ppp or l==0:
-            with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 
                 
@@ -105,7 +104,7 @@ while True:
                             break
                     
                     
-                    with open(r'D:\AOF-files\settings.json', 'w') as f:
+                    with open(r'D:\FWSH-files\settings.json', 'w') as f:
                         settings["IP-S"] =ip
                         settings["IP-U"] =ips
                         settings["firstconn"] = "1"
@@ -155,7 +154,7 @@ while True:
                     
                     
                     
-            with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 ips=settings["IP-U"] 
             while True:
@@ -165,7 +164,7 @@ while True:
                 masge=masge.lower()
                 
 
-                #edit firewall states
+                
                 if masge=="firewall states":
                     
                     while True:
@@ -221,13 +220,13 @@ while True:
                         c.sendall(ips.encode())
                         
                     
-                    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         data = json.load(f)
                         data["FWS"]=rolu
                         if rolu=="off":
                             data["timerF"]=timer
                         
-                        with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
                             json.dump(data,f,indent=4)
                     print("Firewall state has been changed.")
 
@@ -320,7 +319,7 @@ while True:
                         
                    
                         
-                    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         length=settings["length"]
                         length+=1
@@ -334,7 +333,7 @@ while True:
                         s.append(timer)
                         settings["timerR"]=s
                         settings["Rolue"]=rule
-                        with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
                             json.dump(settings,f,indent=4)
                     print("Rule added successfully.")
 
@@ -364,10 +363,10 @@ while True:
                             continue
                     delrule=input("Enter the rule name: ")
                     delrule=delrule.strip()
-                    with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         settings["deleteR"]=delrule
-                        with open(r'D:\AOF-files\settings.json', 'w') as f:
+                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
                             json.dump(settings,f,indent=4)
                     on="del"
                     c.sendall(on.encode())
@@ -382,22 +381,22 @@ while True:
 
                 elif masge=="advance mode":
                     ppp=generate_password()
-                    # print("Preparing to send the password to your email.")
-                    # msg= EmailMessage()
-                    # msg["Subject"]="Enter password"
-                    # msg["From"]="aofnotification@gmail.com"
-                    # msg["To"]=check4
-                    # msg.set_content(f"your password is: {ppp}")
-                    # email="aofnotification@gmail.com"
-                    # password="oqgspkawnyeftyjw"
-                    # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    #     smtp.login(email,password)
-                    #     smtp.send_message(msg)
-                    entpass=ppp
+                    print("Preparing to send the password to your email.")
+                    msg= EmailMessage()
+                    msg["Subject"]="Enter password"
+                    msg["From"]="aofnotification@gmail.com"
+                    msg["To"]=check4
+                    msg.set_content(f"your password is: {ppp}")
+                    email="aofnotification@gmail.com"
+                    password="oqgspkawnyeftyjw"
+                    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                        smtp.login(email,password)
+                        smtp.send_message(msg)
+                    
                     while True:
                         
-                        # entpass=input("Enter password: ")
-                        # entpass=entpass.strip()
+                        entpass=input("Enter password: ")
+                        entpass=entpass.strip()
                         if entpass==ppp:
                             break
                         else:
@@ -492,7 +491,7 @@ while True:
                             
                             
                             
-                        with open(r'D:\AOF-files\settings.json', 'r',encoding='utf-8') as f:
+                        with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
                             settings["constan"]=constan
                             if constan=="no":
@@ -510,7 +509,7 @@ while True:
                                 s.append(timer)
                                 settings["timerR"]=s
                             settings["Rolue"]=rule
-                            with open(r'D:\AOF-files\settings.json', 'w') as f:
+                            with open(r'D:\FWSH-files\settings.json', 'w') as f:
                                 json.dump(settings,f,indent=4)
                         print("Rule added successfully.")
 
