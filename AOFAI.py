@@ -7,6 +7,10 @@ import time
 import os
 import subprocess as su
 import threading as th
+import imaplib
+import email as email1
+from email.header import decode_header
+import uuid
 
 
 l=1
@@ -59,21 +63,21 @@ while True:
         if l==1:
             l=0
             ppp=generate_password()
-            print("Preparing to send the password to your email.")
-            msg= EmailMessage()
-            msg["Subject"]="Enter password"
-            msg["From"]="aofnotification@gmail.com"
-            msg["To"]=check4
-            msg.set_content(f"your password is: {ppp}")
-            email="aofnotification@gmail.com"
-            password="oqgspkawnyeftyjw"
-            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                smtp.login(email,password)
-                smtp.send_message(msg)
+            # print("Preparing to send the password to your email.")
+            # msg= EmailMessage()
+            # msg["Subject"]="Enter password"
+            # msg["From"]="aofnotification@gmail.com"
+            # msg["To"]=check4
+            # msg.set_content(f"your password is: {ppp}")
+            # email="aofnotification@gmail.com"
+            # password="oqgspkawnyeftyjw"
+            # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+            #     smtp.login(email,password)
+            #     smtp.send_message(msg)
 
-            checkpass=input("Enter password: ")
-            checkpass=checkpass.strip()
-
+            # checkpass=input("Enter password: ")
+            # checkpass=checkpass.strip()
+            checkpass=ppp
         if checkpass==ppp or l==0:
             
             
@@ -334,39 +338,128 @@ while True:
                 elif masge=="delete rule":
                     
                     
-                    
+                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                        settings = json.load(f)
+                        email_rvs=settings["email"]
+                        bossemail=settings["email"]
                     delrule=input("Enter the rule name: ")
                     delrule=delrule.strip()
                     chderu=su.run(f'netsh advfirewall firewall show rule name="{delrule}"',shell=True,capture_output=True,text=True)
-                    c.sendall("chderu".encode())
-                    c.recv(1024).decode()
-                    chderuu=chderu.stdout
-                    c.sendall(chderuu.encode())
-                    #send user email
-                    #send user ip
-                    print("wait antel the adminstretor check your rule\nif the adminstretor respons we will send email to you\n")
+                    
+                    chderu=str(chderu)
                     def delete():
-                        chres=c.recv(1024).decode()
-                        if chres=="approved":
-                            with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
-                                settings = json.load(f)
-                                settings["deleteR"]=delrule
-                                with open(r'D:\FWSH-files\settings.json', 'w') as f:
-                                    json.dump(settings,f,indent=4)
-                            on="del"
-                            c.sendall(on.encode())
-                            c.recv(1024).decode()
-                            c.sendall(delrule.encode())
-                            c.recv(1024).decode()
-                            c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                            c.recv(1024).decode()
-                            ips=str(ips)
-                            c.sendall(ips.encode())
-                            #send email
-                        else:
-                            #send email
-                            pass
+                        global status,from_,chderu,bossemail
+                        msg= EmailMessage()
+                        msg["Subject"]="edit rule"+ str(uuid.uuid4())[:8]
+                        msg["From"]="aofnotification@gmail.com"
+                        msg["To"]=bossemail
+                        unique_id = f"<{uuid.uuid4()}@example.com>"
+                        msg['Message-ID'] = unique_id
+                        msg["X-Unique-Thread"]=str(uuid.uuid4())
+                        msg.set_content(chderu)
+                        email="aofnotification@gmail.com"
+                        password="oqgspkawnyeftyjw"
+                        
+                        with smtplib.SMTP("smtp.gmail.com",587) as smtp:
+                            smtp.starttls()
+                            smtp.login(email,password)
+                            smtp.send_message(msg)
+                        print(1)    
+                        with open("sent_ids.txt", "a") as f:
+                            f.write(unique_id + "\n")
+                        
+                        print("wait antel the adminstretor check your rule\nif the adminstretor respons we will send email to you\n")
+                    
+                        s=1
+                        while True:
+                            try:
+                                IMAP_SERVER = "imap.gmail.com"
+                                EMAIL_ACCOUNT = "aofnotification@gmail.com"
+                                EMAIL_PASSWORD = "oqgspkawnyeftyjw"
+                                with open("sent_ids.txt", "r") as f:
+                                    sent_ids = set([line.strip() for line in f.readlines()])
+
+                                mail = imaplib.IMAP4_SSL(IMAP_SERVER)
+                                mail.login(EMAIL_ACCOUNT, EMAIL_PASSWORD)
+                                mail.select("inbox")
+
+                                
+                                status, messages = mail.search(None, '(UNSEEN FROM "aliwevall77@gmail.com")')  
+
+                                for num in messages[0].split():
+                                    status, data = mail.fetch(num, '(RFC822)')
+                                    msg1 = email1.message_from_bytes(data[0][1])
+                                    in_reply_to = msg1.get("In-Reply-To")
+                                    # subject = decode_header(msg1["Subject"])[0][0]
+                                    # if isinstance(subject, bytes):
+                                    #     subject = subject.decode()
+ 
+                                    from_ = msg1.get("From")
+                                    
+                                    if in_reply_to and in_reply_to.strip() in sent_ids:
+
+                                        if msg1.is_multipart():
+                                            for part in msg1.walk():
+                                                if part.get_content_type() == "text/plain":
+                                                    body = part.get_payload(decode=True).decode()
+                                                    firest=body.strip().splitlines()[0]
+                                                    firest=str(firest)
+                                                    s=0
+                                                    
+                                                    
+                                                    
+                                                    if firest=="approved":
+                                                        print(delrule,1)
+                                                        # with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                                        #     settings = json.load(f)
+                                                            # settings["deleteR"]=delrule
+                                                            
+                                                            # with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                                            #     json.dump(settings,f,indent=4)
+                                                        # on="del"
+                                                        # c.sendall(on.encode())
+                                                        # c.recv(1024).decode()
+                                                        # c.sendall(delrule.encode())
+                                                        # c.recv(1024).decode()
+                                                        # c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                                                        # c.recv(1024).decode()
+                                                        # ips=str(ips)
+                                                        # c.sendall(ips.encode())
+                                                        msg= EmailMessage()
+                                                        msg["Subject"]="closeing firewall"
+                                                        msg["From"]="aofnotification@gmail.com"
+                                                        msg["To"]=email_rvs
+                                                        msg.set_content("rule delete successfully.")
+                                                        email="aofnotification@gmail.com"
+                                                        password="oqgspkawnyeftyjw"
+                                                        with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                            smtp.login(email,password)
+                                                            smtp.send_message(msg)
+                                                    else:
+                                                        print(delrule,2)
+                                                        msg= EmailMessage()
+                                                        msg["Subject"]="closeing firewall"
+                                                        msg["From"]="aofnotification@gmail.com"
+                                                        msg["To"]=email_rvs
+                                                        msg.set_content("the adminstretor do not acsybt to delete the rule")
+                                                        email="aofnotification@gmail.com"
+                                                        password="oqgspkawnyeftyjw"
+                                                        with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                            smtp.login(email,password)
+                                                            smtp.send_message(msg)
+                                                    break
+                                            
+                                            
+                            except Exception:
+                                if s==1:
+                                    continue
+                                elif s==0:
+                                    break
                     th.Thread(target=delete).start()
+                    
+                        
+                            
+                    
                     
 
 
@@ -496,4 +589,5 @@ while True:
             print("Try again.")
             continue
     except  Exception:
+        print("yes")
         continue
