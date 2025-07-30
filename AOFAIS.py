@@ -77,7 +77,12 @@ async def h(reder,writer):
     
        
     if addId=="1":
-        pass
+        with open('serverSetting.json', 'r') as f:
+            serverSetting = json.load(f)        
+            bossemail=serverSetting["email"]
+            bossemail=str(bossemail)
+            writer.write(bossemail.encode())
+            await writer.drain()
     
     elif addId!="add":
         with open('serverSetting.json', 'r') as f:
@@ -425,33 +430,33 @@ async def h(reder,writer):
                 d.to_csv(r"D:\projackt\tools\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
 
 
-            if dat=="add new rule":
-                with open('serverSetting.json', 'r') as f:
-                    serverSetting = json.load(f)
-                    bossemail=serverSetting["email"]
-                data= await reder.read(90000)
-                if not data:
-                    break
-                p=generate_password()
-                writer.write(p.encode())
-                await writer.drain() 
-                rule=data.decode()
+            # if dat=="add new rule":
+            #     with open('serverSetting.json', 'r') as f:
+            #         serverSetting = json.load(f)
+            #         bossemail=serverSetting["email"]
+            #     data= await reder.read(90000)
+            #     if not data:
+            #         break
+            #     p=generate_password()
+            #     writer.write(p.encode())
+            #     await writer.drain() 
+            #     rule=data.decode()
                 
-                data= await reder.read(90000)
-                if not data:
-                    break
-                ips=data.decode()
+            #     data= await reder.read(90000)
+            #     if not data:
+            #         break
+            #     ips=data.decode()
                 
-                msg= EmailMessage()
-                msg["Subject"]="edit rule"
-                msg["From"]="aofnotification@gmail.com"
-                msg["To"]=bossemail
-                msg.set_content(f"the IP '{ips}' want to run these rule in his firewall\n\nrule: {rule}\n\nif you aply for this rule send this password to id'1x'\n\npassword: {password1}")
-                email="aofnotification@gmail.com"
-                password="oqgspkawnyeftyjw"
-                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    smtp.login(email,password)
-                    smtp.send_message(msg)
+            #     msg= EmailMessage()
+            #     msg["Subject"]="edit rule"
+            #     msg["From"]="aofnotification@gmail.com"
+            #     msg["To"]=bossemail
+            #     msg.set_content(f"the IP '{ips}' want to run these rule in his firewall\n\nrule: {rule}\n\nif you aply for this rule send this password to id'1x'\n\npassword: {password1}")
+            #     email="aofnotification@gmail.com"
+            #     password="oqgspkawnyeftyjw"
+            #     with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+            #         smtp.login(email,password)
+            #         smtp.send_message(msg)
 
             if dat=="advance mode":
                 with open('serverSetting.json', 'r') as f:

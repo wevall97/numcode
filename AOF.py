@@ -3,11 +3,18 @@ import subprocess as su
 import socket as sk
 import threading as th
 import json
-import FWSetting as fs
+#import FWSetting as fs
 import asyncio as sa
 import smtplib
 from email.message import EmailMessage
 import os
+import imaplib
+import email as email1
+from email.header import decode_header
+import uuid
+
+
+
 
 
 
@@ -32,7 +39,7 @@ with open(r"D:\FWSH-files\check.txt","r",encoding='utf-8')as f:
 #check D:\FWSH-files\settings.json it is exists
 pathfile=os.path.exists(r"D:\FWSH-files\settings.json")
 if pathfile==False:
-    s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
+    s='{"email": "","bossemail": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
     p=json.loads(s)
     with open(r"D:\FWSH-files\settings.json","w")as f:
         json.dump(p,f,indent=4)
@@ -71,6 +78,7 @@ while True:
 #return D:\FWSH-files\settings.json to the defult
 with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f) 
+    bossemail=settings["bossemail"]
     if settings["FWS"]=="":
         settings["FWS"]="null"
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
@@ -116,6 +124,200 @@ with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     email_rvs=settings["email"]
+
+
+
+def ckeck_email():
+    global status,from_
+    while True:
+        IMAP_SERVER = "imap.gmail.com"
+        EMAIL_ACCOUNT = "aofnotification@gmail.com"
+        EMAIL_PASSWORD = "oqgspkawnyeftyjw"
+        with open("sent_ids.txt", "r") as f:
+            sent_ids=f.read().strip()
+            
+        mail = imaplib.IMAP4_SSL(IMAP_SERVER)
+        mail.login(EMAIL_ACCOUNT, EMAIL_PASSWORD)
+        mail.select("inbox")
+
+
+        status, messages = mail.search(None, f'(FROM "{bossemail}")')  
+
+        for num in messages[0].split():
+            status, data = mail.fetch(num, '(RFC822)')
+            msg1 = email1.message_from_bytes(data[0][1])
+            in_reply_to = msg1.get("In-Reply-To")
+            
+            from_ = msg1.get("From")
+            
+            if in_reply_to and in_reply_to.strip() in sent_ids:
+                
+                if msg1.is_multipart():
+                    for part in msg1.walk():
+                        if part.get_content_type() == "text/plain":
+                            body = part.get_payload(decode=True).decode()
+                            firest=body.strip().splitlines()[0]
+                            firest=str(firest)
+                            
+                            sent_ids=sent_ids.replace(in_reply_to,"")
+                            
+                            with open("sent_ids.txt", "w") as f:
+                                sent_id="".join(map(str,sent_ids))
+                                f.write(sent_id)
+                            with open("sent_ids.txt", "r") as f:
+                                sent_ids=f.readlines()
+                                for line in sent_ids:
+                                    if line.startswith("|"):
+                                        l1=line
+                                        l2=line[:1]
+                                        l=line[1:]
+                                        print(l)
+                            with open("sent_ids.txt", "r") as f:
+                                sent_ids=f.read()
+                                sent_ids=sent_ids.replace(l1,"")  
+                                
+                            with open("sent_ids.txt", "w") as f:
+                                sent_id="".join(map(str,sent_ids))
+                                f.write(sent_id)     
+
+                                 
+                            if firest=="approved" and l2=="|":
+                                
+                                with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                    settings = json.load(f)
+                                    settings["deleteR"]=l
+                                    
+                                    with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                        json.dump(settings,f,indent=4)
+                                on="del"
+                                c.sendall(on.encode())
+                                c.recv(1024).decode()
+                                c.sendall(l.encode())
+                                c.recv(1024).decode()
+                                c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                                c.recv(1024).decode()
+                                ips=str(ips)
+                                c.sendall(ips.encode())
+                                msg= EmailMessage()
+                                msg["Subject"]="closeing firewall"
+                                msg["From"]="aofnotification@gmail.com"
+                                msg["To"]=email_rvs
+                                msg.set_content("rule delete successfully.")
+                                email="aofnotification@gmail.com"
+                                password="oqgspkawnyeftyjw"
+                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                    smtp.login(email,password)
+                                    smtp.send_message(msg)
+                            elif firest!="approved" and l2=="|":
+                                
+                                msg= EmailMessage()
+                                msg["Subject"]="closeing firewall"
+                                msg["From"]="aofnotification@gmail.com"
+                                msg["To"]=email_rvs
+                                msg.set_content("the adminstretor do not acsybt to DELETE the rule")
+                                email="aofnotification@gmail.com"
+                                password="oqgspkawnyeftyjw"
+                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                    smtp.login(email,password)
+                                    smtp.send_message(msg)
+                            
+
+
+                            if firest=="approved" and l2=="#":
+                                
+                                row=[]
+                                row1=[]
+
+
+                                for i in l:
+                                    row1.append(i)
+                                    if i =="'" or i=='"':
+                                        break
+                                d=''.join(row1)
+                                e=l.removeprefix(d)
+                                for i in e:
+                                    if i =="'" or i=='"':
+                                        break
+                                    row.append(i)
+                                rulename=''.join(row)
+                                
+                                row.clear()
+                                row1.clear()
+                                on="on"
+                                c.sendall(on.encode())
+                                c.recv(1024).decode()
+                                c.sendall(rulename.encode())
+                                c.recv(1024).decode()
+                                timerlog=timer
+                                c.sendall(timerlog.encode())
+                                c.recv(1024).decode()
+                                c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                                c.recv(1024).decode()
+                                ips=str(ips)
+                                c.sendall(ips.encode())
+                                c.recv(1024).decode()
+                                c.sendall(l.encode())
+                                c.recv(1024).decode()
+                                c.sendall("no".encode())
+                                if timer.endswith("m"):
+                                    lens=len(timer)
+                                    timer=timer[:lens-1]
+                                    timer=int(timer)
+                                    timer*=60
+                                    timer=str(timer)
+                                    
+
+
+                                elif timer.endswith("h"):
+                                    lens=len(timer)
+                                    timer=timer[:lens-1]
+                                    timer=int(timer)
+                                    timer*=3600
+                                    timer=str(timer)
+                                    
+                                
+                            
+                                    
+                                with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                    settings = json.load(f)
+                                    length=settings["length"]
+                                    length+=1
+                                    settings["length"]=length
+                                    s=settings["ruleName"]
+                                    s=list(s)
+                                    s.append(rulename)
+                                    settings["ruleName"]=s 
+                                    settings["Rolue"]=l
+                                    with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                        json.dump(settings,f,indent=4)
+                                msg= EmailMessage()
+                                msg["Subject"]="closeing firewall"
+                                msg["From"]="aofnotification@gmail.com"
+                                msg["To"]=email_rvs
+                                msg.set_content("rule ADD successfully.")
+                                email="aofnotification@gmail.com"
+                                password="oqgspkawnyeftyjw"
+                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                    smtp.login(email,password)
+                                    smtp.send_message(msg)
+                            elif firest!="approved" and l2=="#":
+                                msg= EmailMessage()
+                                msg["Subject"]="closeing firewall"
+                                msg["From"]="aofnotification@gmail.com"
+                                msg["To"]=email_rvs
+                                msg.set_content("the adminstretor do not acsybt to ADD the rule")
+                                email="aofnotification@gmail.com"
+                                password="oqgspkawnyeftyjw"
+                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                    smtp.login(email,password)
+                                    smtp.send_message(msg)
+
+
+                            mail.store(num,"+FLAGS","\\Deleted")
+                            mail.expunge()
+        mail.logout()
+        time.sleep(5)
+th.Thread(target=ckeck_email).start()
 #keys to contrule
 l=1
 ll=1
@@ -222,7 +424,7 @@ def do_ruls():
     global l
     if fws=="off" and l==1:
         l=0
-        fs.fireOff(fws,timer)
+        #fs.fireOff(fws,timer)
         with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f)
             settings["FWS"]="null"
@@ -249,7 +451,7 @@ def add__rule():
             json.dump(settings,f,indent=4) 
     time.sleep(1)
     lw=1
-    fs.add_rule(rulename,rule,timerr)
+    #fs.add_rule(rulename,rule,timerr)
     
     with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
@@ -279,8 +481,9 @@ def add__rule():
 
 while True:
     
-    #the main function that contrule in evry things
+    # #the main function that contrule in evry things
     async def main():
+        pass
         global l,ll,email_rvs,ips,email_rvs,rellen,adad,ips,l3,l4,lw
         
         if ll==1:
