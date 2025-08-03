@@ -12,7 +12,7 @@ import imaplib
 import email as email1
 from email.header import decode_header
 import uuid
-
+import random
 
 
 
@@ -128,8 +128,12 @@ with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
 
 
 def ckeck_email():
-    global status,from_
+    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+        settings = json.load(f)
+        ips=settings["IP-U"]
+    global status,from_,timer
     while True:
+        print("1")
         IMAP_SERVER = "imap.gmail.com"
         EMAIL_ACCOUNT = "aofnotification@gmail.com"
         EMAIL_PASSWORD = "oqgspkawnyeftyjw"
@@ -157,8 +161,8 @@ def ckeck_email():
                         if part.get_content_type() == "text/plain":
                             body = part.get_payload(decode=True).decode()
                             firest=body.strip().splitlines()[0]
-                            firest=str(firest)
-                            
+                            firest=str(firest.strip())
+                           
                             sent_ids=sent_ids.replace(in_reply_to,"")
                             
                             with open("sent_ids.txt", "w") as f:
@@ -167,20 +171,67 @@ def ckeck_email():
                             with open("sent_ids.txt", "r") as f:
                                 sent_ids=f.readlines()
                                 for line in sent_ids:
-                                    if line.startswith("|"):
+                                    if line.startswith("|") or line.startswith("#") or line.startswith("%"):
                                         l1=line
                                         l2=line[:1]
                                         l=line[1:]
-                                        print(l)
+                                        if "~" in l:
+                                            chck1=l.index("~")
+                                            l=l[:chck1]
+                                            l1=l
+                                            with open("sent_ids.txt", "r") as f:
+                                                sent_ids=f.read()
+                                                sent_ids=sent_ids.replace("#","")  
+                                                
+                                                
+                                            with open("sent_ids.txt", "w") as f:
+                                                sent_id="".join(map(str,sent_ids))
+                                                f.write(sent_id)  
+                                           
+                                            
                             with open("sent_ids.txt", "r") as f:
                                 sent_ids=f.read()
+                                
                                 sent_ids=sent_ids.replace(l1,"")  
                                 
                             with open("sent_ids.txt", "w") as f:
                                 sent_id="".join(map(str,sent_ids))
                                 f.write(sent_id)     
 
-                                 
+                            if firest=="approved" and l2=="%": 
+                                
+                                ran = random.randint(100000, 999999)
+                                ran=str(ran)
+                                with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                    settings = json.load(f)
+                                    settings["advance-password"]=ran
+                                    with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                        json.dump(settings,f,indent=4)
+                                msg= EmailMessage()
+                                msg["Subject"]="closeing firewall"
+                                msg["From"]="aofnotification@gmail.com"
+                                msg["To"]=email_rvs
+                                msg.set_content(f"your password: {ran}")
+                                email="aofnotification@gmail.com"
+                                password="oqgspkawnyeftyjw"
+                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                    smtp.login(email,password)
+                                    smtp.send_message(msg)   
+                                
+                            elif firest!="approved"  and l2=="%": 
+
+                                msg= EmailMessage()
+                                msg["Subject"]="closeing firewall"
+                                msg["From"]="aofnotification@gmail.com"
+                                msg["To"]=email_rvs
+                                msg.set_content(f"he dont allowed you")
+                                email="aofnotification@gmail.com"
+                                password="oqgspkawnyeftyjw"
+                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                    smtp.login(email,password)
+                                    smtp.send_message(msg)
+
+                                   
                             if firest=="approved" and l2=="|":
                                 
                                 with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
@@ -208,7 +259,7 @@ def ckeck_email():
                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                                     smtp.login(email,password)
                                     smtp.send_message(msg)
-                            elif firest!="approved" and l2=="|":
+                            elif firest!="approved"  and l2=="|":
                                 
                                 msg= EmailMessage()
                                 msg["Subject"]="closeing firewall"
@@ -223,7 +274,27 @@ def ckeck_email():
                             
 
 
-                            if firest=="approved" and l2=="#":
+                            if firest=="approved"  and l2=="#":
+                                
+                                l=l.replace("#","")
+                        
+
+                                with open("sent_ids.txt", "r") as f:
+                                    sent_ids=f.readlines()
+                                    for line in sent_ids:
+                                        if line.startswith("~"):
+                                            l1=line
+                                            
+                                            timer=line[1:]
+                                            
+                                            
+                                with open("sent_ids.txt", "r") as f:
+                                    sent_ids=f.read()
+                                    sent_ids=sent_ids.replace(l1,"")  
+                                    
+                                with open("sent_ids.txt", "w") as f:
+                                    sent_id="".join(map(str,sent_ids))
+                                    f.write(sent_id) 
                                 
                                 row=[]
                                 row1=[]
@@ -287,6 +358,10 @@ def ckeck_email():
                                     s=list(s)
                                     s.append(rulename)
                                     settings["ruleName"]=s 
+                                    s=settings["timerR"]
+                                    s=list(s)
+                                    s.append(timer)
+                                    settings["timerR"]=s
                                     settings["Rolue"]=l
                                     with open(r'D:\FWSH-files\settings.json', 'w') as f:
                                         json.dump(settings,f,indent=4)
@@ -635,6 +710,6 @@ while True:
         with open(r"D:\FWSH-files\check.txt","w")as f:
             f.write("")
     #run the main function
-    sa.run(main())
+    #sa.run(main())
     #return to do this loop evry 10s
     time.sleep(10)

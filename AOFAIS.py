@@ -14,6 +14,7 @@ import os
 
 
 pathfile=os.path.exists("serverSetting.json")
+print("1")
 if pathfile==False:
     s='{"email": ""}'
     p=json.loads(s)
@@ -149,7 +150,7 @@ async def h(reder,writer):
                 ips=data.decode()
                 
                 try:
-                    s=pd.read_csv(r"D:\projackt\tools\firewall log.csv")
+                    s=pd.read_csv("firewall log.csv")
                 except Exception:
                     datafrme={
                         "IP":["IP"],
@@ -159,7 +160,7 @@ async def h(reder,writer):
                     }
 
                     s=pd.DataFrame(datafrme)
-                    s.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                    s.to_csv("firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
                 datafrme={
                         "IP":[ips],
                         "FWS":["off"],
@@ -168,7 +169,7 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv(r"D:\projackt\tools\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                d.to_csv("firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
             
 
            
@@ -259,7 +260,7 @@ async def h(reder,writer):
                     break
                 constan=data.decode()
                 try:
-                    s=pd.read_csv(r"D:\projackt\tools\add rule log.csv")
+                    s=pd.read_csv("add rule log.csv")
                 except Exception:
                     datafrme={
                         "IP":["IP"],
@@ -271,7 +272,7 @@ async def h(reder,writer):
                     }
 
                     d=pd.DataFrame(datafrme)
-                    d.to_csv(r"D:\projackt\tools\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                    d.to_csv("add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
 
 
                 datafrme={
@@ -284,7 +285,7 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv(r"D:\projackt\tools\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                d.to_csv("add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
             
             if dat=="firewall states off all":
                 T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
@@ -430,55 +431,27 @@ async def h(reder,writer):
                 d.to_csv(r"D:\projackt\tools\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
 
 
-            # if dat=="add new rule":
+            # if dat=="advance mode":
             #     with open('serverSetting.json', 'r') as f:
             #         serverSetting = json.load(f)
             #         bossemail=serverSetting["email"]
-            #     data= await reder.read(90000)
-            #     if not data:
-            #         break
             #     p=generate_password()
             #     writer.write(p.encode())
-            #     await writer.drain() 
-            #     rule=data.decode()
-                
+            #     await writer.drain()
             #     data= await reder.read(90000)
             #     if not data:
             #         break
             #     ips=data.decode()
-                
             #     msg= EmailMessage()
-            #     msg["Subject"]="edit rule"
+            #     msg["Subject"]="advance mode"
             #     msg["From"]="aofnotification@gmail.com"
             #     msg["To"]=bossemail
-            #     msg.set_content(f"the IP '{ips}' want to run these rule in his firewall\n\nrule: {rule}\n\nif you aply for this rule send this password to id'1x'\n\npassword: {password1}")
+            #     msg.set_content(f"the IP '{ips}' want to be in 'advance mode'\n\nif you aply for this,send this password to id'1x'\n\npassword: {password1}")
             #     email="aofnotification@gmail.com"
             #     password="oqgspkawnyeftyjw"
             #     with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
             #         smtp.login(email,password)
             #         smtp.send_message(msg)
-
-            if dat=="advance mode":
-                with open('serverSetting.json', 'r') as f:
-                    serverSetting = json.load(f)
-                    bossemail=serverSetting["email"]
-                p=generate_password()
-                writer.write(p.encode())
-                await writer.drain()
-                data= await reder.read(90000)
-                if not data:
-                    break
-                ips=data.decode()
-                msg= EmailMessage()
-                msg["Subject"]="advance mode"
-                msg["From"]="aofnotification@gmail.com"
-                msg["To"]=bossemail
-                msg.set_content(f"the IP '{ips}' want to be in 'advance mode'\n\nif you aply for this,send this password to id'1x'\n\npassword: {password1}")
-                email="aofnotification@gmail.com"
-                password="oqgspkawnyeftyjw"
-                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                    smtp.login(email,password)
-                    smtp.send_message(msg)
 
         except Exception:
            

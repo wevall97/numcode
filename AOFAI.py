@@ -266,14 +266,14 @@ while True:
                     msg["X-Unique-Thread"]=str(uuid.uuid4())
                     z=f'''This user who had:
 
-                    Email: {email_rvs}
-                    IP: {ips}
+Email: {email_rvs}
+IP: {ips}
 
-                    Want to "ADD" this rule:
+Want to "ADD" this rule:
 
-                    {rule}
+{rule}
 
-                    if you allow to do this type (Approved.) or type (deny) to disallow'''
+if you allow to do this type (Approved.) or type (deny) to disallow'''
                     msg.set_content(z)
                     email="aofnotification@gmail.com"
                     password="oqgspkawnyeftyjw"
@@ -284,85 +284,11 @@ while True:
                         smtp.send_message(msg)
                         
                     with open("sent_ids.txt", "a") as f:
-                        f.write(unique_id+"#"+rule+"\n")
+                        f.write(unique_id+"#"+rule+"~"+timer+"\n")
                     
                     
-                    
-                    
-                    
-                        
-                    row=[]
-                    row1=[]
 
 
-                    for i in rule:
-                        row1.append(i)
-                        if i =="'" or i=='"':
-                            break
-                    d=''.join(row1)
-                    e=rule.removeprefix(d)
-                    for i in e:
-                        if i =="'" or i=='"':
-                            break
-                        row.append(i)
-                    rulename=''.join(row)
-                    
-                    row.clear()
-                    row1.clear()
-                    on="on"
-                    c.sendall(on.encode())
-                    c.recv(1024).decode()
-                    c.sendall(rulename.encode())
-                    c.recv(1024).decode()
-                    timerlog=timer
-                    c.sendall(timerlog.encode())
-                    c.recv(1024).decode()
-                    c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                    c.recv(1024).decode()
-                    ips=str(ips)
-                    c.sendall(ips.encode())
-                    c.recv(1024).decode()
-                    c.sendall(rule.encode())
-                    c.recv(1024).decode()
-                    c.sendall("no".encode())
-                    if timer.endswith("m"):
-                        lens=len(timer)
-                        timer=timer[:lens-1]
-                        timer=int(timer)
-                        timer*=60
-                        timer=str(timer)
-                        
-
-
-                    elif timer.endswith("h"):
-                        lens=len(timer)
-                        timer=timer[:lens-1]
-                        timer=int(timer)
-                        timer*=3600
-                        timer=str(timer)
-                        
-                    
-                
-                        
-                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
-                        settings = json.load(f)
-                        length=settings["length"]
-                        length+=1
-                        settings["length"]=length
-                        s=settings["ruleName"]
-                        s=list(s)
-                        s.append(rulename)
-                        settings["ruleName"]=s 
-                        
-                        settings["Rolue"]=rule
-                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
-                            json.dump(settings,f,indent=4)
-                    
-
-# s=settings["timerR"]
-                        # s=list(s)
-                        # s.append(timer)
-                        # settings["timerR"]=s
 
                 elif masge=="delete rule":
                     
@@ -410,127 +336,177 @@ while True:
                   
 
                 elif masge=="advance mode":
-                    c.sendall(masge.encode())
-                    checkpass1=c.recv(1024).decode()
-                    ips=str(ips)
-                    c.sendall(ips.encode())
-                    while True:
-                        entpass=input("Enter password: ")
-                        entpass=entpass.strip()
-                        if entpass!=checkpass1:
-                            print("Try again.")
-                            continue
-                        if entpass==checkpass1:
-                            break
-                    print("Enter 'exit' to leave 'advanced mode'.\n")
-                    while True:
+                    
+                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                        settings = json.load(f)
+                        advance_password=settings["advance-password"]
+                        check5=settings["advance-mode"]
+                        bossemail=settings["email"]
+                        email_rvs=settings["email"]
+                        check5=str(check5)
                         
-                        rolu=input("Enter the rule or (exit): ")
-                        rolu=rolu.strip()
-                        rule=rolu.replace("'",'"')
-                        if rolu=="exit":
-                            break
-                        while True:
-                            constan=input("Enter state constant (yes for permanent rule, no for temporary): ")
-                            constan=constan.strip()
-                            constan=constan.lower()
-                            if constan=="yes" or constan=="no":
-                                break
-                            else:
-                                print("enter 'yes' or 'no'")
-                                continue
-                        constan=constan.strip()
-                        if constan=="no":
-                            while True:
-                                timer=input("Enter the timer value: ")
-                                timer=timer.strip()
-                                timer=timer.lower()
-                                if timer.endswith("h") or timer.endswith("m"):
-                                    break
-                                else:
-                                    print("Try again.")
-                                    continue
+                        if check5=="0":
+                            msg= EmailMessage()
+                            msg["Subject"]="edit rule"+ str(uuid.uuid4())[:8]
+                            msg["From"]="aofnotification@gmail.com"
+                            msg["To"]=bossemail
+                            unique_id = f"<{uuid.uuid4()}@example.com>"
+                            msg['Message-ID'] = unique_id
+                            msg["X-Unique-Thread"]=str(uuid.uuid4())
+                            z=f'''This user who had:
 
+Email: {email_rvs}
+IP: {ips}
 
-                        row=[]
-                        row1=[]
-
-
-                        for i in rule:
-                            row1.append(i)
-                            if i =="'" or i=='"':
-                                break
-                        d=''.join(row1)
-                        e=rule.removeprefix(d)
-                        for i in e:
-                            if i =="'" or i=='"':
-                                break
-                            row.append(i)
-                        rulename=''.join(row)
-                        row.clear()
-                        row1.clear()
-                        on="on"
-                        c.sendall(on.encode())
-                        c.recv(1024).decode()
-                        c.sendall(rulename.encode())
-                        c.recv(1024).decode()
-                        if constan=="no":
-                            timerlog=timer
-                            c.sendall(timerlog.encode())
-                        elif constan=="yes":
-                            c.sendall("null".encode())
-                        c.recv(1024).decode()
-                        c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                        c.recv(1024).decode()
-                        ips=str(ips)
-                        c.sendall(ips.encode())
-                        c.recv(1024).decode()
-                        c.sendall(rule.encode())
-                        c.recv(1024).decode()
-                        c.sendall(constan.encode())
-
-
-                        if constan=="no":
-                            if timer.endswith("m"):
-                                lens=len(timer)
-                                timer=timer[:lens-1]
-                                timer=int(timer)
-                                timer*=60
-                                timer=str(timer)
+Want to be in "Advance mode" 
+if you allow to do this type (Approved.) or type (deny) to disallow'''
+                            msg.set_content(z)
+                            email="aofnotification@gmail.com"
+                            password="oqgspkawnyeftyjw"
+                            
+                            with smtplib.SMTP("smtp.gmail.com",587) as smtp:
+                                smtp.starttls()
+                                smtp.login(email,password)
+                                smtp.send_message(msg)
                                 
+                            with open("sent_ids.txt", "a") as f:
+                                f.write(unique_id+"%"+"Advance mode"+"\n")
+
+                            with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                settings = json.load(f)
+                                settings["advance-mode"]="1"
+                                with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                    json.dump(settings,f,indent=4)
+
+                        elif check5=="1" and settings["advance-password"]=="0":
+                            print("not now")          
+                        elif check5=="1" and settings["advance-password"]!="0":
+                            while True:
+                                checkpass1=input("enter password: ")
+                                if checkpass1!=advance_password:
+                                    print("try agen")
+                                    continue
+                                elif checkpass1==advance_password:
+                                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                        settings = json.load(f)
+                                        settings["advance-password"]="0"
+                                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                            json.dump(settings,f,indent=4)
+                                    break
+                            print("Enter 'exit' to leave 'advanced mode'.\n")
+                            while True:
+                                
+                                rolu=input("Enter the rule or (exit): ")
+                                rolu=rolu.strip()
+                                rule=rolu.replace("'",'"')
+                                if rolu=="exit":
+                                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                        settings = json.load(f)
+                                        settings["advance-mode"]="0"
+                                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                            json.dump(settings,f,indent=4)
+                                    break
+                                while True:
+                                    constan=input("Enter state constant (yes for permanent rule, no for temporary): ")
+                                    constan=constan.strip()
+                                    constan=constan.lower()
+                                    if constan=="yes" or constan=="no":
+                                        break
+                                    else:
+                                        print("enter 'yes' or 'no'")
+                                        continue
+                                constan=constan.strip()
+                                if constan=="no":
+                                    while True:
+                                        timer=input("Enter the timer value: ")
+                                        timer=timer.strip()
+                                        timer=timer.lower()
+                                        if timer.endswith("h") or timer.endswith("m"):
+                                            break
+                                        else:
+                                            print("Try again.")
+                                            continue
 
 
-                            elif timer.endswith("h"):
-                                lens=len(timer)
-                                timer=timer[:lens-1]
-                                timer=int(timer)
-                                timer*=3600
-                                timer=str(timer)
-                            
-                        
-                        
-                            
-                        with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
-                            settings = json.load(f)
-                            settings["constan"]=constan
-                            if constan=="no":
-                                length=settings["length"]
-                                length+=1
-                                settings["length"]=length
+                                row=[]
+                                row1=[]
 
-                                s=settings["ruleName"]
-                                s=list(s)
-                                s.append(rulename)
-                                settings["ruleName"]=s
-                            
-                                s=settings["timerR"]
-                                s=list(s)
-                                s.append(timer)
-                                settings["timerR"]=s
-                            settings["Rolue"]=rule
-                            with open(r'D:\FWSH-files\settings.json', 'w') as f:
-                                json.dump(settings,f,indent=4)
-                        print("Rule added successfully.")
+
+                                for i in rule:
+                                    row1.append(i)
+                                    if i =="'" or i=='"':
+                                        break
+                                d=''.join(row1)
+                                e=rule.removeprefix(d)
+                                for i in e:
+                                    if i =="'" or i=='"':
+                                        break
+                                    row.append(i)
+                                rulename=''.join(row)
+                                row.clear()
+                                row1.clear()
+                                on="on"
+                                c.sendall(on.encode())
+                                c.recv(1024).decode()
+                                c.sendall(rulename.encode())
+                                c.recv(1024).decode()
+                                if constan=="no":
+                                    timerlog=timer
+                                    c.sendall(timerlog.encode())
+                                elif constan=="yes":
+                                    c.sendall("null".encode())
+                                c.recv(1024).decode()
+                                c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                                c.recv(1024).decode()
+                                ips=str(ips)
+                                c.sendall(ips.encode())
+                                c.recv(1024).decode()
+                                c.sendall(rule.encode())
+                                c.recv(1024).decode()
+                                c.sendall(constan.encode())
+
+
+                                if constan=="no":
+                                    if timer.endswith("m"):
+                                        lens=len(timer)
+                                        timer=timer[:lens-1]
+                                        timer=int(timer)
+                                        timer*=60
+                                        timer=str(timer)
+                                        
+
+
+                                    elif timer.endswith("h"):
+                                        lens=len(timer)
+                                        timer=timer[:lens-1]
+                                        timer=int(timer)
+                                        timer*=3600
+                                        timer=str(timer)
+                                    
+                                
+                                
+                                    
+                                with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                    settings = json.load(f)
+                                    settings["constan"]=constan
+                                    if constan=="no":
+                                        length=settings["length"]
+                                        length+=1
+                                        settings["length"]=length
+
+                                        s=settings["ruleName"]
+                                        s=list(s)
+                                        s.append(rulename)
+                                        settings["ruleName"]=s
+                                    
+                                        s=settings["timerR"]
+                                        s=list(s)
+                                        s.append(timer)
+                                        settings["timerR"]=s
+                                    settings["Rolue"]=rule
+                                    with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                        json.dump(settings,f,indent=4)
+                                print("Rule added successfully.")
         else:
             print("Try again.")
             continue
