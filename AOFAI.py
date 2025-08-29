@@ -13,6 +13,7 @@ from email.header import decode_header
 import uuid
 
 
+# check all code
 l=1
 while True:
     try:
@@ -24,7 +25,7 @@ while True:
         pathfile=os.path.exists(r"D:\FWSH-files\settings.json")
 
         if pathfile==False:
-            s='{"email": "","bossemail": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
+            s='{"user-state": "USER","email": "","bossemail": "","IP-S": "","IP-U": "","advance-mode": "0","advance-password": "0","firstconn": "0","FWS": "","timerF": "","deleteR": "null","checkrulename": [],"ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
             p=json.loads(s)
             with open(r"D:\FWSH-files\settings.json","w")as f:
                 json.dump(p,f,indent=4)
@@ -65,7 +66,7 @@ while True:
             ppp=generate_password()
             # print("Preparing to send the password to your email.")
             # msg= EmailMessage()
-            # msg["Subject"]="Enter password"
+            # msg["Subject"]=f"Enter Password - ID({str(uuid.uuid4())[:8]})"
             # msg["From"]="aofnotification@gmail.com"
             # msg["To"]=check4
             # msg.set_content(f"your password is: {ppp}")
@@ -164,7 +165,9 @@ while True:
                     
             with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
-                ips=settings["IP-U"]        
+                ips=settings["IP-U"]  
+                email_rvs=settings["email"]
+                bossemail=settings["bossemail"]      
                 
             while True:
                 
@@ -240,12 +243,13 @@ while True:
                     
 
                 elif masge=="add new rule":
-                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
-                        settings = json.load(f)
-                        email_rvs=settings["email"]
-                        bossemail=settings["email"]
                     
-                    rol=input("Enter the rule: ")
+                    while True:
+                        rol=input("Enter the rule: ")
+                        if "#" in rol or "|" in rol or "%" in rol or "~" in rol:
+                            continue
+                        else:
+                            break
                     rol=rol.strip()
                     rule=rol.replace("'",'"')
                     while True:
@@ -258,7 +262,7 @@ while True:
                             continue
                     print("wait antel the boss check your rule and he will send a password to you")
                     msg= EmailMessage()
-                    msg["Subject"]="edit rule"+ str(uuid.uuid4())[:8]
+                    msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                     msg["From"]="aofnotification@gmail.com"
                     msg["To"]=bossemail
                     unique_id = f"<{uuid.uuid4()}@example.com>"
@@ -283,7 +287,7 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                         smtp.login(email,password)
                         smtp.send_message(msg)
                         
-                    with open("sent_ids.txt", "a") as f:
+                    with open(r"D:\FWSH-files\sent_ids.txt", "a") as f:
                         f.write(unique_id+"#"+rule+"~"+timer+"\n")
                     
                     
@@ -295,10 +299,18 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                     
                     with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
-                        email_rvs=settings["email"]
-                        bossemail=settings["email"]
-
-                    delrule=input("Enter the rule name: ")
+                        check6=settings["checkrulename"]
+                        check6=list(check6)
+                    while True:
+                        delrule=input("Enter the rule name: ")
+                        if "#" in delrule or "|" in delrule or "%" in delrule or "~" in delrule:
+                            print("try agean")
+                            continue
+                        if delrule in check6:
+                            print("try agean")
+                            continue
+                        else:
+                            break
                     print("wait antel the adminstretor check your rule\nif the adminstretor respons we will send email to you\n")
                     delrule=delrule.strip()
                     chderu=su.run(f'netsh advfirewall firewall show rule name="{delrule}"',shell=True,capture_output=True,text=True)
@@ -306,7 +318,7 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                     chderu=str(chderu.stdout)
                     
                     msg= EmailMessage()
-                    msg["Subject"]="edit rule"+ str(uuid.uuid4())[:8]
+                    msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                     msg["From"]="aofnotification@gmail.com"
                     msg["To"]=bossemail
                     unique_id = f"<{uuid.uuid4()}@example.com>"
@@ -314,13 +326,13 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                     msg["X-Unique-Thread"]=str(uuid.uuid4())
                     z=f'''This user who had:
 
-                    Email: {email_rvs}
-                    IP: {ips}
+Email: {email_rvs}
+IP: {ips}
 
-                    Want to "DELETE" this rule:
-                    {chderu}
+Want to "DELETE" this rule:
+{chderu}
 
-                    if you allow to do this type (Approved.) or type (deny) to disallow'''
+if you allow to do this type (Approved.) or type (deny) to disallow'''
                     msg.set_content(z)
                     email="aofnotification@gmail.com"
                     password="oqgspkawnyeftyjw"
@@ -330,7 +342,7 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                         smtp.login(email,password)
                         smtp.send_message(msg)
                         
-                    with open("sent_ids.txt", "a") as f:
+                    with open(r"D:\FWSH-files\sent_ids.txt", "a") as f:
                         f.write(unique_id+"|"+delrule+"\n")
                         
                   
@@ -341,13 +353,11 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                         settings = json.load(f)
                         advance_password=settings["advance-password"]
                         check5=settings["advance-mode"]
-                        bossemail=settings["email"]
-                        email_rvs=settings["email"]
                         check5=str(check5)
                         
                         if check5=="0":
                             msg= EmailMessage()
-                            msg["Subject"]="edit rule"+ str(uuid.uuid4())[:8]
+                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                             msg["From"]="aofnotification@gmail.com"
                             msg["To"]=bossemail
                             unique_id = f"<{uuid.uuid4()}@example.com>"
@@ -369,7 +379,7 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                                 smtp.login(email,password)
                                 smtp.send_message(msg)
                                 
-                            with open("sent_ids.txt", "a") as f:
+                            with open(r"D:\FWSH-files\sent_ids.txt", "a") as f:
                                 f.write(unique_id+"%"+"Advance mode"+"\n")
 
                             with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
@@ -493,6 +503,11 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                                         length=settings["length"]
                                         length+=1
                                         settings["length"]=length
+                                        
+                                        s=settings["checkrulename"]
+                                        s=list(s)
+                                        s.append(rulename)
+                                        settings["checkrulename"]=s 
 
                                         s=settings["ruleName"]
                                         s=list(s)

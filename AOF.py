@@ -13,8 +13,8 @@ import email as email1
 from email.header import decode_header
 import uuid
 import random
-
-
+# check all code
+# rediseny the "settings.json" just in this code
 
 
 
@@ -43,6 +43,12 @@ if pathfile==False:
     p=json.loads(s)
     with open(r"D:\FWSH-files\settings.json","w")as f:
         json.dump(p,f,indent=4)
+
+
+pathfile=os.path.exists(r"D:\FWSH-files\sent_ids.txt")
+if pathfile==False:
+    with open(r"D:\FWSH-files\sent_ids.txt","w")as f:
+        pass
 
 #check firewall state       
 a=su.run("netsh advfirewall show allprofiles",shell=True,text=True,capture_output=True)
@@ -124,6 +130,7 @@ with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     email_rvs=settings["email"]
+    user_state=settings["user-state"]
 
 
 
@@ -137,7 +144,7 @@ def ckeck_email():
         IMAP_SERVER = "imap.gmail.com"
         EMAIL_ACCOUNT = "aofnotification@gmail.com"
         EMAIL_PASSWORD = "oqgspkawnyeftyjw"
-        with open("sent_ids.txt", "r") as f:
+        with open("D:\FWSH-files\sent_ids.txt", "r", encoding='utf-8') as f:
             sent_ids=f.read().strip()
             
         mail = imaplib.IMAP4_SSL(IMAP_SERVER)
@@ -165,10 +172,10 @@ def ckeck_email():
                            
                             sent_ids=sent_ids.replace(in_reply_to,"")
                             
-                            with open("sent_ids.txt", "w") as f:
+                            with open("D:\FWSH-files\sent_ids.txt", "w") as f:
                                 sent_id="".join(map(str,sent_ids))
                                 f.write(sent_id)
-                            with open("sent_ids.txt", "r") as f:
+                            with open("D:\FWSH-files\sent_ids.txt", "r") as f:
                                 sent_ids=f.readlines()
                                 for line in sent_ids:
                                     if line.startswith("|") or line.startswith("#") or line.startswith("%"):
@@ -179,22 +186,22 @@ def ckeck_email():
                                             chck1=l.index("~")
                                             l=l[:chck1]
                                             l1=l
-                                            with open("sent_ids.txt", "r") as f:
+                                            with open("D:\FWSH-files\sent_ids.txt", "r") as f:
                                                 sent_ids=f.read()
                                                 sent_ids=sent_ids.replace("#","")  
                                                 
                                                 
-                                            with open("sent_ids.txt", "w") as f:
+                                            with open("D:\FWSH-files\sent_ids.txt", "w") as f:
                                                 sent_id="".join(map(str,sent_ids))
                                                 f.write(sent_id)  
                                            
                                             
-                            with open("sent_ids.txt", "r") as f:
+                            with open("D:\FWSH-files\sent_ids.txt", "r") as f:
                                 sent_ids=f.read()
                                 
                                 sent_ids=sent_ids.replace(l1,"")  
                                 
-                            with open("sent_ids.txt", "w") as f:
+                            with open("D:\FWSH-files\sent_ids.txt", "w") as f:
                                 sent_id="".join(map(str,sent_ids))
                                 f.write(sent_id)     
 
@@ -208,7 +215,7 @@ def ckeck_email():
                                     with open(r'D:\FWSH-files\settings.json', 'w') as f:
                                         json.dump(settings,f,indent=4)
                                 msg= EmailMessage()
-                                msg["Subject"]="closeing firewall"
+                                msg["Subject"]=f"Enter Password - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=email_rvs
                                 msg.set_content(f"your password: {ran}")
@@ -219,9 +226,13 @@ def ckeck_email():
                                     smtp.send_message(msg)   
                                 
                             elif firest!="approved"  and l2=="%": 
-
+                                with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                    settings = json.load(f)
+                                    settings["advance-mode"]="0"
+                                    with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                        json.dump(settings,f,indent=4)
                                 msg= EmailMessage()
-                                msg["Subject"]="closeing firewall"
+                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=email_rvs
                                 msg.set_content(f"he dont allowed you")
@@ -250,7 +261,7 @@ def ckeck_email():
                                 ips=str(ips)
                                 c.sendall(ips.encode())
                                 msg= EmailMessage()
-                                msg["Subject"]="closeing firewall"
+                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=email_rvs
                                 msg.set_content("rule delete successfully.")
@@ -262,7 +273,7 @@ def ckeck_email():
                             elif firest!="approved"  and l2=="|":
                                 
                                 msg= EmailMessage()
-                                msg["Subject"]="closeing firewall"
+                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=email_rvs
                                 msg.set_content("the adminstretor do not acsybt to DELETE the rule")
@@ -279,7 +290,7 @@ def ckeck_email():
                                 l=l.replace("#","")
                         
 
-                                with open("sent_ids.txt", "r") as f:
+                                with open("D:\FWSH-files\sent_ids.txt", "r") as f:
                                     sent_ids=f.readlines()
                                     for line in sent_ids:
                                         if line.startswith("~"):
@@ -288,11 +299,11 @@ def ckeck_email():
                                             timer=line[1:]
                                             
                                             
-                                with open("sent_ids.txt", "r") as f:
+                                with open("D:\FWSH-files\sent_ids.txt", "r") as f:
                                     sent_ids=f.read()
                                     sent_ids=sent_ids.replace(l1,"")  
                                     
-                                with open("sent_ids.txt", "w") as f:
+                                with open("D:\FWSH-files\sent_ids.txt", "w") as f:
                                     sent_id="".join(map(str,sent_ids))
                                     f.write(sent_id) 
                                 
@@ -354,6 +365,10 @@ def ckeck_email():
                                     length=settings["length"]
                                     length+=1
                                     settings["length"]=length
+                                    s=settings["checkrulename"]
+                                    s=list(s)
+                                    s.append(rulename)
+                                    settings["checkrulename"]=s 
                                     s=settings["ruleName"]
                                     s=list(s)
                                     s.append(rulename)
@@ -366,7 +381,7 @@ def ckeck_email():
                                     with open(r'D:\FWSH-files\settings.json', 'w') as f:
                                         json.dump(settings,f,indent=4)
                                 msg= EmailMessage()
-                                msg["Subject"]="closeing firewall"
+                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=email_rvs
                                 msg.set_content("rule ADD successfully.")
@@ -377,7 +392,7 @@ def ckeck_email():
                                     smtp.send_message(msg)
                             elif firest!="approved" and l2=="#":
                                 msg= EmailMessage()
-                                msg["Subject"]="closeing firewall"
+                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=email_rvs
                                 msg.set_content("the adminstretor do not acsybt to ADD the rule")
@@ -392,7 +407,8 @@ def ckeck_email():
                             mail.expunge()
         mail.logout()
         time.sleep(5)
-th.Thread(target=ckeck_email).start()
+if user_state=="USER":
+    th.Thread(target=ckeck_email).start()
 #keys to contrule
 l=1
 ll=1
@@ -510,7 +526,7 @@ def do_ruls():
         
 #function to add rules to the firewall
 def add__rule():
-    global lw
+    global lw,rulename
     time.sleep(0.5)
     with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
@@ -531,7 +547,10 @@ def add__rule():
     with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         settings["length"]=settings["length"]-1
-        
+        v=settings["checkrulename"]
+        v=list(v)        
+        v.remove(rulename)
+        settings["checkrulename"]=v
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
         with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
@@ -710,6 +729,6 @@ while True:
         with open(r"D:\FWSH-files\check.txt","w")as f:
             f.write("")
     #run the main function
-    #sa.run(main())
+    sa.run(main())
     #return to do this loop evry 10s
     time.sleep(10)

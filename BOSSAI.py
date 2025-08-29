@@ -1,12 +1,13 @@
 import socket as sk
 import json
-
+import uuid
 import random
 import smtplib
 from email.message import EmailMessage
 import time
 import os
-
+# check if these code need anther itmes from the file "settings.json"
+# check all code
 
 l=1
 while True:
@@ -19,7 +20,7 @@ while True:
         pathfile=os.path.exists(r"D:\FWSH-files\settings.json")
 
         if pathfile==False:
-            s='{"email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
+            s='{"user-state": "ADMEN","email": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","checkrulename": [],"ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
             p=json.loads(s)
             with open(r"D:\FWSH-files\settings.json","w")as f:
                 json.dump(p,f,indent=4)
@@ -62,7 +63,7 @@ while True:
             ppp=generate_password()
             print("Preparing to send the password to your email.")
             msg= EmailMessage()
-            msg["Subject"]="Enter password"
+            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
             msg["From"]="aofnotification@gmail.com"
             msg["To"]=check4
             msg.set_content(f"your password is: {ppp}")
@@ -250,7 +251,7 @@ while True:
                     ppp=generate_password()
                     print("Preparing to send the password to your email.")
                     msg= EmailMessage()
-                    msg["Subject"]="Enter password"
+                    msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                     msg["From"]="aofnotification@gmail.com"
                     msg["To"]=check4
                     msg.set_content(f"your password is: {ppp}")
@@ -340,10 +341,14 @@ while True:
 
 
                 elif masge=="delete rule":
+                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                        settings = json.load(f)
+                        check6=settings["checkrulename"]
+                        check6=list(check6)
                     ppp=generate_password()
                     print("Preparing to send the password to your email.")
                     msg= EmailMessage()
-                    msg["Subject"]="Enter password"
+                    msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                     msg["From"]="aofnotification@gmail.com"
                     msg["To"]=check4
                     msg.set_content(f"your password is: {ppp}")
@@ -361,13 +366,25 @@ while True:
                         else:
                             print("Try again.")
                             continue
-                    delrule=input("Enter the rule name: ")
-                    delrule=delrule.strip()
+
+                    while True:
+                        delrule=input("Enter the rule name: ")
+                        delrule=delrule.strip()
+                        if "#" in delrule or "|" in delrule or "%" in delrule or "~" in delrule:
+                            print("try agean")
+                            continue
+                        if delrule in check6:
+                            print("try agean")
+                            continue
+                        else:
+                            break
+
                     with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         settings["deleteR"]=delrule
                         with open(r'D:\FWSH-files\settings.json', 'w') as f:
                             json.dump(settings,f,indent=4)
+
                     on="del"
                     c.sendall(on.encode())
                     c.recv(1024).decode()
@@ -378,12 +395,14 @@ while True:
                     ips=str(ips)
                     c.sendall(ips.encode())
                     print(f"Rule '{delrule}' deleted successfully.")
+                    
+                    
 
                 elif masge=="advance mode":
                     ppp=generate_password()
                     print("Preparing to send the password to your email.")
                     msg= EmailMessage()
-                    msg["Subject"]="Enter password"
+                    msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                     msg["From"]="aofnotification@gmail.com"
                     msg["To"]=check4
                     msg.set_content(f"your password is: {ppp}")
@@ -521,7 +540,7 @@ while True:
                     ppp=generate_password()
                     print("Preparing to send the password to your email.")
                     msg= EmailMessage()
-                    msg["Subject"]="Enter password"
+                    msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                     msg["From"]="aofnotification@gmail.com"
                     msg["To"]=check4
                     msg.set_content(f"your password is: {ppp}")
