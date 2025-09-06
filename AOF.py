@@ -118,7 +118,13 @@ with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["ruleName"]!=[]:
+        for aa in settings["ruleName"]:
+            su.run(f'netsh advfirewall firewall delete rule name="{aa}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
         settings["ruleName"]=[]
+        with open(r'D:\FWSH-files\settings.json', 'w') as f:
+            json.dump(settings,f,indent=4)
+    if settings["checkrulename"]!=[]: 
+        settings["checkrulename"]=[]
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["constan"]!="no":
