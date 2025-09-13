@@ -6,7 +6,7 @@ import smtplib
 from email.message import EmailMessage
 import time
 import os
-# check if these code need anther itmes from the file "settings.json"
+
 # check all code
 
 l=1
@@ -48,14 +48,7 @@ while True:
         
 
         def generate_password():
-            
-            row1 = []
-            for _ in range(6):
-                ran = random.randint(0, 9)
-                ran = str(ran)
-                row1.append(ran)
-            password = ''.join(map(str,row1))
-            row1.clear()
+            password=random.randint(111111,999999)
             return password
         
         if l==1:
@@ -235,10 +228,15 @@ while True:
 
                 elif masge=="add new rule":
                     
-                    
-                    rolu=input("Enter the rule: ")
-                    rolu=rolu.strip()
-                    rule=rolu.replace("'",'"')
+                    while True:
+                        rolu=input("Enter the rule: ")
+                        rolu=rolu.strip()
+                        rule=rolu.replace("'",'"')
+                        if "#" in rule or "|" in rule or "%" in rule or "~" in rule:
+                            print("try agean")
+                            continue
+                        else:
+                            break
                     while True:
                         timer=input("Enter the timer value: ")
                         timer=timer.strip()
@@ -424,11 +422,17 @@ while True:
                     print("Enter 'exit' to leave 'advanced mode'.\n")    
                     while True:
                         
-                        rolu=input("Enter the rule or (exit): ")
-                        rolu=rolu.strip()
                         
-                        rule=rolu.replace("'",'"')
-                        if rolu=="exit":
+                        while True:
+                            rolu=input("Enter the rule or (exit): ")
+                            rolu=rolu.strip()
+                            rule=rolu.replace("'",'"')
+                            if "#" in rule or "|" in rule or "%" in rule or "~" in rule:
+                                print("try agean")
+                                continue
+                            else:
+                                break
+                        if rule=="exit":
                             break
                         while True:
                             constan=input("Enter state constant (yes for permanent rule, no for temporary): ")

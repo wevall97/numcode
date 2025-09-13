@@ -6,10 +6,6 @@ from email.message import EmailMessage
 import time
 import os
 import subprocess as su
-import threading as th
-import imaplib
-import email as email1
-from email.header import decode_header
 import uuid
 
 
@@ -51,14 +47,7 @@ while True:
             
 
         def generate_password():
-            
-            row1 = []
-            for _ in range(6):
-                ran = random.randint(0, 9)
-                ran = str(ran)
-                row1.append(ran)
-            password = ''.join(map(str,row1))
-            row1.clear()
+            password=random.randint(111111,999999)
             return password
         
         if l==1:
@@ -123,16 +112,11 @@ while True:
                 
                 
                 if check2=="1":
-                    check3=settings["IP-S"]
+                    ip=settings["IP-S"]
                     
-                
-                    ip = check3
-                    
-                    
-                
-            
-            
-            
+       
+
+
             while True:
                 try:
                     c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
@@ -406,10 +390,16 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                             print("Enter 'exit' to leave 'advanced mode'.\n")
                             while True:
                                 
-                                rolu=input("Enter the rule or (exit): ")
-                                rolu=rolu.strip()
-                                rule=rolu.replace("'",'"')
-                                if rolu=="exit":
+                                while True:
+                                    rolu=input("Enter the rule or (exit): ")
+                                    rolu=rolu.strip()
+                                    rule=rolu.replace("'",'"')
+                                    if "#" in rule or "|" in rule or "%" in rule or "~" in rule:
+                                        print("try agean")
+                                        continue
+                                    else:
+                                        break
+                                if rule=="exit":
                                     with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                         settings = json.load(f)
                                         settings["advance-mode"]="0"

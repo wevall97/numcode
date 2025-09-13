@@ -10,19 +10,15 @@ from email.message import EmailMessage
 import os
 import imaplib
 import email as email1
-from email.header import decode_header
 import uuid
 import random
 # check all code
-# rediseny the "settings.json" just in this code
 
 
 
-#check FWSH-FILES it is exists
-try:
-    os.mkdir(r"D:\FWSH-files")
-except FileExistsError:
-    pass
+
+
+
 #creat check.txt 
 with open(r"D:\FWSH-files\check.txt","w")as f:
         f.write("")
@@ -36,13 +32,7 @@ with open(r"D:\FWSH-files\check.txt","r",encoding='utf-8')as f:
             ld+=1
     rellen=ld
     
-#check D:\FWSH-files\settings.json it is exists
-pathfile=os.path.exists(r"D:\FWSH-files\settings.json")
-if pathfile==False:
-    s='{"email": "","bossemail": "","IP-S": "","IP-U": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
-    p=json.loads(s)
-    with open(r"D:\FWSH-files\settings.json","w")as f:
-        json.dump(p,f,indent=4)
+
 
 
 pathfile=os.path.exists(r"D:\FWSH-files\sent_ids.txt")

@@ -1,7 +1,5 @@
 import random
 import asyncio as sa
-import smtplib
-from email.message import EmailMessage
 import pandas as pd
 import json
 import time
