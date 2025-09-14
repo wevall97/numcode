@@ -3,7 +3,7 @@ import subprocess as su
 import socket as sk
 import threading as th
 import json
-#import FWSetting as fs
+import fireSett as fs
 import asyncio as sa
 import smtplib
 from email.message import EmailMessage
@@ -511,7 +511,7 @@ def do_ruls():
     global l
     if fws=="off" and l==1:
         l=0
-        #fs.fireOff(fws,timer)
+        fs.fireOff(fws,timer)
         with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f)
             settings["FWS"]="null"
@@ -522,7 +522,7 @@ def do_ruls():
         
 #function to add rules to the firewall
 def add__rule():
-    global lw,rulename
+    global lw,rulename,rellen
     time.sleep(0.5)
     with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
@@ -538,14 +538,14 @@ def add__rule():
             json.dump(settings,f,indent=4) 
     time.sleep(1)
     lw=1
-    #fs.add_rule(rulename,rule,timerr)
-    
+    rulename1=fs.add_rule(rulename,rule,timerr)
+    # لو حصل مشكله خت هنا زمن انتظار
     with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         settings["length"]=settings["length"]-1
         v=settings["checkrulename"]
         v=list(v)        
-        v.remove(rulename)
+        v.remove(rulename1)
         settings["checkrulename"]=v
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
@@ -573,8 +573,8 @@ while True:
     
     # #the main function that contrule in evry things
     async def main():
-        pass
-        global l,ll,email_rvs,ips,email_rvs,rellen,adad,ips,l3,l4,lw
+        # pass
+        global l,ll,email_rvs,ips,email_rvs,rellen,adad,ips,l3,l4,lw,constan
         
         if ll==1:
             #run the seconed conn function
