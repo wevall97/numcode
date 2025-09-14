@@ -286,7 +286,9 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                         check6=settings["checkrulename"]
                         check6=list(check6)
                     while True:
-                        delrule=input("Enter the rule name: ")
+                        delrule=input("Enter the rule name or (exit): ")
+                        if delrule!="exit":
+                            break
                         if "#" in delrule or "|" in delrule or "%" in delrule or "~" in delrule:
                             print("try agean")
                             continue
@@ -295,20 +297,22 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                             continue
                         else:
                             break
-                    print("wait antel the adminstretor check your rule\nif the adminstretor respons we will send email to you\n")
-                    delrule=delrule.strip()
-                    chderu=su.run(f'netsh advfirewall firewall show rule name="{delrule}"',shell=True,capture_output=True,text=True)
-                    
-                    chderu=str(chderu.stdout)
-                    
-                    msg= EmailMessage()
-                    msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
-                    msg["From"]="aofnotification@gmail.com"
-                    msg["To"]=bossemail
-                    unique_id = f"<{uuid.uuid4()}@example.com>"
-                    msg['Message-ID'] = unique_id
-                    msg["X-Unique-Thread"]=str(uuid.uuid4())
-                    z=f'''This user who had:
+                    if delrule!="exit":
+                        
+                        print("wait antel the adminstretor check your rule\nif the adminstretor respons we will send email to you\n")
+                        delrule=delrule.strip()
+                        chderu=su.run(f'netsh advfirewall firewall show rule name="{delrule}"',shell=True,capture_output=True,text=True)
+                        
+                        chderu=str(chderu.stdout)
+                        
+                        msg= EmailMessage()
+                        msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                        msg["From"]="aofnotification@gmail.com"
+                        msg["To"]=bossemail
+                        unique_id = f"<{uuid.uuid4()}@example.com>"
+                        msg['Message-ID'] = unique_id
+                        msg["X-Unique-Thread"]=str(uuid.uuid4())
+                        z=f'''This user who had:
 
 Email: {email_rvs}
 IP: {ips}
@@ -317,17 +321,17 @@ Want to "DELETE" this rule:
 {chderu}
 
 if you allow to do this type (Approved.) or type (deny) to disallow'''
-                    msg.set_content(z)
-                    email="aofnotification@gmail.com"
-                    password="oqgspkawnyeftyjw"
-                    
-                    with smtplib.SMTP("smtp.gmail.com",587) as smtp:
-                        smtp.starttls()
-                        smtp.login(email,password)
-                        smtp.send_message(msg)
+                        msg.set_content(z)
+                        email="aofnotification@gmail.com"
+                        password="oqgspkawnyeftyjw"
                         
-                    with open(r"D:\FWSH-files\sent_ids.txt", "a") as f:
-                        f.write(unique_id+"|"+delrule+"\n")
+                        with smtplib.SMTP("smtp.gmail.com",587) as smtp:
+                            smtp.starttls()
+                            smtp.login(email,password)
+                            smtp.send_message(msg)
+                            
+                        with open(r"D:\FWSH-files\sent_ids.txt", "a") as f:
+                            f.write(unique_id+"|"+delrule+"\n")
                         
                   
 

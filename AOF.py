@@ -386,7 +386,23 @@ def ckeck_email():
                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                                     smtp.login(email,password)
                                     smtp.send_message(msg)
+
+
+
                             elif firest!="approved" and l2=="#":
+                                with open("D:\FWSH-files\sent_ids.txt", "r") as f:
+                                    sent_ids=f.readlines()
+                                    for line in sent_ids:
+                                        if line.startswith("~"):
+                                            l1=line   
+                                with open("D:\FWSH-files\sent_ids.txt", "r") as f:
+                                    sent_ids=f.read()
+                                    sent_ids=sent_ids.replace(l1,"") 
+                                    
+                                with open("D:\FWSH-files\sent_ids.txt", "w") as f:
+                                    sent_id="".join(map(str,sent_ids))
+                                    f.write(sent_id) 
+
                                 msg= EmailMessage()
                                 msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
