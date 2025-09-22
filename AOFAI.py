@@ -7,9 +7,10 @@ import time
 import os
 import subprocess as su
 import uuid
-
-
+# one day maybe the "ip-u" change, find a slution
+# maybe i must do a "ports rows" to avoid any errors that incloud ports
 # check all code
+
 l=1
 while True:
     try:
@@ -48,6 +49,7 @@ while True:
 
         def generate_password():
             password=random.randint(111111,999999)
+            password=str(password)
             return password
         
         if l==1:

@@ -74,7 +74,8 @@ while True:
 #return D:\FWSH-files\settings.json to the defult
 with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f) 
-    bossemail=settings["bossemail"]
+    if settings["user-state"]=="USER":
+        bossemail=settings["bossemail"]
     if settings["FWS"]=="":
         settings["FWS"]="null"
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
@@ -108,12 +109,12 @@ with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["ruleName"]!=[]:
-        for aa in settings["ruleName"]:
-            su.run(f'netsh advfirewall firewall delete rule name="{aa}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
         settings["ruleName"]=[]
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["checkrulename"]!=[]: 
+        for aa in settings["checkrulename"]:
+            su.run(f'netsh advfirewall firewall delete rule name="{aa}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
         settings["checkrulename"]=[]
         with open(r'D:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
@@ -635,7 +636,7 @@ while True:
                 c.sendall(ips.encode())
                 #send email to the user
                 msg= EmailMessage()
-                msg["Subject"]="closeing firewall"
+                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                 msg["From"]="aofnotification@gmail.com"
                 msg["To"]=email_rvs
                 msg.set_content(f"your firewall state has been off,we rutern it to be open.\ndo the protocol to check your devic if you had been hackt")
@@ -705,7 +706,7 @@ while True:
             c.sendall(ips.encode())
             #send email to user
             msg= EmailMessage()
-            msg["Subject"]="add strange rule"
+            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
             msg["From"]="aofnotification@gmail.com"
             msg["To"]=email_rvs
             msg.set_content(f"there are strange rule had been add to your firewall\ndo the protocol to check your devic if you had been hackt")
@@ -728,7 +729,7 @@ while True:
             c.sendall(ips.encode())
             #send email to user
             msg= EmailMessage()
-            msg["Subject"]="delete strange rule"
+            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
             msg["From"]="aofnotification@gmail.com"
             msg["To"]=email_rvs
             msg.set_content(f"there are some rule had been delete from your firewall\ndo the protocol to check your devic if you had been hackt")

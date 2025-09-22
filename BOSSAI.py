@@ -6,7 +6,8 @@ import smtplib
 from email.message import EmailMessage
 import time
 import os
-
+# one day maybe the "ip-u" change, find a slution
+# maybe i must do a "ports rows" to avoid any errors that incloud ports
 # check all code
 
 l=1
@@ -49,24 +50,26 @@ while True:
 
         def generate_password():
             password=random.randint(111111,999999)
+            password=str(password)
             return password
         
         if l==1:
             l=0
             ppp=generate_password()
-            print("Preparing to send the password to your email.")
-            msg= EmailMessage()
-            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
-            msg["From"]="aofnotification@gmail.com"
-            msg["To"]=check4
-            msg.set_content(f"your password is: {ppp}")
-            email="aofnotification@gmail.com"
-            password="oqgspkawnyeftyjw"
-            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                smtp.login(email,password)
-                smtp.send_message(msg)
-            checkpass=input("Enter password: ")
-            checkpass=checkpass.strip()
+            # print("Preparing to send the password to your email.")
+            # msg= EmailMessage()
+            # msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+            # msg["From"]="aofnotification@gmail.com"
+            # msg["To"]=check4
+            # msg.set_content(f"your password is: {ppp}")
+            # email="aofnotification@gmail.com"
+            # password="oqgspkawnyeftyjw"
+            # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+            #     smtp.login(email,password)
+            #     smtp.send_message(msg)
+            # checkpass=input("Enter password: ")
+            # checkpass=checkpass.strip()
+            checkpass=ppp
         if checkpass==ppp or l==0:
             with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
@@ -331,6 +334,10 @@ while True:
                         s=list(s)
                         s.append(timer)
                         settings["timerR"]=s
+                        s=settings["checkrulename"]
+                        s=list(s)
+                        s.append(rulename)
+                        settings["checkrulename"]=s
                         settings["Rolue"]=rule
                         with open(r'D:\FWSH-files\settings.json', 'w') as f:
                             json.dump(settings,f,indent=4)
@@ -531,6 +538,11 @@ while True:
                                 s=list(s)
                                 s.append(timer)
                                 settings["timerR"]=s
+
+                                s=settings["checkrulename"]
+                                s=list(s)
+                                s.append(rulename)
+                                settings["checkrulename"]=s
                             settings["Rolue"]=rule
                             with open(r'D:\FWSH-files\settings.json', 'w') as f:
                                 json.dump(settings,f,indent=4)

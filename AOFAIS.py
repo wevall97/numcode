@@ -161,7 +161,7 @@ async def h(reder,writer):
                     }
 
                     s=pd.DataFrame(datafrme)
-                    s.to_csv("firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                    s.to_csv(r"D:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
                 datafrme={
                         "IP":[ips],
                         "FWS":["off"],
@@ -170,7 +170,7 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv("firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                d.to_csv(r"D:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
             
 
            
