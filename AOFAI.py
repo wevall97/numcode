@@ -15,20 +15,23 @@ l=1
 while True:
     try:
         try:
-            os.mkdir(r"D:\FWSH-files")
-        except FileExistsError:
-            pass
+            cod="D"
+            os.mkdir(rf"{cod}:\FWSH-files")
+        except Exception:
+            cod="C"
+            os.mkdir(rf"{cod}:\FWSH-files")
 
-        pathfile=os.path.exists(r"D:\FWSH-files\settings.json")
+        pathfile=os.path.exists(rf"{cod}:\FWSH-files\settings.json")
 
         if pathfile==False:
-            s='{"user-state": "USER","email": "","bossemail": "","IP-S": "","IP-U": "","advance-mode": "0","advance-password": "0","firstconn": "0","FWS": "","timerF": "","deleteR": "null","checkrulename": [],"ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
+            s='{"user-state": "USER","email": "","bossemail": "","IP-S": "","IP-U": "","advance-mode": "0","advance-password": "0","firstconn": "0","cod": "","FWS": "","timerF": "","deleteR": "null","checkrulename": [],"ruleName": [],"Rolue": "null","constan": "no","timerR": [],"length": 0,"length2": 0}'
             p=json.loads(s)
-            with open(r"D:\FWSH-files\settings.json","w")as f:
+            with open(rf"{cod}:\FWSH-files\settings.json","w")as f:
                 json.dump(p,f,indent=4)
                 
-        with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
+                settings["cod"]=cod
                 if settings["email"]=="":
                     while True:
                         emai=input("Email Address: ")
@@ -36,13 +39,13 @@ while True:
                             
                             emai=emai.strip()
                             settings["email"]=emai
-                            with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                            with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
                                 json.dump(settings,f,indent=4)
                                 break
                         else:
                             print("Please enter a valid email address.")
                             continue
-        with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f)
             check4=settings["email"]
             
@@ -74,7 +77,7 @@ while True:
             
             
             
-            with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 
                 
@@ -102,7 +105,7 @@ while True:
                             row.clear()
                             break
                     
-                    with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                    with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
                         settings["IP-S"] =ip
                         settings["IP-U"] =ips
                         settings["firstconn"] = "1"
@@ -137,10 +140,10 @@ while True:
                     if chck=='1':
                         c.sendall("1".encode())
                         bossemail=c.recv(1024).decode('utf-8')
-                        with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                        with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
                             settings["bossemail"]=bossemail 
-                            with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                            with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
                                 json.dump(settings,f,indent=4)
                         break
                 except Exception:
@@ -149,7 +152,7 @@ while True:
         
                     
                     
-            with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 ips=settings["IP-U"]  
                 email_rvs=settings["email"]
@@ -216,13 +219,13 @@ while True:
                         c.sendall(ips.encode())
                     
                     
-                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         data = json.load(f)
                         data["FWS"]=rolu
                         if rolu=="off":
                             data["timerF"]=timer
                         
-                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
                             json.dump(data,f,indent=4)
                     print("Firewall state has been changed.")
                     
@@ -273,7 +276,7 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                         smtp.login(email,password)
                         smtp.send_message(msg)
                         
-                    with open(r"D:\FWSH-files\sent_ids.txt", "a") as f:
+                    with open(rf"{cod}:\FWSH-files\sent_ids.txt", "a") as f:
                         f.write(unique_id+"#"+rule+"~"+timer+"\n")
                     
                     
@@ -283,7 +286,7 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                 elif masge=="delete rule":
                     
                     
-                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         check6=settings["checkrulename"]
                         check6=list(check6)
@@ -332,14 +335,14 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                             smtp.login(email,password)
                             smtp.send_message(msg)
                             
-                        with open(r"D:\FWSH-files\sent_ids.txt", "a") as f:
+                        with open(rf"{cod}:\FWSH-files\sent_ids.txt", "a") as f:
                             f.write(unique_id+"|"+delrule+"\n")
                         
                   
 
                 elif masge=="advance mode":
                     
-                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         advance_password=settings["advance-password"]
                         check5=settings["advance-mode"]
@@ -369,13 +372,13 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                                 smtp.login(email,password)
                                 smtp.send_message(msg)
                                 
-                            with open(r"D:\FWSH-files\sent_ids.txt", "a") as f:
+                            with open(rf"{cod}:\FWSH-files\sent_ids.txt", "a") as f:
                                 f.write(unique_id+"%"+"Advance mode"+"\n")
 
-                            with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 settings["advance-mode"]="1"
-                                with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
                                     json.dump(settings,f,indent=4)
 
                         elif check5=="1" and settings["advance-password"]=="0":
@@ -387,10 +390,10 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                                     print("try agen")
                                     continue
                                 elif checkpass1==advance_password:
-                                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                    with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                         settings = json.load(f)
                                         settings["advance-password"]="0"
-                                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
                                             json.dump(settings,f,indent=4)
                                     break
                             print("Enter 'exit' to leave 'advanced mode'.\n")
@@ -406,10 +409,10 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                                     else:
                                         break
                                 if rule=="exit":
-                                    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                    with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                         settings = json.load(f)
                                         settings["advance-mode"]="0"
-                                        with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
                                             json.dump(settings,f,indent=4)
                                     break
                                 while True:
@@ -492,7 +495,7 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                                 
                                 
                                     
-                                with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                     settings = json.load(f)
                                     settings["constan"]=constan
                                     if constan=="no":
@@ -515,7 +518,7 @@ if you allow to do this type (Approved.) or type (deny) to disallow'''
                                         s.append(timer)
                                         settings["timerR"]=s
                                     settings["Rolue"]=rule
-                                    with open(r'D:\FWSH-files\settings.json', 'w') as f:
+                                    with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
                                         json.dump(settings,f,indent=4)
                                 print("Rule added successfully.")
         else:
