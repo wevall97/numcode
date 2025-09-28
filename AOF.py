@@ -15,36 +15,9 @@ import random
 # check all code
 
 
-try:
-    with open(r'D:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
-        settings = json.load(f)
-        cod=settings["cod"]
-except Exception:
-    with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
-        settings = json.load(f) 
-        cod=settings["cod"]
-
-        
-
-#creat check.txt 
-with open(rf"{cod}:\FWSH-files\check.txt","w")as f:
-        f.write("")
-#cuntant firewall rules lenghth
-su.run("netsh advfirewall firewall show rule name=all > D:\FWSH-files\check.txt",shell=True,text=True,capture_output=False,stdout=su.DEVNULL,stderr=su.DEVNULL)
-with open(rf"{cod}:\FWSH-files\check.txt","r",encoding='utf-8')as f:
-    a=f.readlines()
-    ld=0
-    for line in a:
-        if "Rule Name:" in line:
-            ld+=1
-    rellen=ld
-    
-
-
-
-pathfile=os.path.exists(rf"{cod}:\FWSH-files\sent_ids.txt")
+pathfile=os.path.exists(r"C:\FWSH-files\sent_ids.txt")
 if pathfile==False:
-    with open(rf"{cod}:\FWSH-files\sent_ids.txt","w")as f:
+    with open(r"C:\FWSH-files\sent_ids.txt","w")as f:
         pass
 
 #check firewall state       
@@ -56,7 +29,7 @@ if "State                                 OFF" in a or len(a) != 2094:
 #conn with the praimry conn   
 while True:
     try:
-        with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f) 
             ip=settings["IP-S"]
         
@@ -79,76 +52,96 @@ while True:
 
 
 #return D:\FWSH-files\settings.json to the defult
-with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f) 
     if settings["user-state"]=="USER":
         bossemail=settings["bossemail"]
     if settings["FWS"]=="":
         settings["FWS"]="null"
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["timerF"]=="":
         settings["timerF"]="0"
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["Rolue"]!="null":
         settings["Rolue"]="null"
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["FWS"]=="off" or settings["FWS"]=="on" or settings["FWS"]=="off-all":
         settings["FWS"]="null"
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["timerF"]!="0":
         settings["timerF"]="0"
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
-    if settings["length"]!=0:
-        settings["length"]=0
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
-            json.dump(settings,f,indent=4)
-    if settings["length2"]!=0:
-        settings["length2"]=0
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+    
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["timerR"]!=[]:
         settings["timerR"]=[]
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["ruleName"]!=[]:
         settings["ruleName"]=[]
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["checkrulename"]!=[]: 
         for aa in settings["checkrulename"]:
             su.run(f'netsh advfirewall firewall delete rule name="{aa}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
         settings["checkrulename"]=[]
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["constan"]!="no":
         settings["constan"]="no"
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
+            json.dump(settings,f,indent=4)
+    if settings["advance-mode"]!="0":
+        settings["advance-mode"]="0"
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     if settings["deleteR"]!="null":
         settings["deleteR"]="null"
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
     email_rvs=settings["email"]
     user_state=settings["user-state"]
 
 
 
+with open(r"C:\FWSH-files\check.txt","w")as f:
+        f.write("")
+#cuntant firewall rules lenghth
+su.run(r"netsh advfirewall firewall show rule name=all > C:\FWSH-files\check.txt",shell=True,text=True,capture_output=False,stdout=su.DEVNULL,stderr=su.DEVNULL)
+with open(r"C:\FWSH-files\check.txt","r",encoding='utf-8')as f:
+    a=f.readlines()
+    ld=0
+    for line in a:
+        if "Rule Name:" in line:
+            ld+=1
+    rellen=ld
+
+def get_wifi_mac():
+    result = su.check_output("netsh wlan show interfaces", shell=True, text=True)
+
+    for line in result.splitlines():
+        if "Physical address" in line:
+            mac = line.split(":", 1)[1].strip()  
+            return mac 
+
 def ckeck_email():
-    with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+    
+    with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         ips=settings["IP-U"]
-    global status,from_,timer,cod
+    global status,from_,timer
     while True:
         print("1")
         IMAP_SERVER = "imap.gmail.com"
         EMAIL_ACCOUNT = "aofnotification@gmail.com"
         EMAIL_PASSWORD = "oqgspkawnyeftyjw"
-        with open(rf"{cod}:\FWSH-files\sent_ids.txt", "r", encoding='utf-8') as f:
+        with open(r"C:\FWSH-files\sent_ids.txt", "r", encoding='utf-8') as f:
             sent_ids=f.read().strip()
             
         mail = imaplib.IMAP4_SSL(IMAP_SERVER)
@@ -172,14 +165,14 @@ def ckeck_email():
                         if part.get_content_type() == "text/plain":
                             body = part.get_payload(decode=True).decode()
                             firest=body.strip().splitlines()[0]
-                            firest=str(firest.strip())
+                            firest=str(firest.strip()).lower()
                            
                             sent_ids=sent_ids.replace(in_reply_to,"")
                             
-                            with open(rf"{cod}:\FWSH-files\sent_ids.txt", "w") as f:
+                            with open(r"C:\FWSH-files\sent_ids.txt", "w") as f:
                                 sent_id="".join(map(str,sent_ids))
                                 f.write(sent_id)
-                            with open(rf"{cod}:\FWSH-files\sent_ids.txt", "r") as f:
+                            with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
                                 sent_ids=f.readlines()
                                 for line in sent_ids:
                                     if line.startswith("|") or line.startswith("#") or line.startswith("%"):
@@ -190,22 +183,22 @@ def ckeck_email():
                                             chck1=l.index("~")
                                             l=l[:chck1]
                                             l1=l
-                                            with open(rf"{cod}:\FWSH-files\sent_ids.txt", "r") as f:
+                                            with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
                                                 sent_ids=f.read()
                                                 sent_ids=sent_ids.replace("#","")  
                                                 
                                                 
-                                            with open(rf"{cod}:\FWSH-files\sent_ids.txt", "w") as f:
+                                            with open(r"C:\FWSH-files\sent_ids.txt", "w") as f:
                                                 sent_id="".join(map(str,sent_ids))
                                                 f.write(sent_id)  
                                            
                                             
-                            with open(rf"{cod}:\FWSH-files\sent_ids.txt", "r") as f:
+                            with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
                                 sent_ids=f.read()
                                 
                                 sent_ids=sent_ids.replace(l1,"")  
                                 
-                            with open(rf"{cod}:\FWSH-files\sent_ids.txt", "w") as f:
+                            with open(r"C:\FWSH-files\sent_ids.txt", "w") as f:
                                 sent_id="".join(map(str,sent_ids))
                                 f.write(sent_id)     
 
@@ -213,10 +206,10 @@ def ckeck_email():
                                 
                                 ran = random.randint(100000, 999999)
                                 ran=str(ran)
-                                with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                     settings = json.load(f)
                                     settings["advance-password"]=ran
-                                    with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+                                    with open(r'C:\FWSH-files\settings.json', 'w') as f:
                                         json.dump(settings,f,indent=4)
                                 msg= EmailMessage()
                                 msg["Subject"]=f"Enter Password - ID({str(uuid.uuid4())[:8]})"
@@ -230,10 +223,10 @@ def ckeck_email():
                                     smtp.send_message(msg)   
                                 
                             elif firest!="approved"  and l2=="%": 
-                                with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                     settings = json.load(f)
                                     settings["advance-mode"]="0"
-                                    with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+                                    with open(r'C:\FWSH-files\settings.json', 'w') as f:
                                         json.dump(settings,f,indent=4)
                                 msg= EmailMessage()
                                 msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
@@ -249,11 +242,11 @@ def ckeck_email():
                                    
                             if firest=="approved" and l2=="|":
                                 
-                                with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                     settings = json.load(f)
                                     settings["deleteR"]=l
                                     
-                                    with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+                                    with open(r'C:\FWSH-files\settings.json', 'w') as f:
                                         json.dump(settings,f,indent=4)
                                 on="del"
                                 c.sendall(on.encode())
@@ -264,6 +257,8 @@ def ckeck_email():
                                 c.recv(1024).decode()
                                 ips=str(ips)
                                 c.sendall(ips.encode())
+                                c.recv(1024).decode()
+                                c.sendall(get_wifi_mac().encode())
                                 msg= EmailMessage()
                                 msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
@@ -294,7 +289,7 @@ def ckeck_email():
                                 l=l.replace("#","")
                         
 
-                                with open(rf"{cod}:\FWSH-files\sent_ids.txt", "r") as f:
+                                with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
                                     sent_ids=f.readlines()
                                     for line in sent_ids:
                                         if line.startswith("~"):
@@ -303,11 +298,11 @@ def ckeck_email():
                                             timer=line[1:]
                                             
                                             
-                                with open(rf"{cod}:\FWSH-files\sent_ids.txt", "r") as f:
+                                with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
                                     sent_ids=f.read()
                                     sent_ids=sent_ids.replace(l1,"")  
                                     
-                                with open(rf"{cod}:\FWSH-files\sent_ids.txt", "w") as f:
+                                with open(r"C:\FWSH-files\sent_ids.txt", "w") as f:
                                     sent_id="".join(map(str,sent_ids))
                                     f.write(sent_id) 
                                 
@@ -345,6 +340,8 @@ def ckeck_email():
                                 c.sendall(l.encode())
                                 c.recv(1024).decode()
                                 c.sendall("no".encode())
+                                c.recv(1024).decode()
+                                c.sendall(get_wifi_mac().encode())
                                 if timer.endswith("m"):
                                     lens=len(timer)
                                     timer=timer[:lens-1]
@@ -364,11 +361,9 @@ def ckeck_email():
                                 
                             
                                     
-                                with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                     settings = json.load(f)
-                                    length=settings["length"]
-                                    length+=1
-                                    settings["length"]=length
+                                    
                                     s=settings["checkrulename"]
                                     s=list(s)
                                     s.append(rulename)
@@ -382,7 +377,7 @@ def ckeck_email():
                                     s.append(timer)
                                     settings["timerR"]=s
                                     settings["Rolue"]=l
-                                    with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+                                    with open(r'C:\FWSH-files\settings.json', 'w') as f:
                                         json.dump(settings,f,indent=4)
                                 msg= EmailMessage()
                                 msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
@@ -398,16 +393,16 @@ def ckeck_email():
 
 
                             elif firest!="approved" and l2=="#":
-                                with open(rf"{cod}:\FWSH-files\sent_ids.txt", "r") as f:
+                                with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
                                     sent_ids=f.readlines()
                                     for line in sent_ids:
                                         if line.startswith("~"):
                                             l1=line   
-                                with open(rf"{cod}:\FWSH-files\sent_ids.txt", "r") as f:
+                                with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
                                     sent_ids=f.read()
                                     sent_ids=sent_ids.replace(l1,"") 
                                     
-                                with open(rf"{cod}:\FWSH-files\sent_ids.txt", "w") as f:
+                                with open(r"C:\FWSH-files\sent_ids.txt", "w") as f:
                                     sent_id="".join(map(str,sent_ids))
                                     f.write(sent_id) 
 
@@ -432,12 +427,11 @@ if user_state=="USER":
 #keys to contrule
 l=1
 ll=1
-adad=0
-lw=1
+l5=0
 #function to conn to the seconed conn in the server
 def clos_fw():
     
-    global ll,cod
+    global ll
     ll=0
     c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
     c.connect((ip, 9991))
@@ -448,20 +442,20 @@ def clos_fw():
             close=c.recv(1024).decode('utf-8')
             if close=="off":
                 
-                with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     settings["FWS"]="off-all"
                     settings["timerF"]="0"
-                    with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+                    with open(r'C:\FWSH-files\settings.json', 'w') as f:
                         json.dump(settings,f,indent=4)
                 su.run("netsh advfirewall set allprofiles state off",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
             elif close=="on":
                 su.run("netsh advfirewall set allprofiles state on",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
-                with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     settings["FWS"]="null"
                     settings["timerF"]="0"
-                    with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+                    with open(r'C:\FWSH-files\settings.json', 'w') as f:
                         json.dump(settings,f,indent=4)
             
         except Exception:
@@ -472,9 +466,9 @@ def clos_fw():
 
 #function to check the D:\FWSH-files\settings.json evry 10s
 async def check_files():
-    global fws,ip,timer,rule,rulename,timerr,ips,constan,deleteR,adad,adad2,rellen,cod
+    global fws,ip,timer,rule,rulename,timerr,ips,constan,deleteR,rellen
     
-    with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+    with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         
 
@@ -511,44 +505,26 @@ async def check_files():
             timerr=int(timerr)
 
 
-
-        
-        adad=settings["length"]
-        adad2=settings["length2"]
-        if adad2<adad:
-            
-            adad2=adad
-            with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
-                settings["length2"]=adad2
-                json.dump(settings,f,indent=4)
-            rellen=rellen+1
-        elif adad2>adad:
-            
-            adad2=adad
-            with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
-                settings["length2"]=adad2
-                json.dump(settings,f,indent=4)
-            rellen=rellen-1
             
 #function to close the firewall
 def do_ruls():
-    global l,cod
+    global l
     if fws=="off" and l==1:
         l=0
         fs.fireOff(fws,timer)
-        with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f)
             settings["FWS"]="null"
             settings["timerF"]="0"
-            with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+            with open(r'C:\FWSH-files\settings.json', 'w') as f:
                 json.dump(settings,f,indent=4)
         l=1
         
 #function to add rules to the firewall
 def add__rule():
-    global lw,rulename,rellen,cod
+    global rulename,rellen,timerr,rellen1,l5
     time.sleep(0.5)
-    with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+    with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
         a=settings["ruleName"]
         w=settings["timerR"]
@@ -558,39 +534,23 @@ def add__rule():
         w.pop(0)
         settings["ruleName"]=a
         settings["timerR"]=w
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4) 
-    time.sleep(1)
-    lw=1
-    rulename1=fs.add_rule(rulename,rule,timerr)
-    # لو حصل مشكله خت هنا زمن انتظار
-    with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+    
+
+    rulename1=fs.add_rule(rulename,timerr)
+    l5=1
+    rellen1=rellen-1
+    
+    with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f)
-        settings["length"]=settings["length"]-1
         v=settings["checkrulename"]
         v=list(v)        
         v.remove(rulename1)
         settings["checkrulename"]=v
-        with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+        with open(r'C:\FWSH-files\settings.json', 'w') as f:
             json.dump(settings,f,indent=4)
-        with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
-            settings = json.load(f)    
-            adad=settings["length"]
-            adad2=settings["length2"]
-            if adad2<adad:
-                
-                adad2=adad
-                with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
-                    settings["length2"]=adad2
-                    json.dump(settings,f,indent=4)
-                rellen=rellen+1
-            elif adad2>adad:
-                
-                adad2=adad
-                with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
-                    settings["length2"]=adad2
-                    json.dump(settings,f,indent=4)
-                rellen=rellen-1
+        
         
 
 while True:
@@ -598,7 +558,7 @@ while True:
     # #the main function that contrule in evry things
     async def main():
         # pass
-        global l,ll,email_rvs,ips,email_rvs,rellen,adad,ips,l3,l4,lw,constan,cod
+        global l,ll,email_rvs,ips,email_rvs,rellen,ips,l3,l4,constan,rule,rellen1,l5
         
         if ll==1:
             #run the seconed conn function
@@ -615,21 +575,21 @@ while True:
         elif fws=="on":
             #open firewall
             su.run("netsh advfirewall set allprofiles state on",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
-            with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 settings["FWS"]="null"
                 settings["timerF"]="0"
-                with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+                with open(r'C:\FWSH-files\settings.json', 'w') as f:
                     json.dump(settings,f,indent=4)
             l=1
         #check if the firewall state is off without the user send any ordurs
-        with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f)
             check=settings["FWS"]
         if check=="null":
             a=su.run("netsh advfirewall show allprofiles",shell=True,text=True,capture_output=True)
             a=a.stdout
-            with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     firews=settings["FWS"]
                     firews=str(firews)
@@ -641,6 +601,8 @@ while True:
                 c.recv(1024).decode()
                 ips=str(ips)
                 c.sendall(ips.encode())
+                c.recv(1024).decode()
+                c.sendall(get_wifi_mac().encode())
                 #send email to the user
                 msg= EmailMessage()
                 msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
@@ -658,10 +620,10 @@ while True:
         if deleteR!="null":
             su.run(f'netsh advfirewall firewall delete rule name="{deleteR}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
             rellen=rellen-1
-            with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 settings["deleteR"]="null"
-                with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+                with open(r'C:\FWSH-files\settings.json', 'w') as f:
                     json.dump(settings,f,indent=4)
 
 
@@ -671,29 +633,37 @@ while True:
             
             if constan=="yes":
                 su.run(rule,shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+                print("in side")
                 rellen=rellen+1
-            with open(rf'{cod}:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
-                settings = json.load(f)
-                settings["Rolue"]="null"
-                settings["constan"]="no"
+                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                    settings = json.load(f)
+                    settings["Rolue"]="null"
+                    settings["constan"]="no"
                 
-                with open(rf'{cod}:\FWSH-files\settings.json', 'w') as f:
+                with open(r'C:\FWSH-files\settings.json', 'w') as f:
                     json.dump(settings,f,indent=4)
-            if constan=="no":
-                lw=0
+            elif constan=="no":
+                
+                su.run(rule,shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+                rellen=rellen+1
+                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                        settings = json.load(f)
+                        settings["Rolue"]="null"
+                        settings["constan"]="no"
+                        with open(r'C:\FWSH-files\settings.json', 'w') as f:
+                            json.dump(settings,f,indent=4)
                 #run add rules function
                 th.Thread(target=add__rule).start()
 
 
         
         
-        with open(rf"{cod}:\FWSH-files\check.txt","w")as f:
+        with open(r"C:\FWSH-files\check.txt","w")as f:
             f.write("")
         #check firewall rules lenghth
-        if lw==0:
-            time.sleep(3)
-        su.run("netsh advfirewall firewall show rule name=all > D:\FWSH-files\check.txt",shell=True,text=True,capture_output=True)
-        with open(rf"{cod}:\FWSH-files\check.txt","r",encoding='utf-8')as f:
+        
+        su.run(r"netsh advfirewall firewall show rule name=all > C:\FWSH-files\check.txt",shell=True,text=True,capture_output=True)
+        with open(r"C:\FWSH-files\check.txt","r",encoding='utf-8')as f:
             a=f.readlines()
             ld=0
             
@@ -701,6 +671,9 @@ while True:
                 if "Rule Name:" in line:
                     ld+=1
         #if there a rule add to the firewall without ordars from the user the belwo code will run
+        if l5==1:
+            rellen=rellen1
+            l5=0
         if ld>rellen:
             
         
@@ -711,6 +684,8 @@ while True:
             c.recv(1024).decode()
             ips=str(ips)
             c.sendall(ips.encode())
+            c.recv(1024).decode()
+            c.sendall(get_wifi_mac().encode())
             #send email to user
             msg= EmailMessage()
             msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
@@ -734,6 +709,8 @@ while True:
             c.recv(1024).decode()
             ips=str(ips)
             c.sendall(ips.encode())
+            c.recv(1024).decode()
+            c.sendall(get_wifi_mac().encode())
             #send email to user
             msg= EmailMessage()
             msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
@@ -746,7 +723,7 @@ while True:
                 smtp.login(email,password)
                 smtp.send_message(msg)
                     
-        with open(rf"{cod}:\FWSH-files\check.txt","w")as f:
+        with open(r"C:\FWSH-files\check.txt","w")as f:
             f.write("")
     #run the main function
     sa.run(main())
