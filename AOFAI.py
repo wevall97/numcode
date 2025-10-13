@@ -7,7 +7,7 @@ import time
 import os
 import subprocess as su
 import uuid
-
+# in any print do 'try' and if it run make the print = "null" like the line "12" in the "qbit.py" file
 
 
 # check all code
@@ -114,23 +114,30 @@ while True:
                 
                 
                 if check2=="1":
-                    ip=settings["IP-S"]
+                    check7=0
                     try:
-                        s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
-                        s.connect(("1.1.1.1",80))
-                        ips=s.getsockname()[0]
-                        s.close()
+                        try:
+                            
+                            s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+                            s.connect(("1.1.1.1",80))
+                            ips=s.getsockname()[0]
+                            s.close()
+                        except Exception:
+                            
+                            s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+                            s.connect(("8.8.8.8",443))
+                            ips=s.getsockname()[0]
+                            s.close()
                     except Exception:
-                        s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
-                        s.connect(("8.8.8.8",443))
-                        ips=s.getsockname()[0]
-                        s.close()
+                        check7=1
 
-                    with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
-                        settings = json.load(f)
-                        settings["IP-U"] =ips
-                        with open(r'C:\FWSH-files\settings.json', 'w') as f:
-                            json.dump(settings, f, indent=4)
+                    if check7==0:
+                        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            settings = json.load(f)
+                            settings["IP-U"] =ips
+                            with open(r'C:\FWSH-files\settings.json', 'w') as f:
+                                json.dump(settings, f, indent=4)
+                    ip=settings["IP-S"]
        
 
 
@@ -172,13 +179,16 @@ while True:
                 
                     
             def get_wifi_mac():
-                result = su.check_output("netsh wlan show interfaces", shell=True, text=True)
+                try:
+                    result = su.check_output('netsh wlan show interfaces || getmac /v /fo list', shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
 
-                for line in result.splitlines():
-                    if "Physical address" in line:
-                        mac = line.split(":", 1)[1].strip()  
-                        return mac   
-                    
+                    for line in result.splitlines():
+                        if "physical address" in line.lower():
+                            mac = line.split(":", 1)[1].strip()  
+                            return mac   
+                except Exception:
+                    mac="null"
+                    return mac                    
             print("enter (help) for help")
             while True:
                 
@@ -196,7 +206,7 @@ while True:
 4. advance mode : it is a mode make you to add meny rules and make the rule conest or not. 
 
 '''
-                print(help)
+                    print(help)
                 if masge=="firewall state" or masge=="1":
                     print("if you wont to exit enter (exit)")
                     while True:

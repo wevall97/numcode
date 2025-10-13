@@ -171,7 +171,13 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                try:
+                    d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                except Exception:
+                    writer.write("firewall log.csv".encode())
+                    await writer.drain()
+                writer.write("1".encode())
+                await writer.drain()
             
 
            
@@ -231,7 +237,13 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv(r"C:\FWSH-file\delete rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                try:
+                    d.to_csv(r"C:\FWSH-file\delete rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                except Exception:
+                    writer.write("delete rule log.csv".encode())
+                    await writer.drain()
+                writer.write("1".encode())
+                await writer.drain()
 
             if dat=="on":
                 writer.write("1".encode())
@@ -305,9 +317,15 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv(r"C:\FWSH-file\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                try:
+                    d.to_csv(r"C:\FWSH-file\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                except Exception:
+                    writer.write("add rule log.csv".encode())
+                    await writer.drain()
+                writer.write("1".encode())
+                await writer.drain()
             
-            if dat=="firewall states off all":
+            if dat=="firewall state off all" or dat=="5" :
                 T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                 try:
                     s=pd.read_csv(r"C:\FWSH-file\firewall log.csv")###
@@ -331,13 +349,20 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                try:
+                    d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                except Exception:
+                    writer.write("firewall log.csv".encode())
+                    await writer.drain()
+                writer.write("1".encode())
+                await writer.drain()
+                time.sleep(1.5)
                 writer.write("1".encode())
                 await writer.drain()
                 clos_fw(command="off")    
                        
-
-            if dat=="firewall states on all":
+            
+            if dat=="firewall state on all" or dat=="6" :
                 T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                 try:
                     s=pd.read_csv(r"C:\FWSH-file\firewall log.csv")###
@@ -361,7 +386,14 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                try:
+                    d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                except Exception:
+                    writer.write("firewall log.csv".encode())
+                    await writer.drain()
+                writer.write("1".encode())
+                await writer.drain()
+                time.sleep(1.5)
                 writer.write("1".encode())
                 await writer.drain()
                 clos_fw(command="on")
@@ -401,7 +433,13 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv(r"C:\FWSH-file\issue FWS.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                try:
+                    d.to_csv(r"C:\FWSH-file\issue FWS.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                except Exception:
+                    writer.write("issue FWS.csv".encode())
+                    await writer.drain()
+                writer.write("1".encode())
+                await writer.drain()
 
             
 
@@ -439,7 +477,13 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                try:
+                    d.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                except Exception:
+                    writer.write("issue rule.csv".encode())
+                    await writer.drain()
+                writer.write("1".encode())
+                await writer.drain()
 
 
             if dat=="hackDel":
@@ -476,7 +520,13 @@ async def h(reder,writer):
                     }
 
                 d=pd.DataFrame(datafrme)
-                d.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                try:
+                    d.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                except Exception:
+                    writer.write("issue rule.csv".encode())
+                    await writer.drain()
+                writer.write("1".encode())
+                await writer.drain()
 
 
             
