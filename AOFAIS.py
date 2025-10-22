@@ -5,7 +5,7 @@ import time
 import threading as th
 import socket as so
 import os
-
+# try to check all "json" files like "csv" files
 # check all code
 
 try:
@@ -150,7 +150,7 @@ async def h(reder,writer):
                 mac=data.decode()
                 
                 try:
-                    s=pd.read_csv("firewall log.csv")
+                    s=pd.read_csv(r"C:\FWSH-file\firewall log.csv")
                 except Exception:
                     datafrme={
                         "IP":["IP"],
@@ -172,7 +172,7 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 try:
-                    d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 except Exception:
                     writer.write("firewall log.csv".encode())
                     await writer.drain()
@@ -216,7 +216,7 @@ async def h(reder,writer):
                 mac=data.decode()
                 
                 try:
-                    s=pd.read_csv(r"C:\FWSH-file\delete rule log.csv")###
+                    s=pd.read_csv(r"C:\FWSH-file\delete rule log.csv") 
                 except Exception:
                     datafrme={
                         "IP":["IP"],
@@ -226,7 +226,7 @@ async def h(reder,writer):
                     }
 
                     d=pd.DataFrame(datafrme)
-                    d.to_csv(r"C:\FWSH-file\delete rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    d.to_csv(r"C:\FWSH-file\delete rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
 
 
                 datafrme={
@@ -238,7 +238,7 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 try:
-                    d.to_csv(r"C:\FWSH-file\delete rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    d.to_csv(r"C:\FWSH-file\delete rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 except Exception:
                     writer.write("delete rule log.csv".encode())
                     await writer.drain()
@@ -318,7 +318,7 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 try:
-                    d.to_csv(r"C:\FWSH-file\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    d.to_csv(r"C:\FWSH-file\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 except Exception:
                     writer.write("add rule log.csv".encode())
                     await writer.drain()
@@ -328,7 +328,7 @@ async def h(reder,writer):
             if dat=="firewall state off all" or dat=="5" :
                 T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                 try:
-                    s=pd.read_csv(r"C:\FWSH-file\firewall log.csv")###
+                    s=pd.read_csv(r"C:\FWSH-file\firewall log.csv") 
                 except Exception:
                     datafrme={
                         "IP":["IP"],
@@ -339,7 +339,7 @@ async def h(reder,writer):
                     }
 
                     s=pd.DataFrame(datafrme)
-                    s.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    s.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 datafrme={
                         "IP":["ALL"],
                         "MAC":["ALL"],
@@ -350,7 +350,7 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 try:
-                    d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 except Exception:
                     writer.write("firewall log.csv".encode())
                     await writer.drain()
@@ -365,7 +365,7 @@ async def h(reder,writer):
             if dat=="firewall state on all" or dat=="6" :
                 T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                 try:
-                    s=pd.read_csv(r"C:\FWSH-file\firewall log.csv")###
+                    s=pd.read_csv(r"C:\FWSH-file\firewall log.csv") 
                 except Exception:
                     datafrme={
                         "IP":["IP"],
@@ -376,7 +376,7 @@ async def h(reder,writer):
                     }
 
                     s=pd.DataFrame(datafrme)
-                    s.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    s.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 datafrme={
                         "IP":["ALL"],
                         "MAC":["ALL"],
@@ -387,7 +387,7 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 try:
-                    d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 except Exception:
                     writer.write("firewall log.csv".encode())
                     await writer.drain()
@@ -414,7 +414,7 @@ async def h(reder,writer):
                 mac=data.decode()
                 T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                 try:
-                    s=pd.read_csv(r"C:\FWSH-file\issue FWS.csv")###
+                    s=pd.read_csv(r"C:\FWSH-file\issue FWS.csv") 
                 except Exception:
                     datafrme={
                         "IP":["IP"],
@@ -424,7 +424,7 @@ async def h(reder,writer):
                     }
 
                     s=pd.DataFrame(datafrme)
-                    s.to_csv(r"C:\FWSH-file\issue FWS.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    s.to_csv(r"C:\FWSH-file\issue FWS.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 datafrme={
                         "IP":[ips],
                         "MAC":[mac],
@@ -434,7 +434,7 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 try:
-                    d.to_csv(r"C:\FWSH-file\issue FWS.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    d.to_csv(r"C:\FWSH-file\issue FWS.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 except Exception:
                     writer.write("issue FWS.csv".encode())
                     await writer.drain()
@@ -458,7 +458,7 @@ async def h(reder,writer):
                 mac=data.decode()
                 T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                 try:
-                    s=pd.read_csv(r"C:\FWSH-file\issue rule.csv")###
+                    s=pd.read_csv(r"C:\FWSH-file\issue rule.csv") 
                 except Exception:
                     datafrme={
                         "IP":["IP"],
@@ -468,7 +468,7 @@ async def h(reder,writer):
                     }
 
                     s=pd.DataFrame(datafrme)
-                    s.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    s.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 datafrme={
                         "IP":[ips],
                         "MAC":[mac],
@@ -478,7 +478,7 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 try:
-                    d.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    d.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 except Exception:
                     writer.write("issue rule.csv".encode())
                     await writer.drain()
@@ -501,7 +501,7 @@ async def h(reder,writer):
                 mac=data.decode()
                 T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                 try:
-                    s=pd.read_csv(r"C:\FWSH-file\issue rule.csv")###
+                    s=pd.read_csv(r"C:\FWSH-file\issue rule.csv") 
                 except Exception:
                     datafrme={
                         "IP":["IP"],
@@ -511,7 +511,7 @@ async def h(reder,writer):
                     }
 
                     s=pd.DataFrame(datafrme)
-                    s.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    s.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 datafrme={
                         "IP":[ips],
                         "MAC":[mac],
@@ -521,12 +521,93 @@ async def h(reder,writer):
 
                 d=pd.DataFrame(datafrme)
                 try:
-                    d.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)###
+                    d.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                 except Exception:
                     writer.write("issue rule.csv".encode())
                     await writer.drain()
                 writer.write("1".encode())
                 await writer.drain()
+
+
+
+
+            if dat=="rua":
+                
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                rulename=data.decode()
+
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                T=data.decode()
+
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                action=data.decode()
+
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                timerlog=data.decode()
+
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                ips=data.decode()
+
+                writer.write("1".encode())
+                await writer.drain()
+                data= await reder.read(90000)
+                if not data:
+                    break
+                mac=data.decode()
+                
+                try:
+                    s=pd.read_csv(r"C:\FWSH-file\action rule log.csv")
+                except Exception:
+                    datafrme={
+                        "IP":["IP"],
+                        "MAC":["MAC"],
+                        "RULE-N":["RULE-N"],
+                        "ACTION":["ACTION"],
+                        "TIMER":["TIMER"],
+                        "TIME":["TIME"]
+                    }
+
+                    s=pd.DataFrame(datafrme)
+                    s.to_csv(r"C:\FWSH-file\action rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                datafrme={
+                        "IP":[ips],
+                        "MAC":[mac],
+                        "RULE-N":[rulename],
+                        "ACTION":[action],
+                        "TIMER":[T],
+                        "TIME":[timerlog]
+                    }
+
+                d=pd.DataFrame(datafrme)
+                try:
+                    d.to_csv(r"C:\FWSH-file\action rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                except Exception:
+                    writer.write("action rule log.csv".encode())
+                    await writer.drain()
+                writer.write("1".encode())
+                await writer.drain()
+
+
 
 
             

@@ -8,8 +8,8 @@ import os
 import subprocess as su
 import uuid
 # in any print do 'try' and if it run make the print = "null" like the line "12" in the "qbit.py" file
-
-
+# try to check all "json" files like "csv" files
+# let the user put just the rule not enthing alse
 # check all code
 
 l=1
@@ -24,7 +24,7 @@ while True:
         pathfile=os.path.exists(r"C:\FWSH-files\settings.json")
 
         if pathfile==False:
-            s='{"user-state": "USER","email": "","bossemail": "","IP-S": "","IP-U": "","advance-mode": "0","advance-password": "0","firstconn": "0","FWS": "","timerF": "","deleteR": "null","checkrulename": [],"ruleName": [],"Rolue": "null","constan": "no","timerR": []}'
+            s='{"user-state": "USER","email": "","bossemail": "","IP-S": "","IP-U": "","advance-mode": "0","advance-password": "0","firstconn": "0","FWS": "","timerF": "","deleteR": "null","checkrulename": [],"ruleName": [],"Rolue": "null","constan": "no","timerR": [],"Enaply list": [],"Disaply list": []}'
             p=json.loads(s)
             with open(r"C:\FWSH-files\settings.json","w")as f:
                 json.dump(p,f,indent=4)
@@ -72,7 +72,7 @@ while True:
 
             # checkpass=input("Enter password: ")
             # checkpass=checkpass.strip()
-            checkpass=ppp
+            checkpass=ppp   
         if checkpass==ppp or l==0:
             
             
@@ -180,15 +180,14 @@ while True:
                     
             def get_wifi_mac():
                 try:
-                    result = su.check_output('netsh wlan show interfaces || getmac /v /fo list', shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
-
-                    for line in result.splitlines():
-                        if "physical address" in line.lower():
-                            mac = line.split(":", 1)[1].strip()  
-                            return mac   
+                    result = su.run('powershell -Command "Get-NetAdapter | Select-Object MacAddress"', shell=True,text=True,capture_output=True)
+                    result=result.stdout
+                    mac = [l.strip() for l in result.splitlines() if "-" in l] 
+                    return mac[-1]  
                 except Exception:
                     mac="null"
-                    return mac                    
+                    return mac   
+                            
             print("enter (help) for help")
             while True:
                 
@@ -279,14 +278,21 @@ while True:
                 elif masge=="add new rule" or masge=="2":
                     print("if you wont to exit enter (exit)")
                     while True:
-                        rol=input("Enter the rule: ")
-                        if "#" in rol or "|" in rol or "%" in rol or "~" in rol:
+                        rule=input("Enter the rule: ")
+                        if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
+                            print("try agean")
+                            continue
+                        if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
+                            print("try agean")
+                            continue
+                        if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
+                            print("try agean")
                             continue
                         else:
                             break
-                    if rol!="exit":
-                        rol=rol.strip()
-                        rule=rol.replace("'",'"')
+                    if rule!="exit":
+                        rule=rule.strip()
+                        rule=rule.replace("'",'"')
                         while True:
                             timer=input("Enter the timer value: ")
                             timer=timer.strip()
@@ -321,8 +327,8 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                             smtp.starttls()
                             smtp.login(email,password)
                             smtp.send_message(msg)
-                            
-                        with open(r"C:\FWSH-files\sent_ids.txt", "a") as f:
+                        rule=f'powershell -Command {rule}'
+                        with open(r"C:\FWSH-files\sent_ids.txt", "a",encoding='utf-8') as f:
                             f.write(unique_id+"#"+rule+"~"+timer+"\n")
                     
                     
@@ -340,7 +346,7 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                         delrule=input("Enter the rule name: ")
                         if delrule=="exit":
                             break
-                        if "#" in delrule or "|" in delrule or "%" in delrule or "~" in delrule:
+                        if "#" in delrule or "%" in delrule or "|" in delrule or "~" in delrule:
                             print("try agean")
                             continue
                         if delrule in check6:
@@ -352,7 +358,7 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                         
                         print("wait antel the adminstretor check your rule\nif the adminstretor respons we will send email to you\n")
                         delrule=delrule.strip()
-                        chderu=su.run(f'netsh advfirewall firewall show rule name="{delrule}"',shell=True,capture_output=True,text=True)
+                        chderu=su.run(f'powershell -Command Get-NetFirewallRule -DisplayName "{delrule}"',shell=True,capture_output=True,text=True)
                         
                         chderu=str(chderu.stdout)
                         
@@ -381,7 +387,7 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                             smtp.login(email,password)
                             smtp.send_message(msg)
                             
-                        with open(r"C:\FWSH-files\sent_ids.txt", "a") as f:
+                        with open(r"C:\FWSH-files\sent_ids.txt", "a",encoding='utf-8') as f:
                             f.write(unique_id+"|"+delrule+"\n")
                         
                   
@@ -418,7 +424,7 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                 smtp.login(email,password)
                                 smtp.send_message(msg)
                                 
-                            with open(r"C:\FWSH-files\sent_ids.txt", "a") as f:
+                            with open(r"C:\FWSH-files\sent_ids.txt", "a",encoding='utf-8') as f:
                                 f.write(unique_id+"%"+"Advance mode"+"\n")
 
                             with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
@@ -452,7 +458,13 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                         rolu=input("Enter the rule or (exit): ")
                                         rolu=rolu.strip()
                                         rule=rolu.replace("'",'"')
-                                        if "#" in rule or "|" in rule or "%" in rule or "~" in rule:
+                                        if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
+                                            print("try agean")
+                                            continue
+                                        if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
+                                            print("try agean")
+                                            continue
+                                        if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
                                             print("try agean")
                                             continue
                                         else:
@@ -545,7 +557,7 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                         
                                     
                                     
-                                        
+                                    rule=f'powershell -Command {rule}'   
                                     with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                         settings = json.load(f)
                                         settings["constan"]=constan
@@ -570,9 +582,93 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                         with open(r'C:\FWSH-files\settings.json', 'w') as f:
                                             json.dump(settings,f,indent=4)
                                     print("Rule added successfully.")
+
+
+
+
+                elif masge=="rule action" or masge=="5":
+                    print("if you wont to exit enter (exit)")
+                    
+                    
+                    while True:
+                        ruleac=input("Enter the rule name: ")
+                        ruleac=ruleac.strip()
+                        
+                        if "#" in ruleac or "|" in ruleac or "%" in ruleac or "~" in ruleac or ";" in ruleac or "&" in ruleac or "\\" in ruleac:
+                            print("try agean")
+                            continue
+                        if "-or" in ruleac.lower() or "if" in ruleac.lower() or "try" in ruleac.lower() or "catch" in ruleac.lower():
+                            print("try agean")
+                            continue
+                        if "new-netfirewallrule" in ruleac.lower()  or "-displayname"  in ruleac.lower():
+                            print("try agean")
+                            continue
+                        else:
+                            break
+
+
+                    while True:
+                        action=input("Enter Rule Action (Enably , Disaply): ").lower().strip()
+                        if action=="enably" or action=="disaply":
+                            break
+                        else:
+                            print("try agean")
+                            continue
+
+                    if action=="enably":
+                        action1="e"
+                    else:
+                        action1="d"
+
+                    while True:
+                        timer=input("Enter the timer value: ")
+                        timer=timer.strip()
+                        timer=timer.lower()
+                        if timer.endswith("h") or timer.endswith("m"):
+                            break
+                        else:
+                            print("Try again.")
+                            continue
+                    if ruleac!="exit":
+                        
+                        print("prepar to sending email to the adminstretor \n")
+                        
+                        chderu=su.run(f'powershell -Command Get-NetFirewallRule -DisplayName "{ruleac}"',shell=True,capture_output=True,text=True)
+                        
+                        chderu=str(chderu.stdout)
+                        
+                        msg= EmailMessage()
+                        msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                        msg["From"]="aofnotification@gmail.com"
+                        msg["To"]=bossemail
+                        unique_id = f"<{uuid.uuid4()}@example.com>"
+                        msg['Message-ID'] = unique_id
+                        msg["X-Unique-Thread"]=str(uuid.uuid4())
+                        z=f'''This user who had:
+
+Email: {email_rvs}
+IP: {ips}
+
+Want to "{action}" this rule:
+{chderu}
+
+if you allow to do this type (Approved) or type (Deny) to disallow'''
+                        msg.set_content(z)
+                        email="aofnotification@gmail.com"
+                        password="oqgspkawnyeftyjw"
+                        
+                        with smtplib.SMTP("smtp.gmail.com",587) as smtp:
+                            smtp.starttls()
+                            smtp.login(email,password)
+                            smtp.send_message(msg)
+                        ruleac=ruleac + "^" + timer + action1
+                        with open(r"C:\FWSH-files\sent_ids.txt", "a",encoding='utf-8') as f:
+                            f.write(unique_id+"&"+ruleac+"\n")
+                        print("wait until the adminstretor check your email\nif the adminstretor respons we will send email to you\n")
         else:
             print("Try again.")
             continue
     except  Exception:
-        print("yes")
+        print("there are error")
         continue
+    

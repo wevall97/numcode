@@ -15,20 +15,23 @@ import random
 # check all code
 # in any print do 'try' and if it run make the print = "null" like the line "12" in the "qbit.py" file
 # what if the coonction end what will hapned for all the threads
+# try to check all "json" files like "csv" files
+# exsspit errors : close the enternet while using the system
+# exsspit errors : deleteing the "json or csv" files while using the system 
 
 chck2=0
 while True:
     try:
         pathfile=os.path.exists(r"C:\FWSH-files\sent_ids.txt")
         if pathfile==False:
-            with open(r"C:\FWSH-files\sent_ids.txt","w")as f:
-                pass
+            with open(r"C:\FWSH-files\sent_ids.txt","w",encoding='utf-8')as f:
+                f.write("")
 
-        #check firewall state       
-        a=su.run("netsh advfirewall show allprofiles",shell=True,text=True,capture_output=True)
-        a=a.stdout
-        if "State                                 OFF" in a or len(a) != 2094:
-            su.run('netsh advfirewall set allprofiles state on', shell=True)
+        #check firewall state    
+        a=su.run('powershell -Command "Get-NetFirewallProfile | Select-Object Enabled"',shell=True,text=True,capture_output=True)
+        a=a.stdout  
+        if "False" in a: 
+            su.run(r"powershell -Command Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True",shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
 
         #conn with the praimry conn   
         while True:
@@ -93,7 +96,7 @@ while True:
                     json.dump(settings,f,indent=4)
             if settings["checkrulename"]!=[]: 
                 for aa in settings["checkrulename"]:
-                    su.run(f'netsh advfirewall firewall delete rule name="{aa}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+                    su.run(f'powershell -Command Remove-NetFirewallRule -DisplayName "{aa}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
                 settings["checkrulename"]=[]
                 with open(r'C:\FWSH-files\settings.json', 'w') as f:
                     json.dump(settings,f,indent=4)
@@ -111,29 +114,26 @@ while True:
 
 
 
-        with open(r"C:\FWSH-files\check.txt","w")as f:
+        with open(r"C:\FWSH-files\FirewallRules.txt","w")as f:
                 f.write("")
         #cuntant firewall rules lenghth
-        su.run(r"netsh advfirewall firewall show rule name=all > C:\FWSH-files\check.txt",shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
-        with open(r"C:\FWSH-files\check.txt","r",encoding='utf-8')as f:
+        su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FWSH-files\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
+        with open(r"C:\FWSH-files\FirewallRules.txt","r",encoding='utf-8')as f:
             a=f.readlines()
             ld=0
-            for line in a:
-                if "Rule Name:" in line:
-                    ld+=1
+            for _ in a:
+                ld+=1
             rellen=ld
 
         def get_wifi_mac():
             try:
-                result = su.check_output('netsh wlan show interfaces || getmac /v /fo list', shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
-
-                for line in result.splitlines():
-                    if "physical address" in line.lower():
-                        mac = line.split(":", 1)[1].strip()  
-                        return mac 
+                result = su.run('powershell -Command "Get-NetAdapter | Select-Object MacAddress"', shell=True,text=True,capture_output=True)
+                result=result.stdout
+                mac = [l.strip() for l in result.splitlines() if "-" in l] 
+                return mac[-1]  
             except Exception:
                 mac="null"
-                return mac
+                return mac 
         def ckeck_email():
             
             with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
@@ -173,13 +173,13 @@ while True:
                                 
                                     sent_ids=sent_ids.replace(in_reply_to,"")
                                     
-                                    with open(r"C:\FWSH-files\sent_ids.txt", "w") as f:
+                                    with open(r"C:\FWSH-files\sent_ids.txt", "w",encoding='utf-8') as f:
                                         sent_id="".join(map(str,sent_ids))
                                         f.write(sent_id)
-                                    with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
+                                    with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
                                         sent_ids=f.readlines()
                                         for line in sent_ids:
-                                            if line.startswith("|") or line.startswith("#") or line.startswith("%"):
+                                            if line.startswith("|") or line.startswith("#") or line.startswith("%") or line.startswith("&"):
                                                 l1=line
                                                 l2=line[:1]
                                                 l=line[1:]
@@ -187,22 +187,22 @@ while True:
                                                     chck1=l.index("~")
                                                     l=l[:chck1]
                                                     l1=l
-                                                    with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
+                                                    with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
                                                         sent_ids=f.read()
                                                         sent_ids=sent_ids.replace("#","")  
                                                         
                                                         
-                                                    with open(r"C:\FWSH-files\sent_ids.txt", "w") as f:
+                                                    with open(r"C:\FWSH-files\sent_ids.txt", "w",encoding='utf-8') as f:
                                                         sent_id="".join(map(str,sent_ids))
                                                         f.write(sent_id)  
                                                 
                                                     
-                                    with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
+                                    with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
                                         sent_ids=f.read()
                                         
                                         sent_ids=sent_ids.replace(l1,"")  
                                         
-                                    with open(r"C:\FWSH-files\sent_ids.txt", "w") as f:
+                                    with open(r"C:\FWSH-files\sent_ids.txt", "w",encoding='utf-8') as f:
                                         sent_id="".join(map(str,sent_ids))
                                         f.write(sent_id)     
 
@@ -243,7 +243,85 @@ while True:
                                             smtp.login(email,password)
                                             smtp.send_message(msg)
 
+
+                                    if firest=="approved" and l2=="&":
                                         
+                                        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                            settings = json.load(f)
+                                            if l.endswith("e"):
+                                                l=l[:-1]
+                                                settings["Enaply list"]=[l]
+                                                action="Enaply"
+                                            else:
+                                                l=l[:-1]
+                                                settings["Disaply list"]=[l]
+                                                action="Disaply"
+                                            with open(r'C:\FWSH-files\settings.json', 'w') as f:
+                                                json.dump(settings,f,indent=4)
+
+
+                                        if l.endswith("m") or l.endswith("h"):
+                                            z=l.index("^")
+                                            bb=l[z:]
+                                            aa=l.replace(bb,"")
+                                            bb=bb.replace("^","")
+                                            
+                                        on="rua"
+                                        c.sendall(on.encode())
+                                        c.recv(1024).decode()
+                                        c.sendall(aa.encode())
+                                        c.recv(1024).decode()
+                                        c.sendall(bb.encode())
+                                        c.recv(1024).decode()
+                                        c.sendall(action.encode())
+                                        c.recv(1024).decode()
+                                        c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                                        c.recv(1024).decode()
+                                        ips=str(ips)
+                                        c.sendall(ips.encode())
+                                        c.recv(1024).decode()
+                                        c.sendall(get_wifi_mac().encode())
+                                        check1=c.recv(1024).decode()
+                                        check1=check1.replace("1","")
+                                        check1=check1.strip()
+                                        if check1=="acction rule log.csv" or check1=="action rule log.csv1":
+                                            
+                                            msg= EmailMessage()
+                                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                            msg["From"]="aofnotification@gmail.com"
+                                            msg["To"]=email_rvs
+                                            msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                                            email="aofnotification@gmail.com"
+                                            password="oqgspkawnyeftyjw"
+                                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                smtp.login(email,password)
+                                                smtp.send_message(msg)
+                                        msg= EmailMessage()
+                                        msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                        msg["From"]="aofnotification@gmail.com"
+                                        msg["To"]=email_rvs
+                                        msg.set_content("action rule change successfully.")
+                                        email="aofnotification@gmail.com"
+                                        password="oqgspkawnyeftyjw"
+                                        with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                            smtp.login(email,password)
+                                            smtp.send_message(msg)
+
+
+                                    elif firest!="approved"  and l2=="&":
+                                        
+                                        msg= EmailMessage()
+                                        msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                        msg["From"]="aofnotification@gmail.com"
+                                        msg["To"]=email_rvs
+                                        msg.set_content("the adminstretor do not acsybt to change action of the rule")
+                                        email="aofnotification@gmail.com"
+                                        password="oqgspkawnyeftyjw"
+                                        with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                            smtp.login(email,password)
+                                            smtp.send_message(msg)
+
+
                                     if firest=="approved" and l2=="|":
                                         
                                         with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
@@ -308,7 +386,7 @@ while True:
                                         l=l.replace("#","")
                                 
 
-                                        with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
+                                        with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
                                             sent_ids=f.readlines()
                                             for line in sent_ids:
                                                 if line.startswith("~"):
@@ -317,11 +395,11 @@ while True:
                                                     timer=line[1:]
                                                     
                                                     
-                                        with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
+                                        with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
                                             sent_ids=f.read()
                                             sent_ids=sent_ids.replace(l1,"")  
                                             
-                                        with open(r"C:\FWSH-files\sent_ids.txt", "w") as f:
+                                        with open(r"C:\FWSH-files\sent_ids.txt", "w",encoding='utf-8') as f:
                                             sent_id="".join(map(str,sent_ids))
                                             f.write(sent_id) 
                                         
@@ -427,16 +505,16 @@ while True:
 
 
                                     elif firest!="approved" and l2=="#":
-                                        with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
+                                        with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
                                             sent_ids=f.readlines()
                                             for line in sent_ids:
                                                 if line.startswith("~"):
                                                     l1=line   
-                                        with open(r"C:\FWSH-files\sent_ids.txt", "r") as f:
+                                        with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
                                             sent_ids=f.read()
                                             sent_ids=sent_ids.replace(l1,"") 
                                             
-                                        with open(r"C:\FWSH-files\sent_ids.txt", "w") as f:
+                                        with open(r"C:\FWSH-files\sent_ids.txt", "w",encoding='utf-8') as f:
                                             sent_id="".join(map(str,sent_ids))
                                             f.write(sent_id) 
 
@@ -456,7 +534,7 @@ while True:
                                     mail.expunge()
                 mail.logout()
                 time.sleep(5)
-        if user_state=="USER" and chck2==0:
+        if user_state=="USER" :
             with open(r'C:\FWSH-files\settings.json', 'r') as f:
                 if settings["advance-mode"]!="0":
                     settings["advance-mode"]="0"
@@ -488,9 +566,9 @@ while True:
                             settings["timerF"]="0"
                             with open(r'C:\FWSH-files\settings.json', 'w') as f:
                                 json.dump(settings,f,indent=4)
-                        su.run("netsh advfirewall set allprofiles state off",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+                        su.run(r"powershell -Command Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False",shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
                     elif close=="on":
-                        su.run("netsh advfirewall set allprofiles state on",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+                        su.run(r"powershell -Command Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True",shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
                         with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
                             settings["FWS"]="null"
@@ -506,7 +584,7 @@ while True:
 
         #function to check the D:\FWSH-files\settings.json evry 10s
         async def check_files():
-            global fws,ip,timer,rule,rulename,timerr,ips,constan,deleteR,rellen
+            global fws,ip,timer,rule,rulename,timerr,ips,constan,deleteR,rellen,enaply,disaply
             
             with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
@@ -545,6 +623,17 @@ while True:
                     timerr=int(timerr)
 
 
+
+                enaply=settings["Enaply list"]
+                disaply=settings["Disaply list"]
+                
+                    
+                
+                
+                    
+
+                
+
                     
         #function to close the firewall
         def do_ruls():
@@ -563,7 +652,7 @@ while True:
         #function to add rules to the firewall
         def add__rule():
             global rulename,rellen,timerr
-            time.sleep(0.5)
+            
             with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 a=settings["ruleName"]
@@ -598,7 +687,7 @@ while True:
             # #the main function that contrule in evry things
             async def main():
                 # pass
-                global l,ll,email_rvs,ips,email_rvs,rellen,ips,l3,l4,constan,rule
+                global l,ll,email_rvs,ips,email_rvs,rellen,ips,l3,l4,constan,rule,disaply,enaply
                 
                 if ll==1:
                     #run the seconed conn function
@@ -614,7 +703,7 @@ while True:
                     th.Thread(target=do_ruls).start()
                 elif fws=="on":
                     #open firewall
-                    su.run("netsh advfirewall set allprofiles state on",shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+                    su.run(r"powershell -Command Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True",shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
                     with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         settings["FWS"]="null"
@@ -627,15 +716,15 @@ while True:
                     settings = json.load(f)
                     check=settings["FWS"]
                 if check=="null":
-                    a=su.run("netsh advfirewall show allprofiles",shell=True,text=True,capture_output=True)
+                    a=su.run('powershell -Command "Get-NetFirewallProfile | Select-Object Enabled"',shell=True,text=True,capture_output=True)
                     a=a.stdout
                     with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
                             firews=settings["FWS"]
                             firews=str(firews)
                     #run the belwo code if firewall is off without the user send any ordurs to return firewall on   
-                    if "State                                 OFF" in a and firews=="null" :
-                        su.run('netsh advfirewall set allprofiles state on', shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+                    if "False" in a and firews=="null" :
+                        su.run('powershell -Command Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True', shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
                         #send to server to add to the csv file
                         c.sendall("hackOff".encode())
                         c.recv(1024).decode()
@@ -673,7 +762,7 @@ while True:
 
                 #delete rule from the firewall
                 if deleteR!="null":
-                    su.run(f'netsh advfirewall firewall delete rule name="{deleteR}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+                    su.run(f'powershell -Command Remove-NetFirewallRule -DisplayName "{deleteR}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
                     rellen=rellen-1
                     with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
@@ -713,18 +802,18 @@ while True:
 
                 
                 
-                with open(r"C:\FWSH-files\check.txt","w")as f:
+                with open(r"C:\FWSH-files\FirewallRules.txt","w")as f:
                     f.write("")
                 #check firewall rules lenghth
                 
-                su.run(r"netsh advfirewall firewall show rule name=all > C:\FWSH-files\check.txt",shell=True,text=True,capture_output=True)
-                with open(r"C:\FWSH-files\check.txt","r",encoding='utf-8')as f:
+                su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FWSH-files\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=True)
+                with open(r"C:\FWSH-files\FirewallRules.txt","r",encoding='utf-8')as f:
                     a=f.readlines()
                     ld=0
                     
-                    for line in a:
-                        if "Rule Name:" in line:
-                            ld+=1
+                    for _ in a:
+                        
+                        ld+=1
                 #if there a rule add to the firewall without ordars from the user the belwo code will run
                 
                 if ld>rellen:
@@ -806,12 +895,89 @@ while True:
                         smtp.login(email,password)
                         smtp.send_message(msg)
                             
-                with open(r"C:\FWSH-files\check.txt","w")as f:
+                with open(r"C:\FWSH-files\FirewallRules.txt","w")as f:
                     f.write("")
+                
+
+
+                if enaply !=[] :
+                    def enaply_action():
+                        global enaply
+                        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            settings = json.load(f)
+                            enaply=list(enaply)
+                            enaply1=enaply.pop(0)
+                            settings["Enaply list"]=enaply
+                        with open(r'C:\FWSH-files\settings.json', 'w') as f:
+                            json.dump(settings,f,indent=4) 
+                        action="e"
+                        if enaply1.endswith("m") or enaply1.endswith("h"):
+                            z=enaply1.index("^")
+                            bb=enaply1[z:]
+                            aa=enaply1.replace(bb,"")
+                            bb=bb.replace("^","")
+                            if bb.endswith("m"):
+                                lens=len(bb)
+                                bb=bb[:lens-1]
+                                bb=int(bb)
+                                bb*=60
+                                bb=str(bb)
+                                
+
+
+                            elif bb.endswith("h"):
+                                lens=len(bb)
+                                bb=bb[:lens-1]
+                                bb=int(bb)
+                                bb*=3600
+                                bb=str(bb)
+                        
+                        fs.action_rule(bb,aa,action)
+                    th.Thread(target=enaply_action).start()
+                
+
+
+                if disaply !=[] :
+                    print("in")
+                    def disaply_action():
+                        global disaply
+                        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            settings = json.load(f)
+                            disaply=list(disaply)
+                            disaply1=disaply.pop(0)
+                            settings["Disaply list"]=disaply
+                        with open(r'C:\FWSH-files\settings.json', 'w') as f:
+                            json.dump(settings,f,indent=4) 
+                        action="d"
+                        if disaply1.endswith("m") or disaply1.endswith("h"):
+                            z=disaply1.index("^")
+                            bb=disaply1[z:]
+                            aa=disaply1.replace(bb,"")
+                            bb=bb.replace("^","")
+                            if bb.endswith("m"):
+                                lens=len(bb)
+                                bb=bb[:lens-1]
+                                bb=int(bb)
+                                bb*=60
+                                bb=str(bb)
+                                
+
+
+                            elif bb.endswith("h"):
+                                lens=len(bb)
+                                bb=bb[:lens-1]
+                                bb=int(bb)
+                                bb*=3600
+                                bb=str(bb)
+                        
+                        fs.action_rule(bb,aa,action)
+                    th.Thread(target=disaply_action).start()
+
             #run the main function
             sa.run(main())
             
             #return to do this loop evry 10s
             time.sleep(10)
     except Exception:
+        print("there are error")
         continue

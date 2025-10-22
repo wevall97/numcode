@@ -8,7 +8,7 @@ import time
 import os
 import subprocess as su
 # in any print do 'try' and if it run make the print = "null" like the line "12" in the "qbit.py" file
-
+# try to check all "json" files like "csv" files
 
 # check all code
 
@@ -170,15 +170,13 @@ while True:
                     
             def get_wifi_mac():
                 try:
-                    result = su.check_output('netsh wlan show interfaces || getmac /v /fo list', shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
-
-                    for line in result.splitlines():
-                        if "physical address" in line.lower():
-                            mac = line.split(":", 1)[1].strip()  
-                            return mac 
+                    result = su.run('powershell -Command "Get-NetAdapter | Select-Object MacAddress"', shell=True,text=True,capture_output=True)
+                    result=result.stdout
+                    mac = [l.strip() for l in result.splitlines() if "-" in l] 
+                    return mac[-1]  
                 except Exception:
                     mac="null"
-                    return mac
+                    return mac 
 
             with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
@@ -277,7 +275,13 @@ while True:
                         rolu=input("Enter the rule or (exit): ")
                         rolu=rolu.strip()
                         rule=rolu.replace("'",'"')
-                        if "#" in rule or "|" in rule or "%" in rule or "~" in rule:
+                        if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
+                            print("try agean")
+                            continue
+                        if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
+                            print("try agean")
+                            continue
+                        if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
                             print("try agean")
                             continue
                         else:
@@ -346,7 +350,7 @@ while True:
                             timer=str(timer)
                             
                     
-                            
+                        rule=f'powershell -Command {rule}'    
                         with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
                             length=settings["length"]
@@ -426,7 +430,13 @@ while True:
                             rolu=input("Enter the rule: ")
                             rolu=rolu.strip()
                             rule=rolu.replace("'",'"')
-                            if "#" in rule or "|" in rule or "%" in rule or "~" in rule:
+                            if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
+                                print("try agean")
+                                continue
+                            if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
+                                print("try agean")
+                                continue
+                            if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
                                 print("try agean")
                                 continue
                             else:
@@ -514,7 +524,7 @@ while True:
                                 
                             
                             
-                            
+                        rule=f'powershell -Command {rule}'   
                         with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
                             settings["constan"]=constan
