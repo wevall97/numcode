@@ -13,7 +13,7 @@ import email as email1
 import uuid
 import random
 # check all code
-
+# serish erorr: when i delete a rule without using the system the "aof.py" send to the server "delhac" but nothing alse hapen
 
 with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f) 
@@ -207,10 +207,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                 with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
                                             msg= EmailMessage()
-                                            msg["Subject"]=f"Enter Password - ID({str(uuid.uuid4())[:8]})"
+                                            msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content(f"your password: {ran}")
+                                            msg.set_content(f"Your password: {ran}")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -224,10 +224,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                 with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
                                             msg= EmailMessage()
-                                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                            msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content(f"he dont allowed you")
+                                            msg.set_content(f"The official did not approve your request.")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -242,11 +242,11 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                 if l.endswith("e"):
                                                     l=l[:-1]
                                                     settings["Enaply list"]=[l]
-                                                    action="Enaply"
+                                                    action="Enable"
                                                 else:
                                                     l=l[:-1]
                                                     settings["Disaply list"]=[l]
-                                                    action="Disaply"
+                                                    action="Disable"
                                                 with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
 
@@ -288,10 +288,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                     smtp.login(email,password)
                                                     smtp.send_message(msg)
                                             msg= EmailMessage()
-                                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                            msg["Subject"]=f"Request approval - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("action rule change successfully.")
+                                            msg.set_content("The base state was successfully changed.")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -302,10 +302,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                         elif firest!="approved"  and l2=="&":
                                             
                                             msg= EmailMessage()
-                                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                            msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("the adminstretor do not acsybt to change action of the rule")
+                                            msg.set_content("The official did not approve your request.")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -348,10 +348,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                     smtp.login(email,password)
                                                     smtp.send_message(msg)
                                             msg= EmailMessage()
-                                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                            msg["Subject"]=f"Request approva - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("rule delete successfully.")
+                                            msg.set_content("Rule delete successfully.")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -360,10 +360,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                         elif firest!="approved"  and l2=="|":
                                             
                                             msg= EmailMessage()
-                                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                            msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("the adminstretor do not acsybt to DELETE the rule")
+                                            msg.set_content("The official did not approve your request.")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -412,7 +412,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                             
                                             row.clear()
                                             row1.clear()
-                                            on="on"
+                                            on="addrule"
                                             c.sendall(on.encode())
                                             c.recv(1024).decode()
                                             c.sendall(rulename.encode())
@@ -479,14 +479,14 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                 s=list(s)
                                                 s.append(timer)
                                                 settings["timerR"]=s
-                                                settings["Rolue"]=l
+                                                settings["Rolue"]=f'powershell -Command {l}'
                                                 with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
                                             msg= EmailMessage()
-                                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                            msg["Subject"]=f"Request approval - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("rule ADD successfully.")
+                                            msg.set_content("Rule ADD successfully.")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -510,10 +510,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                 f.write(sent_id) 
 
                                             msg= EmailMessage()
-                                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                            msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("the adminstretor do not acsybt to ADD the rule")
+                                            msg.set_content("The official did not approve your request.")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -536,7 +536,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             #keys to contrule
             l=1
             ll=1
-
+            tirell=0
             #function to conn to the seconed conn in the server
             def clos_fw():
                 
@@ -642,7 +642,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     
             #function to add rules to the firewall
             def add__rule():
-                global rulename,rellen,timerr
+                global rulename,rellen,timerr,tirell
                 
                 with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
@@ -659,7 +659,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 
 
                 rulename1=fs.add_rule(rulename,timerr)
-                
+                tirell=1
                 rellen=rellen-1
                 
                 with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
@@ -678,7 +678,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 # #the main function that contrule in evry things
                 async def main():
                     # pass
-                    global l,ll,email_rvs,ips,email_rvs,rellen,ips,l3,l4,constan,rule,disaply,enaply,mac
+                    global l,ll,email_rvs,ips,email_rvs,rellen,ips,l3,l4,constan,rule,disaply,enaply,mac,tirell
                     
                     if ll==1:
                         #run the seconed conn function
@@ -740,10 +740,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                     smtp.send_message(msg)
                             #send email to the user
                             msg= EmailMessage()
-                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                            msg["Subject"]=f"Detect stop attempt - ID({str(uuid.uuid4())[:8]})"
                             msg["From"]="aofnotification@gmail.com"
                             msg["To"]=email_rvs
-                            msg.set_content(f"your firewall state has been off,we rutern it to be open.\ndo the protocol to check your devic if you had been hackt")
+                            msg.set_content(f"your firewall state has been off,we rutern it to be open.\nTurn off the network to check if your device has been hacked or not")
                             email="aofnotification@gmail.com"
                             password="oqgspkawnyeftyjw"
                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -806,7 +806,19 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             
                             ld+=1
                     #if there a rule add to the firewall without ordars from the user the belwo code will run
-                    
+                    if tirell==1:
+                        with open(r"C:\FWSH-files\FirewallRules.txt","w",encoding='utf-8')as f:
+                            f.write("")
+                        su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FWSH-files\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=True)
+                        with open(r"C:\FWSH-files\FirewallRules.txt","r",encoding='utf-8')as f:
+                            a=f.readlines()
+                            ld=0
+                            
+                            for _ in a:
+                                
+                                ld+=1
+                            tirell=0
+
                     if ld>rellen:
                         
                     
@@ -836,10 +848,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                 smtp.send_message(msg)
                         #send email to user
                         msg= EmailMessage()
-                        msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                        msg["Subject"]=f"Detect add attempt - ID({str(uuid.uuid4())[:8]})"
                         msg["From"]="aofnotification@gmail.com"
                         msg["To"]=email_rvs
-                        msg.set_content(f"there are strange rule had been add to your firewall\ndo the protocol to check your devic if you had been hackt")
+                        msg.set_content(f"There's a strange rule that's been added to your firewall.\nTurn off the network to check if your device has been hacked or not")
                         email="aofnotification@gmail.com"
                         password="oqgspkawnyeftyjw"
                         with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -847,7 +859,20 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             smtp.send_message(msg)
                                 
 
-                    #if there a rule delete from the firewall without ordars from the user the belwo code will run        
+                    #if there a rule delete from the firewall without ordars from the user the belwo code will run    
+                    if tirell==1:
+                        with open(r"C:\FWSH-files\FirewallRules.txt","w",encoding='utf-8')as f:
+                            f.write("")
+                        su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FWSH-files\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=True)
+                        with open(r"C:\FWSH-files\FirewallRules.txt","r",encoding='utf-8')as f:
+                            a=f.readlines()
+                            ld=0
+                            
+                            for _ in a:
+                                
+                                ld+=1 
+                            tirell=0
+
                     elif ld<rellen:
                         
                         l4=rellen-ld
@@ -876,10 +901,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                 smtp.send_message(msg)
                         #send email to user
                         msg= EmailMessage()
-                        msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                        msg["Subject"]=f"Detect delete attempt - ID({str(uuid.uuid4())[:8]})"
                         msg["From"]="aofnotification@gmail.com"
                         msg["To"]=email_rvs
-                        msg.set_content(f"there are some rule had been delete from your firewall\ndo the protocol to check your devic if you had been hackt")
+                        msg.set_content(f"There's a strange rule that's been deleted from your firewall.\nTurn off the network to check if your device has been hacked or not")
                         email="aofnotification@gmail.com"
                         password="oqgspkawnyeftyjw"
                         with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -968,7 +993,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 sa.run(main())
                 
                 #return to do this loop evry 10s
-                time.sleep(10)
+                time.sleep(5)
         except Exception:
             print("there are error")
             continue

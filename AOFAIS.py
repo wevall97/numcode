@@ -120,7 +120,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                 if dat=="gg":
                     
                     break
-                if dat=="off":
+                if dat=="off" or dat=="on":
                     
                     writer.write("1".encode())
                     await writer.drain()
@@ -166,7 +166,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
-                            "FWS":["off"],
+                            "FWS":[dat],
                             "TIMER":[timerlog],
                             "TIME":[T]
                         }
@@ -222,7 +222,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         datafrme={
                             "IP":["IP"],
                             "MAC":["MAC"],
-                            "deleteR":["deleteR"],
+                            "Delete_Ru":["Delete_Ru"],
                             "TIME":["TIME"]
                         }
 
@@ -233,7 +233,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
-                            "deleteR":[deleteR],
+                            "Delete_Ru":[deleteR],
                             "TIME":[timerlog]
                         }
 
@@ -246,7 +246,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     writer.write("1".encode())
                     await writer.drain()
 
-                if dat=="on":
+                if dat=="addrule":
                     writer.write("1".encode())
                     await writer.drain()
                     data= await reder.read(90000)
@@ -296,7 +296,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         datafrme={
                             "IP":["IP"],
                             "MAC":["MAC"],
-                            "RuleN":["RuleN"],
+                            "Rule_Name":["Rule_Name"],
                             "RULE":["RULE"],
                             "TIMER":["TIMER"],
                             "CONSTAN":["CONSTAN"],
@@ -310,7 +310,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
-                            "RuleN":[rulename],
+                            "Rule_Name":[rulename],
                             "RULE":[RULE],
                             "TIMER":[timerlog],
                             "CONSTAN":[constan],
@@ -582,7 +582,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         datafrme={
                             "IP":["IP"],
                             "MAC":["MAC"],
-                            "RULE-N":["RULE-N"],
+                            "RULE_Name":["RULE_Name"],
                             "ACTION":["ACTION"],
                             "TIMER":["TIMER"],
                             "TIME":["TIME"]
@@ -593,7 +593,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
-                            "RULE-N":[rulename],
+                            "RULE_Name":[rulename],
                             "ACTION":[action],
                             "TIMER":[T],
                             "TIME":[timerlog]

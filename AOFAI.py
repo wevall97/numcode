@@ -35,7 +35,7 @@ while True:
                     
                     if settings["email"]=="":
                         while True:
-                            emai=input("Email Address: ")
+                            emai=input("Enter your Email Address: ")
                             if "@" in emai and ".com" in emai:
                                 
                                 emai=emai.strip()
@@ -57,23 +57,23 @@ while True:
                 return password
             
             if l==1:
-                l=0
+                
                 ppp=generate_password()
                 # print("Preparing to send the password to your email.")
                 # msg= EmailMessage()
-                # msg["Subject"]=f"Enter Password - ID({str(uuid.uuid4())[:8]})"
+                # msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
                 # msg["From"]="aofnotification@gmail.com"
                 # msg["To"]=check4
-                # msg.set_content(f"your password is: {ppp}")
+                # msg.set_content(f"Your password: {ppp}")
                 # email="aofnotification@gmail.com"
                 # password="oqgspkawnyeftyjw"
                 # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                 #     smtp.login(email,password)
                 #     smtp.send_message(msg)
 
-                # checkpass=input("Enter password: ")
+                # checkpass=input("Enter the password: ")
                 # checkpass=checkpass.strip()
-                checkpass=ppp   
+                checkpass=ppp  
             if checkpass==ppp or l==0:
                 
                 
@@ -88,7 +88,7 @@ while True:
 
                     if check=="0":
                         while True:
-                            ip=input("Server IP address: ")
+                            ip=input("Enter Server IP address: ")
                             ip=ip.strip()
                             
                             row=[]
@@ -108,7 +108,7 @@ while True:
                             
                             settings["firstconn"] = "1"
                             json.dump(settings, f, indent=4)
-
+                        
 
                     check2=settings["firstconn"]
                     
@@ -148,8 +148,9 @@ while True:
                                     json.dump(settings, f, indent=4)
                         ip=settings["IP-S"]
         
-
-
+                if l==1:
+                    print("Connecting to the server....")
+                    l=0
                 while True:
                     try:
                         c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
@@ -179,7 +180,7 @@ while True:
                         continue
             
                         
-                        
+                      
                 with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     ips=settings["IP-U"]  
@@ -201,15 +202,16 @@ while True:
                     if masge=="help" or masge=="h":
                         help='''
 
-    1. firewall state : to change firewall state (off / on).
-    2. add new rule : to add one new rule for firewall.
-    3. delete rule : to delete one rule from firewall.
-    4. advance mode : it is a mode make you to add meny rules and make the rule conest or not. 
+1. Firewall Mode : To change firewall state (off / on).
+2. Add New Rule : Add a temporary rule to the firewall.
+3. Delete Rule : To delete rule from the firewall.
+4. Advance Mode : It is a mode that allows you to add more than one rule to the firewall while specifying their persistence status.
+5. Rule State : To disable or enable a specific rule.
 
-    '''
+'''
                         print(help)
                     if masge=="firewall state" or masge=="1":
-                        print("if you wont to exit enter (exit)")
+                        print("If you want to exit enter (exit)")
                         while True:
                             rolu=input("Enter firewall state (on to enable, off to disable): ")
                             rolu=rolu.strip()
@@ -252,32 +254,32 @@ while True:
                                 
 
                             
-                            off="off"
-                            c.sendall(off.encode())
-                            c.recv(1024).decode()
-                            c.sendall(timerlog.encode())
-                            c.recv(1024).decode()
-                            c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                            c.recv(1024).decode()
-                            ips=str(ips)
-                            c.sendall(ips.encode())
-                            c.recv(1024).decode()
-                            c.sendall(mac.encode())
-                            check1=c.recv(1024).decode()
-                            check1=check1.replace("1","")
-                            check1=check1.strip()
-                            if check1=="firewall log.csv" or check1=="firewall log.csv1":
-                                
-                                msg= EmailMessage()
-                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
-                                msg["From"]="aofnotification@gmail.com"
-                                msg["To"]=check4
-                                msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
-                                email="aofnotification@gmail.com"
-                                password="oqgspkawnyeftyjw"
-                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                    smtp.login(email,password)
-                                    smtp.send_message(msg)
+                        
+                        c.sendall(rolu.encode())
+                        c.recv(1024).decode()
+                        c.sendall(timerlog.encode())
+                        c.recv(1024).decode()
+                        c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                        c.recv(1024).decode()
+                        ips=str(ips)
+                        c.sendall(ips.encode())
+                        c.recv(1024).decode()
+                        c.sendall(mac.encode())
+                        check1=c.recv(1024).decode()
+                        check1=check1.replace("1","")
+                        check1=check1.strip()
+                        if check1=="firewall log.csv" or check1=="firewall log.csv1":
+                            
+                            msg= EmailMessage()
+                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                            msg["From"]="aofnotification@gmail.com"
+                            msg["To"]=check4
+                            msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                            email="aofnotification@gmail.com"
+                            password="oqgspkawnyeftyjw"
+                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                smtp.login(email,password)
+                                smtp.send_message(msg)
                         
                         if rolu!="exit":
                             with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
@@ -293,18 +295,21 @@ while True:
                         
 
                     elif masge=="add new rule" or masge=="2":
-                        print("if you wont to exit enter (exit)")
+                        print("If you want to exit enter (exit)")
                         while True:
                             rule=input("Enter the rule: ")
+                            if rule=="exit":
+                                break
                             if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
-                                print("try agean")
+                                print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
                                 continue
                             if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
-                                print("try agean")
+                                print("The rule contains strange elements. Rewrite it correctly.")
                                 continue
                             if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
-                                print("try agean")
+                                print("Enter a rule in PowerShell format")
                                 continue
+                            
                             else:
                                 break
                         if rule!="exit":
@@ -318,9 +323,9 @@ while True:
                                 else:
                                     print("Please enter a valid timer value.")
                                     continue
-                            print("wait antel the boss check your rule and he will send a password to you")
+                            print("Preparing to send the Email to the official.")
                             msg= EmailMessage()
-                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                            msg["Subject"]=f"Add request - ID({str(uuid.uuid4())[:8]})"
                             msg["From"]="aofnotification@gmail.com"
                             msg["To"]=bossemail
                             unique_id = f"<{uuid.uuid4()}@example.com>"
@@ -335,7 +340,7 @@ Want to "ADD" this rule:
 
 {rule}
 
-if you allow to do this type (Approved) or type (Deny) to disallow'''
+if you allow to do this, type (Approved) or type (Deny) to not allowed'''
                             msg.set_content(z)
                             email="aofnotification@gmail.com"
                             password="oqgspkawnyeftyjw"
@@ -344,16 +349,16 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                 smtp.starttls()
                                 smtp.login(email,password)
                                 smtp.send_message(msg)
-                            rule=f'powershell -Command {rule}'
+                           # rule=f'powershell -Command {rule}'
                             with open(r"C:\FWSH-files\sent_ids.txt", "a",encoding='utf-8') as f:
                                 f.write(unique_id+"#"+rule+"~"+timer+"\n")
-                        
+                            print("Wait until the official approves your request.\nYou will receive an email containing the activation code.")
                         
 
 
 
                     elif masge=="delete rule" or masge=="3":
-                        print("if you wont to exit enter (exit)")
+                        print("If you want to exit enter (exit)")
                         
                         with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
@@ -363,24 +368,24 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                             delrule=input("Enter the rule name: ")
                             if delrule=="exit":
                                 break
-                            if "#" in delrule or "%" in delrule or "|" in delrule or "~" in delrule:
-                                print("try agean")
+                            if "#" in delrule or "%" in delrule or "|" in delrule or "~" in delrule or ";" in delrule or "&" in delrule or "\\" in delrule:
+                                print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
                                 continue
                             if delrule in check6:
-                                print("try agean")
+                                print("The rule can only be deleted when its validity period expires.")
                                 continue
                             else:
                                 break
                         if delrule!="exit":
+                            print("Preparing to send the Email to the official.")
                             
-                            print("wait antel the adminstretor check your rule\nif the adminstretor respons we will send email to you\n")
                             delrule=delrule.strip()
                             chderu=su.run(f'powershell -Command Get-NetFirewallRule -DisplayName "{delrule}"',shell=True,capture_output=True,text=True)
                             
                             chderu=str(chderu.stdout)
                             
                             msg= EmailMessage()
-                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                            msg["Subject"]=f"Delete request - ID({str(uuid.uuid4())[:8]})"
                             msg["From"]="aofnotification@gmail.com"
                             msg["To"]=bossemail
                             unique_id = f"<{uuid.uuid4()}@example.com>"
@@ -394,7 +399,7 @@ IP: {ips}
 Want to "DELETE" this rule:
 {chderu}
 
-if you allow to do this type (Approved) or type (Deny) to disallow'''
+if you allow to do this type (Approved) or type (Deny) to not allowed'''
                             msg.set_content(z)
                             email="aofnotification@gmail.com"
                             password="oqgspkawnyeftyjw"
@@ -406,7 +411,7 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                 
                             with open(r"C:\FWSH-files\sent_ids.txt", "a",encoding='utf-8') as f:
                                 f.write(unique_id+"|"+delrule+"\n")
-                            
+                            print("Wait until the official approves your request.\nYou will receive an email.\n")
                     
 
                     elif masge=="advance mode" or masge=="4":
@@ -418,8 +423,9 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                             check5=str(check5)
                             
                             if check5=="0":
+                                print("Preparing to send the Email to the official.")
                                 msg= EmailMessage()
-                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                msg["Subject"]=f"Advance Mode - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=bossemail
                                 unique_id = f"<{uuid.uuid4()}@example.com>"
@@ -451,15 +457,15 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                         json.dump(settings,f,indent=4)
 
                             elif check5=="1" and settings["advance-password"]=="0":
-                                print("not now")          
+                                print("Your request has not yet been approved by the official.")          
                             elif check5=="1" and settings["advance-password"]!="0":
-                                print("if you wont to exit enter (exit)")
+                                print("If you want to exit enter (exit)")
                                 while True:
-                                    checkpass1=input("enter password: ")
+                                    checkpass1=input("Enter the password: ")
                                     if checkpass1=="exit":
                                         break
                                     if checkpass1!=advance_password:
-                                        print("try agen")
+                                        print("Rewrite the correct code")
                                         continue
                                     elif checkpass1==advance_password:
                                         with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
@@ -475,17 +481,18 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                             rolu=input("Enter the rule or (exit): ")
                                             rolu=rolu.strip()
                                             rule=rolu.replace("'",'"')
-                                            if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
-                                                print("try agean")
-                                                continue
-                                            if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
-                                                print("try agean")
-                                                continue
-                                            if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
-                                                print("try agean")
-                                                continue
                                             if rule=="exit":
                                                 break
+                                            if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
+                                                print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
+                                                continue
+                                            if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
+                                                print("The rule contains strange elements. Rewrite it correctly.")
+                                                continue
+                                            if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
+                                                print("Enter a rule in PowerShell format")
+                                                continue
+                                            
                                             else:
                                                 break
                                         if rule=="exit":
@@ -496,7 +503,7 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                                     json.dump(settings,f,indent=4)
                                             break
                                         while True:
-                                            constan=input("Enter state constant (yes for permanent rule, no for temporary): ")
+                                            constan=input("Enter a constant for the rule's status ('yes' for a permanent rule, 'no' for a temporary rule): ")
                                             constan=constan.strip()
                                             constan=constan.lower()
                                             if constan=="yes" or constan=="no":
@@ -513,7 +520,7 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                                 if timer.endswith("h") or timer.endswith("m"):
                                                     break
                                                 else:
-                                                    print("Try again.")
+                                                    print("Please enter a valid timer value.")
                                                     continue
 
 
@@ -534,7 +541,7 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                                         rulename=''.join(row)
                                         row.clear()
                                         row1.clear()
-                                        on="on"
+                                        on="addrule"
                                         c.sendall(on.encode())
                                         c.recv(1024).decode()
                                         c.sendall(rulename.encode())
@@ -622,7 +629,7 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
 
 
                     elif masge=="rule action" or masge=="5":
-                        print("if you wont to exit enter (exit)")
+                        print("If you want to exit enter (exit)")
                         
                         
                         while True:
@@ -630,29 +637,40 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                             ruleac=ruleac.strip()
                             
                             if "#" in ruleac or "|" in ruleac or "%" in ruleac or "~" in ruleac or ";" in ruleac or "&" in ruleac or "\\" in ruleac:
-                                print("try agean")
+                                print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
                                 continue
                             if "-or" in ruleac.lower() or "if" in ruleac.lower() or "try" in ruleac.lower() or "catch" in ruleac.lower():
-                                print("try agean")
+                                print("The rule contains strange elements. Rewrite it correctly.")
                                 continue
                             if "new-netfirewallrule" in ruleac.lower()  or "-displayname"  in ruleac.lower():
-                                print("try agean")
+                                print("The rule contains strange elements. Rewrite it correctly.")
                                 continue
                             else:
                                 break
 
 
                         while True:
-                            action=input("Enter Rule Action (Enably , Disaply): ").lower().strip()
-                            if action=="enably" or action=="disaply":
-                                break
+                            action=input("Enter Rule Action (Enable , Disable): ").lower().strip()
+                            if action=="enable" or action=="disable":
+                                pass
                             else:
-                                print("try agean")
+                                print("Enter (enable/disable)")
                                 continue
-
-                        if action=="enably":
+                            chderu=su.run(f'powershell -Command Get-NetFirewallRule -DisplayName "{ruleac}"',shell=True,capture_output=True,text=True)
+                            chderu=str(chderu.stdout)
+                            if "Enabled                       : True" in chderu and action=="enable":
+                                print("This rule is irlady enabled")
+                                continue
+                            if "Enabled                       : False" in chderu and action=="disable":
+                                print("This rule is irlady disabled")
+                                continue
+                            else:
+                                break
+                        if action=="enable":
+                            action="Enable"
                             action1="e"
                         else:
+                            action="Disable"
                             action1="d"
 
                         while True:
@@ -662,18 +680,18 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                             if timer.endswith("h") or timer.endswith("m"):
                                 break
                             else:
-                                print("Try again.")
+                                print("Please enter a valid timer value.")
                                 continue
                         if ruleac!="exit":
                             
-                            print("prepar to sending email to the adminstretor \n")
+                            print("Preparing to send the Email to the official.")
                             
                             chderu=su.run(f'powershell -Command Get-NetFirewallRule -DisplayName "{ruleac}"',shell=True,capture_output=True,text=True)
                             
                             chderu=str(chderu.stdout)
                             
                             msg= EmailMessage()
-                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                            msg["Subject"]=f"Rule State - ID({str(uuid.uuid4())[:8]})"
                             msg["From"]="aofnotification@gmail.com"
                             msg["To"]=bossemail
                             unique_id = f"<{uuid.uuid4()}@example.com>"
@@ -687,7 +705,7 @@ IP: {ips}
 Want to "{action}" this rule:
 {chderu}
 
-if you allow to do this type (Approved) or type (Deny) to disallow'''
+if you allow to do this type (Approved) or type (Deny) to not allowed'''
                             msg.set_content(z)
                             email="aofnotification@gmail.com"
                             password="oqgspkawnyeftyjw"
@@ -699,9 +717,9 @@ if you allow to do this type (Approved) or type (Deny) to disallow'''
                             ruleac=ruleac + "^" + timer + action1
                             with open(r"C:\FWSH-files\sent_ids.txt", "a",encoding='utf-8') as f:
                                 f.write(unique_id+"&"+ruleac+"\n")
-                            print("wait until the adminstretor check your email\nif the adminstretor respons we will send email to you\n")
+                            print("Wait until the official approves your request.\nYou will receive an email.\n")
             else:
-                print("Try again.")
+                print("Rewrite the correct code")
                 continue
     except  Exception:
         print("there are error")

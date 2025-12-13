@@ -35,7 +35,7 @@ while True:
                     
                     if settings["email"]=="":
                         while True:
-                            emai=input("Email Address: ")
+                            emai=input("Enter your Email Address: ")
                             if "@" in emai and ".com" in emai:
                                 
                                 emai=emai.strip()
@@ -59,20 +59,20 @@ while True:
                 return password
             
             if l==1:
-                l=0
+                
                 ppp=generate_password()
                 # print("Preparing to send the password to your email.")
                 # msg= EmailMessage()
-                # msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                # msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
                 # msg["From"]="aofnotification@gmail.com"
                 # msg["To"]=check4
-                # msg.set_content(f"your password is: {ppp}")
+                # msg.set_content(f"Your password: {ppp}")
                 # email="aofnotification@gmail.com"
                 # password="oqgspkawnyeftyjw"
                 # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                 #     smtp.login(email,password)
                 #     smtp.send_message(msg)
-                # checkpass=input("Enter password: ")
+                # checkpass=input("Enter the password: ")
                 # checkpass=checkpass.strip()
                 checkpass=ppp
             if checkpass==ppp or l==0:
@@ -87,7 +87,7 @@ while True:
                     if check=="0":
                 
                         while True:
-                            ip=input("Server IP address: ")
+                            ip=input("Enter Server IP address: ")
                             ip=ip.strip()
                             
                             row=[]
@@ -149,7 +149,9 @@ while True:
                                     json.dump(settings, f, indent=4)
                     
 
-                
+                if l==1:
+                    print("Connecting to the server....")
+                    l=0
 
                 while True:
                     try:
@@ -195,26 +197,27 @@ while True:
                     if masge=="help" or masge=="h":
                         help='''
                         
-    1. firewall state : to change firewall state (off / on).
-    2. add new rule : to add one new rule for firewall.
-    3. delete rule : to delete rule from firewall.
-    4. advance mode : it is a mode make you to add miny rules and make the rule conest or not. 
-    5. firewall state off all : to disable all the concting user's firewall.
-    6. firewall state on all : to enable all the concting user's firewall.
+1. Firewall Mode : To change firewall state (off / on).
+2. Add New Rule : Add a temporary rule to the firewall.
+3. Delete Rule : To delete rule from the firewall.
+4. Advance Mode : It is a mode that allows you to add more than one rule to the firewall while specifying their persistence status.
+5. Firewall State Off All : To disable the firewall for all connected devices.
+6. Firewall State On All : To enable the firewall for all connected devices.
+7. Rule State : To disable or enable a specific rule.
 
-    '''
+'''
                         print(help)
-                    if masge=="firewall states" or masge=="1":
-                        print("if you wont to exit enter (exit)")
+                    if masge=="Firewall Mode" or masge=="1":
+                        print("If you want to exit enter (exit)\n")
                         while True:
-                            rolu=input("Enter firewall status (on to enable, off to disable): ")
+                            rolu=input("Enter firewall statu (on to enable, off to disable): ")
                             rolu=rolu.strip()
                             rolu=rolu.lower()
                             if rolu=="on" or rolu=="off" or rolu=="exit":
                                 
                                 break
                             else:
-                                print("Enter 'on' or 'off'")
+                                print("There is an error. Enter 'on' or 'off'")
                                 continue
                         if rolu=="off":
                             while True:
@@ -248,32 +251,32 @@ while True:
                                 
 
                             
-                            off="off"
-                            c.sendall(off.encode())
-                            c.recv(1024).decode()
-                            c.sendall(timerlog.encode())
-                            c.recv(1024).decode()
-                            c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                            c.recv(1024).decode()
-                            ips=str(ips)
-                            c.sendall(ips.encode())
-                            c.recv(1024).decode()
-                            c.sendall(mac.encode())
-                            check1=c.recv(1024).decode()
-                            check1=check1.replace("1","")
-                            check1=check1.strip()
-                            if check1=="firewall log.csv" or check1=="firewall log.csv1":
-                                
-                                msg= EmailMessage()
-                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
-                                msg["From"]="aofnotification@gmail.com"
-                                msg["To"]=check4
-                                msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
-                                email="aofnotification@gmail.com"
-                                password="oqgspkawnyeftyjw"
-                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                    smtp.login(email,password)
-                                    smtp.send_message(msg)
+                            
+                        c.sendall(rolu.encode())
+                        c.recv(1024).decode()
+                        c.sendall(timerlog.encode())
+                        c.recv(1024).decode()
+                        c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                        c.recv(1024).decode()
+                        ips=str(ips)
+                        c.sendall(ips.encode())
+                        c.recv(1024).decode()
+                        c.sendall(mac.encode())
+                        check1=c.recv(1024).decode()
+                        check1=check1.replace("1","")
+                        check1=check1.strip()
+                        if check1=="firewall log.csv" or check1=="firewall log.csv1":
+                            
+                            msg= EmailMessage()
+                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                            msg["From"]="aofnotification@gmail.com"
+                            msg["To"]=check4
+                            msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                            email="aofnotification@gmail.com"
+                            password="oqgspkawnyeftyjw"
+                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                smtp.login(email,password)
+                                smtp.send_message(msg)
                             
                         if rolu !="exit":
                             with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
@@ -294,14 +297,16 @@ while True:
                             rolu=input("Enter the rule or (exit): ")
                             rolu=rolu.strip()
                             rule=rolu.replace("'",'"')
+                            if rule=="exit":
+                                break
                             if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
-                                print("try agean")
+                                print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
                                 continue
                             if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
-                                print("try agean")
+                                print("The rule contains strange elements. Rewrite it correctly.")
                                 continue
                             if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
-                                print("try agean")
+                                print("Enter a rule in PowerShell format")
                                 continue
                             else:
                                 break
@@ -334,7 +339,7 @@ while True:
                             rulename=''.join(row)
                             row.clear()
                             row1.clear()
-                            on="on"
+                            on="addrule"
                             c.sendall(on.encode())
                             c.recv(1024).decode()
                             c.sendall(rulename.encode())
@@ -387,9 +392,6 @@ while True:
                             rule=f'powershell -Command {rule}'    
                             with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
-                                length=settings["length"]
-                                length+=1
-                                settings["length"]=length
                                 s=settings["ruleName"]
                                 s=list(s)
                                 s.append(rulename)
@@ -415,17 +417,17 @@ while True:
                             check6=settings["checkrulename"]
                             check6=list(check6)
                         
-                        print("if you wont to exit enter (exit)")
+                        print("if you want to exit enter (exit)")
                         
                         
                         while True:
                             delrule=input("Enter the rule name: ")
                             delrule=delrule.strip()
-                            if "#" in delrule or "|" in delrule or "%" in delrule or "~" in delrule:
-                                print("try agean")
+                            if "#" in delrule or "%" in delrule or "|" in delrule or "~" in delrule or ";" in delrule or "&" in delrule or "\\" in delrule:
+                                print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
                                 continue
                             if delrule in check6:
-                                print("try agean")
+                                print("The rule can only be deleted when its validity period expires.")
                                 continue
                             
                             else:
@@ -463,13 +465,13 @@ while True:
                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                                     smtp.login(email,password)
                                     smtp.send_message(msg)
-                            print(f"Rule '{delrule}' deleted successfully.")
+                            print(f"The Rule '{delrule}' deleted successfully.")
                         
                         
 
                     elif masge=="advance mode" or masge=="4":
                         
-                        print("if you wont to exit enter (exit)")
+                        print("if you want to exit enter (exit)")
                         
                         
                         while True:
@@ -479,27 +481,30 @@ while True:
                                 rolu=input("Enter the rule: ")
                                 rolu=rolu.strip()
                                 rule=rolu.replace("'",'"')
+                                if rule=="exit":
+                                    break
                                 if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
-                                    print("try agean")
+                                    print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
                                     continue
                                 if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
-                                    print("try agean")
+                                    print("The rule contains strange elements. Rewrite it correctly.")
                                     continue
                                 if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
-                                    print("try agean")
+                                    print("Enter a rule in PowerShell format")
                                     continue
+                                
                                 else:
                                     break
                             if rule=="exit":
                                 break
                             while True:
-                                constan=input("Enter state constant (yes for permanent rule, no for temporary): ")
+                                constan=input("Enter a constant for the rule's status ('yes' for a permanent rule, 'no' for a temporary rule): ")
                                 constan=constan.strip()
                                 constan=constan.lower()
                                 if constan=="yes" or constan=="no":
                                     break
                                 else:
-                                    print("enter 'yes' or 'no'")
+                                    print("Enter 'yes' or 'no'")
                                     continue
                             constan=constan.strip()
                             if constan=="no":
@@ -510,7 +515,7 @@ while True:
                                     if timer.endswith("h") or timer.endswith("m"):
                                         break
                                     else:
-                                        print("Try again.")
+                                        print("Please enter a valid timer value.")
                                         continue
 
                             
@@ -532,7 +537,7 @@ while True:
                             row.clear()
                             row1.clear()
                         
-                            on="on"
+                            on="addrule"
                             c.sendall(on.encode())
                             c.recv(1024).decode()
                             c.sendall(rulename.encode())
@@ -593,9 +598,7 @@ while True:
                                 settings = json.load(f)
                                 settings["constan"]=constan
                                 if constan=="no":
-                                    length=settings["length"]
-                                    length+=1
-                                    settings["length"]=length
+                                    
 
                                     s=settings["ruleName"]
                                     s=list(s)
@@ -624,21 +627,21 @@ while True:
                         c.sendall(masge.encode())
                         c.recv(1024).decode()
                         c.sendall("gg".encode())
-                        print("The firewall will be off in '10' seconds.")
+                        print("The firewall will be turned off after 10 seconds.")
                         break  
                     elif masge=="firewall state on all" or masge=="6":
 
                         c.sendall(masge.encode())
                         c.recv(1024).decode()
                         c.sendall("gg".encode())
-                        print("The firewall will be on in '10' seconds.")
+                        print("The firewall will restart after 10 seconds.")
                         break
 
                 
                     
 
-                    elif masge=="rule action" or masge=="7":
-                        print("if you wont to exit enter (exit)")
+                    elif masge=="rule state" or masge=="7":
+                        print("If you want to exit enter (exit)")
                         
                         
                         while True:
@@ -646,27 +649,37 @@ while True:
                             ruleac=ruleac.strip()
                             
                             if "#" in ruleac or "|" in ruleac or "%" in ruleac or "~" in ruleac or ";" in ruleac or "&" in ruleac or "\\" in ruleac:
-                                print("try agean")
+                                print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
                                 continue
                             if "-or" in ruleac.lower() or "if" in ruleac.lower() or "try" in ruleac.lower() or "catch" in ruleac.lower():
-                                print("try agean")
+                                print("The rule contains strange elements. Rewrite it correctly.")
                                 continue
                             if "new-netfirewallrule" in ruleac.lower()  or "-displayname"  in ruleac.lower():
-                                print("try agean")
+                                print("The rule contains strange elements. Rewrite it correctly.")
                                 continue
                             else:
                                 break
 
 
                         while True:
-                            action=input("Enter Rule Action (Enably , Disaply): ").lower().strip()
-                            if action=="enably" or action=="disaply":
-                                break
+                            action=input("Enter Rule state (Enable , Disable): ").lower().strip()
+                            if action=="enable" or action=="disable":
+                                pass
                             else:
-                                print("try agean")
+                                print("Enter (enable/disable)")
                                 continue
+                            chderu=su.run(f'powershell -Command Get-NetFirewallRule -DisplayName "{ruleac}"',shell=True,capture_output=True,text=True)
+                            chderu=str(chderu.stdout)
+                            if "Enabled                       : True" in chderu and action=="enable":
+                                print("This rule is irlady enabled")
+                                continue
+                            if "Enabled                       : False" in chderu and action=="disable":
+                                print("This rule is irlady disabled")
+                                continue
+                            else:
+                                break
 
-                        if action=="enably":
+                        if action=="enable":
                             action1="e"
                         else:
                             action1="d"
@@ -678,7 +691,7 @@ while True:
                             if timer.endswith("h") or timer.endswith("m"):
                                 break
                             else:
-                                print("Try again.")
+                                print("Please enter a valid timer value.")
                                 continue
                         if ruleac!="exit":
                             
@@ -722,15 +735,12 @@ while True:
                                     smtp.login(email,password)
                                     smtp.send_message(msg)
                             
-                            print(f"Rule action of : '{ruleac}' change successfully.")
-                            
-                        
-
-
-
+                            print(f"The Rule state of : '{ruleac}' change successfully.")
+                
             else:
-                print("Try again.")
+                print("Rewrite the correct code")
                 continue
                 
     except  Exception:
+        print("error")
         continue
