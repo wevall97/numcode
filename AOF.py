@@ -15,14 +15,14 @@ import random
 # check all code
 # serish erorr: when i delete a rule without using the system the "aof.py" send to the server "delhac" but nothing alse hapen
 
-with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f) 
     chck2=0
     while True:
         try:
-            pathfile=os.path.exists(r"C:\FWSH-files\sent_ids.txt")
+            pathfile=os.path.exists(r"C:\FS-File\sent_ids.txt")
             if pathfile==False:
-                with open(r"C:\FWSH-files\sent_ids.txt","w",encoding='utf-8')as f:
+                with open(r"C:\FS-File\sent_ids.txt","w",encoding='utf-8')as f:
                     f.write("")
 
             #check firewall state    
@@ -34,7 +34,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             #conn with the praimry conn   
             while True:
                 try:
-                    with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f) 
                         ip=settings["IP-S"]
                     
@@ -56,56 +56,56 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
 
 
 
-            #return D:\FWSH-files\settings.json to the defult
-            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+            #return D:\FS-File\settings.json to the defult
+            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f) 
                 if settings["user-state"]=="USER":
                     bossemail=settings["bossemail"]
                 if settings["FWS"]=="":
                     settings["FWS"]="null"
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 if settings["timerF"]=="":
                     settings["timerF"]="0"
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 if settings["Rolue"]!="null":
                     settings["Rolue"]="null"
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 if settings["FWS"]=="off" or settings["FWS"]=="on" or settings["FWS"]=="off-all":
                     settings["FWS"]="null"
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 if settings["timerF"]!="0":
                     settings["timerF"]="0"
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 if settings["timerR"]!=[]:
                     settings["timerR"]=[]
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 if settings["ruleName"]!=[]:
                     settings["ruleName"]=[]
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 if settings["checkrulename"]!=[]: 
                     for aa in settings["checkrulename"]:
                         su.run(f'powershell -Command Remove-NetFirewallRule -DisplayName "{aa}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
                     settings["checkrulename"]=[]
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 if settings["constan"]!="no":
                     settings["constan"]="no"
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 
                 if settings["deleteR"]!="null":
                     settings["deleteR"]="null"
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                 email_rvs=settings["email"]
                 user_state=settings["user-state"]
@@ -113,11 +113,11 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
 
 
 
-            with open(r"C:\FWSH-files\FirewallRules.txt","w",encoding='utf-8')as f:
+            with open(r"C:\FS-File\FirewallRules.txt","w",encoding='utf-8')as f:
                     f.write("")
             #cuntant firewall rules lenghth
-            su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FWSH-files\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
-            with open(r"C:\FWSH-files\FirewallRules.txt","r",encoding='utf-8')as f:
+            su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FS-File\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
+            with open(r"C:\FS-File\FirewallRules.txt","r",encoding='utf-8')as f:
                 a=f.readlines()
                 ld=0
                 for _ in a:
@@ -127,16 +127,16 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             
             def ckeck_email():
                 
-                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     ips=settings["IP-U"]
-                global status,from_,timer,mac
+                global status,from_,timer,mac,bossemail
                 while True:
-                    print("1")
+                    
                     IMAP_SERVER = "imap.gmail.com"
                     EMAIL_ACCOUNT = "aofnotification@gmail.com"
                     EMAIL_PASSWORD = "oqgspkawnyeftyjw"
-                    with open(r"C:\FWSH-files\sent_ids.txt", "r", encoding='utf-8') as f:
+                    with open(r"C:\FS-File\sent_ids.txt", "r", encoding='utf-8') as f:
                         sent_ids=f.read().strip()
                         
                     mail = imaplib.IMAP4_SSL(IMAP_SERVER)
@@ -164,10 +164,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                     
                                         sent_ids=sent_ids.replace(in_reply_to,"")
                                         
-                                        with open(r"C:\FWSH-files\sent_ids.txt", "w",encoding='utf-8') as f:
+                                        with open(r"C:\FS-File\sent_ids.txt", "w",encoding='utf-8') as f:
                                             sent_id="".join(map(str,sent_ids))
                                             f.write(sent_id)
-                                        with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
+                                        with open(r"C:\FS-File\sent_ids.txt", "r",encoding='utf-8') as f:
                                             sent_ids=f.readlines()
                                             for line in sent_ids:
                                                 if line.startswith("|") or line.startswith("#") or line.startswith("%") or line.startswith("&"):
@@ -178,22 +178,22 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                         chck1=l.index("~")
                                                         l=l[:chck1]
                                                         l1=l
-                                                        with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
+                                                        with open(r"C:\FS-File\sent_ids.txt", "r",encoding='utf-8') as f:
                                                             sent_ids=f.read()
                                                             sent_ids=sent_ids.replace("#","")  
                                                             
                                                             
-                                                        with open(r"C:\FWSH-files\sent_ids.txt", "w",encoding='utf-8') as f:
+                                                        with open(r"C:\FS-File\sent_ids.txt", "w",encoding='utf-8') as f:
                                                             sent_id="".join(map(str,sent_ids))
                                                             f.write(sent_id)  
                                                     
                                                         
-                                        with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
+                                        with open(r"C:\FS-File\sent_ids.txt", "r",encoding='utf-8') as f:
                                             sent_ids=f.read()
                                             
                                             sent_ids=sent_ids.replace(l1,"")  
                                             
-                                        with open(r"C:\FWSH-files\sent_ids.txt", "w",encoding='utf-8') as f:
+                                        with open(r"C:\FS-File\sent_ids.txt", "w",encoding='utf-8') as f:
                                             sent_id="".join(map(str,sent_ids))
                                             f.write(sent_id)     
 
@@ -201,10 +201,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                             
                                             ran = random.randint(100000, 999999)
                                             ran=str(ran)
-                                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                                 settings = json.load(f)
                                                 settings["advance-password"]=ran
-                                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
                                             msg= EmailMessage()
                                             msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
@@ -218,10 +218,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                 smtp.send_message(msg)   
                                             
                                         elif firest!="approved"  and l2=="%": 
-                                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                                 settings = json.load(f)
                                                 settings["advance-mode"]="0"
-                                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
                                             msg= EmailMessage()
                                             msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
@@ -237,7 +237,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
 
                                         if firest=="approved" and l2=="&":
                                             
-                                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                                 settings = json.load(f)
                                                 if l.endswith("e"):
                                                     l=l[:-1]
@@ -247,7 +247,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                     l=l[:-1]
                                                     settings["Disaply list"]=[l]
                                                     action="Disable"
-                                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
 
 
@@ -275,13 +275,13 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                             check1=c.recv(1024).decode()
                                             check1=check1.replace("1","")
                                             check1=check1.strip()
-                                            if check1=="acction rule log.csv" or check1=="action rule log.csv1":
+                                            if check1=="action rule log.csv" or check1=="action rule log.csv1":
                                                 
                                                 msg= EmailMessage()
-                                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
                                                 msg["From"]="aofnotification@gmail.com"
                                                 msg["To"]=email_rvs
-                                                msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                                                msg.set_content(f"Someone is reading the 'State_rule.csv' file.\n you should check the server's status to see if it has been compromised or not.")
                                                 email="aofnotification@gmail.com"
                                                 password="oqgspkawnyeftyjw"
                                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -315,11 +315,11 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
 
                                         if firest=="approved" and l2=="|":
                                             
-                                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                                 settings = json.load(f)
                                                 settings["deleteR"]=l
                                                 
-                                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
                                             on="del"
                                             c.sendall(on.encode())
@@ -338,10 +338,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                             if check1=="delete rule log.csv" or check1=="delete rule log.csv1":
                                                 
                                                 msg= EmailMessage()
-                                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
                                                 msg["From"]="aofnotification@gmail.com"
                                                 msg["To"]=email_rvs
-                                                msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                                                msg.set_content(f"Someone is reading the 'Delete_rule.csv' file.\n you should check the server's status to see if it has been compromised or not.")
                                                 email="aofnotification@gmail.com"
                                                 password="oqgspkawnyeftyjw"
                                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -377,7 +377,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                             l=l.replace("#","")
                                     
 
-                                            with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
+                                            with open(r"C:\FS-File\sent_ids.txt", "r",encoding='utf-8') as f:
                                                 sent_ids=f.readlines()
                                                 for line in sent_ids:
                                                     if line.startswith("~"):
@@ -386,11 +386,11 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                         timer=line[1:]
                                                         
                                                         
-                                            with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
+                                            with open(r"C:\FS-File\sent_ids.txt", "r",encoding='utf-8') as f:
                                                 sent_ids=f.read()
                                                 sent_ids=sent_ids.replace(l1,"")  
                                                 
-                                            with open(r"C:\FWSH-files\sent_ids.txt", "w",encoding='utf-8') as f:
+                                            with open(r"C:\FS-File\sent_ids.txt", "w",encoding='utf-8') as f:
                                                 sent_id="".join(map(str,sent_ids))
                                                 f.write(sent_id) 
                                             
@@ -436,10 +436,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                             if check1=="add rule log.csv" or check1=="add rule log.csv1":
                                             
                                                 msg= EmailMessage()
-                                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
                                                 msg["From"]="aofnotification@gmail.com"
                                                 msg["To"]=email_rvs
-                                                msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                                                msg.set_content(f"Someone is reading the 'Add_rule_log.csv' file.\n you should check the server's status to see if it has been compromised or not.")
                                                 email="aofnotification@gmail.com"
                                                 password="oqgspkawnyeftyjw"
                                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -464,7 +464,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                             
                                         
                                                 
-                                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                                 settings = json.load(f)
                                                 
                                                 s=settings["checkrulename"]
@@ -480,7 +480,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                                                 s.append(timer)
                                                 settings["timerR"]=s
                                                 settings["Rolue"]=f'powershell -Command {l}'
-                                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
                                             msg= EmailMessage()
                                             msg["Subject"]=f"Request approval - ID({str(uuid.uuid4())[:8]})"
@@ -496,16 +496,16 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
 
 
                                         elif firest!="approved" and l2=="#":
-                                            with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
+                                            with open(r"C:\FS-File\sent_ids.txt", "r",encoding='utf-8') as f:
                                                 sent_ids=f.readlines()
                                                 for line in sent_ids:
                                                     if line.startswith("~"):
                                                         l1=line   
-                                            with open(r"C:\FWSH-files\sent_ids.txt", "r",encoding='utf-8') as f:
+                                            with open(r"C:\FS-File\sent_ids.txt", "r",encoding='utf-8') as f:
                                                 sent_ids=f.read()
                                                 sent_ids=sent_ids.replace(l1,"") 
                                                 
-                                            with open(r"C:\FWSH-files\sent_ids.txt", "w",encoding='utf-8') as f:
+                                            with open(r"C:\FS-File\sent_ids.txt", "w",encoding='utf-8') as f:
                                                 sent_id="".join(map(str,sent_ids))
                                                 f.write(sent_id) 
 
@@ -526,10 +526,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     mail.logout()
                     time.sleep(5)
             if user_state=="USER" and chck2==0:
-                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     if settings["advance-mode"]!="0":
                         settings["advance-mode"]="0"
-                        with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                             json.dump(settings,f,indent=4)
                 th.Thread(target=ckeck_email).start()
                 chck2=1
@@ -551,20 +551,20 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         close=c.recv(1024).decode('utf-8')
                         if close=="off":
                             
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 settings["FWS"]="off-all"
                                 settings["timerF"]="0"
-                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
                             su.run(r"powershell -Command Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False",shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
                         elif close=="on":
                             su.run(r"powershell -Command Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True",shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 settings["FWS"]="null"
                                 settings["timerF"]="0"
-                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
                         
                     except Exception:
@@ -573,11 +573,11 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
 
 
 
-            #function to check the D:\FWSH-files\settings.json evry 10s
+            #function to check the D:\FS-File\settings.json evry 10s
             async def check_files():
                 global fws,ip,timer,rule,rulename,timerr,ips,constan,deleteR,rellen,enaply,disaply,mac
                 
-                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     
 
@@ -632,11 +632,11 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 if fws=="off" and l==1:
                     l=0
                     fs.fireOff(fws,timer)
-                    with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         settings["FWS"]="null"
                         settings["timerF"]="0"
-                        with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                             json.dump(settings,f,indent=4)
                     l=1
                     
@@ -644,7 +644,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
             def add__rule():
                 global rulename,rellen,timerr,tirell
                 
-                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     a=settings["ruleName"]
                     w=settings["timerR"]
@@ -654,7 +654,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     w.pop(0)
                     settings["ruleName"]=a
                     settings["timerR"]=w
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4) 
                 
 
@@ -662,13 +662,13 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 tirell=1
                 rellen=rellen-1
                 
-                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     v=settings["checkrulename"]
                     v=list(v)        
                     v.remove(rulename1)
                     settings["checkrulename"]=v
-                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                         json.dump(settings,f,indent=4)
                     
                     
@@ -683,7 +683,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     if ll==1:
                         #run the seconed conn function
                         th.Thread(target=clos_fw).start()
-                    #run the check D:\FWSH-files\settings.json function
+                    #run the check D:\FS-File\settings.json function
                     sa.gather(check_files())
                     
                     
@@ -695,21 +695,21 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     elif fws=="on":
                         #open firewall
                         su.run(r"powershell -Command Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True",shell=True,text=True,capture_output=False,stderr=su.DEVNULL)
-                        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
                             settings["FWS"]="null"
                             settings["timerF"]="0"
-                            with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                 json.dump(settings,f,indent=4)
                         l=1
                     #check if the firewall state is off without the user send any ordurs
-                    with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         check=settings["FWS"]
                     if check=="null":
                         a=su.run('powershell -Command "Get-NetFirewallProfile | Select-Object Enabled"',shell=True,text=True,capture_output=True)
                         a=a.stdout
-                        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 firews=settings["FWS"]
                                 firews=str(firews)
@@ -729,10 +729,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             if check1=="issue FWS.csv" or check1=="issue FWS.csv1":
                                 
                                 msg= EmailMessage()
-                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=email_rvs
-                                msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                                msg.set_content(f"Someone is reading the 'FirewallTamper.csv' file.\n you should check the server's status to see if it has been compromised or not.")
                                 email="aofnotification@gmail.com"
                                 password="oqgspkawnyeftyjw"
                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -755,10 +755,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     if deleteR!="null":
                         su.run(f'powershell -Command Remove-NetFirewallRule -DisplayName "{deleteR}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
                         rellen=rellen-1
-                        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
                             settings["deleteR"]="null"
-                            with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                 json.dump(settings,f,indent=4)
 
 
@@ -770,22 +770,22 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             su.run(rule,shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
                            
                             rellen=rellen+1
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 settings["Rolue"]="null"
                                 settings["constan"]="no"
                             
-                            with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                 json.dump(settings,f,indent=4)
                         elif constan=="no":
                             
                             su.run(rule,shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
                             rellen=rellen+1
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                     settings = json.load(f)
                                     settings["Rolue"]="null"
                                     settings["constan"]="no"
-                                    with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                         json.dump(settings,f,indent=4)
                             #run add rules function
                             th.Thread(target=add__rule).start()
@@ -793,12 +793,12 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
 
                     
                     
-                    with open(r"C:\FWSH-files\FirewallRules.txt","w",encoding='utf-8')as f:
+                    with open(r"C:\FS-File\FirewallRules.txt","w",encoding='utf-8')as f:
                         f.write("")
                     #check firewall rules lenghth
                     
-                    su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FWSH-files\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=True)
-                    with open(r"C:\FWSH-files\FirewallRules.txt","r",encoding='utf-8')as f:
+                    su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FS-File\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=True)
+                    with open(r"C:\FS-File\FirewallRules.txt","r",encoding='utf-8')as f:
                         a=f.readlines()
                         ld=0
                         
@@ -807,10 +807,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             ld+=1
                     #if there a rule add to the firewall without ordars from the user the belwo code will run
                     if tirell==1:
-                        with open(r"C:\FWSH-files\FirewallRules.txt","w",encoding='utf-8')as f:
+                        with open(r"C:\FS-File\FirewallRules.txt","w",encoding='utf-8')as f:
                             f.write("")
-                        su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FWSH-files\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=True)
-                        with open(r"C:\FWSH-files\FirewallRules.txt","r",encoding='utf-8')as f:
+                        su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FS-File\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=True)
+                        with open(r"C:\FS-File\FirewallRules.txt","r",encoding='utf-8')as f:
                             a=f.readlines()
                             ld=0
                             
@@ -837,10 +837,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         if check1=="issue rule.csv" or check1=="issue rule.csv1":
                             
                             msg= EmailMessage()
-                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                            msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
                             msg["From"]="aofnotification@gmail.com"
                             msg["To"]=email_rvs
-                            msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                            msg.set_content(f"Someone is reading the 'RuleTamper.csv' file.\n you should check the server's status to see if it has been compromised or not.")
                             email="aofnotification@gmail.com"
                             password="oqgspkawnyeftyjw"
                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -861,10 +861,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
 
                     #if there a rule delete from the firewall without ordars from the user the belwo code will run    
                     if tirell==1:
-                        with open(r"C:\FWSH-files\FirewallRules.txt","w",encoding='utf-8')as f:
+                        with open(r"C:\FS-File\FirewallRules.txt","w",encoding='utf-8')as f:
                             f.write("")
-                        su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FWSH-files\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=True)
-                        with open(r"C:\FWSH-files\FirewallRules.txt","r",encoding='utf-8')as f:
+                        su.run(r'powershell -Command "Get-NetFirewallRule | Select-Object -ExpandProperty Name | Out-File "C:\FS-File\FirewallRules.txt" -Encoding utf8"',shell=True,text=True,capture_output=True)
+                        with open(r"C:\FS-File\FirewallRules.txt","r",encoding='utf-8')as f:
                             a=f.readlines()
                             ld=0
                             
@@ -890,10 +890,10 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         if check1=="issue rule.csv" or check1=="issue rule.csv1":
                             
                             msg= EmailMessage()
-                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                            msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
                             msg["From"]="aofnotification@gmail.com"
                             msg["To"]=email_rvs
-                            msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                            msg.set_content(f"Someone is reading the 'RuleTamper.csv' file.\n you should check the server's status to see if it has been compromised or not.")
                             email="aofnotification@gmail.com"
                             password="oqgspkawnyeftyjw"
                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -911,7 +911,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                             smtp.login(email,password)
                             smtp.send_message(msg)
                                 
-                    with open(r"C:\FWSH-files\FirewallRules.txt","w",encoding='utf-8')as f:
+                    with open(r"C:\FS-File\FirewallRules.txt","w",encoding='utf-8')as f:
                         f.write("")
                     
 
@@ -919,12 +919,12 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                     if enaply !=[] :
                         def enaply_action():
                             global enaply
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 enaply=list(enaply)
                                 enaply1=enaply.pop(0)
                                 settings["Enaply list"]=enaply
-                            with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                 json.dump(settings,f,indent=4) 
                             action="e"
                             if enaply1.endswith("m") or enaply1.endswith("h"):
@@ -957,12 +957,12 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                         
                         def disaply_action():
                             global disaply
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 disaply=list(disaply)
                                 disaply1=disaply.pop(0)
                                 settings["Disaply list"]=disaply
-                            with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                 json.dump(settings,f,indent=4) 
                             action="d"
                             if disaply1.endswith("m") or disaply1.endswith("h"):
@@ -993,7 +993,7 @@ with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
                 sa.run(main())
                 
                 #return to do this loop evry 10s
-                time.sleep(5)
+                time.sleep(7)
         except Exception:
-            print("there are error")
+            
             continue

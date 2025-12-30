@@ -8,7 +8,7 @@ import uuid
 from email.message import EmailMessage
 import smtplib
 
-
+# chick the name of the commend "rule state"
 
 # check all code
 
@@ -17,20 +17,20 @@ while True:
     try:
         try:
             
-            os.mkdir(r"C:\FWSH-files")
+            os.mkdir(r"C:\FS-File")
         except Exception:
             pass
 
-        pathfile=os.path.exists(r"C:\FWSH-files\settings.json")
+        pathfile=os.path.exists(r"C:\FS-File\settings.json")
 
         if pathfile==False:
             s='{"user-state": "ADMEN","email": "","IP-S": "","IP-U": "","MAC": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","checkrulename": [],"ruleName": [],"Rolue": "null","constan": "no","timerR": [],"Enaply list": [],"Disaply list": []}'
             p=json.loads(s)
-            with open(r"C:\FWSH-files\settings.json","w",encoding='utf-8')as f:
+            with open(r"C:\FS-File\settings.json","w",encoding='utf-8')as f:
                 json.dump(p,f,indent=4)
-        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f) 
-            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     
                     if settings["email"]=="":
@@ -40,15 +40,15 @@ while True:
                                 
                                 emai=emai.strip()
                                 settings["email"]=emai
-                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
                                     break
                             else:
                                 print("Please enter a valid email address.")
                                 continue
-                        with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                             json.dump(settings,f,indent=4)
-            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                 settings = json.load(f)
                 check4=settings["email"]
             
@@ -61,22 +61,22 @@ while True:
             if l==1:
                 
                 ppp=generate_password()
-                # print("Preparing to send the password to your email.")
-                # msg= EmailMessage()
-                # msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
-                # msg["From"]="aofnotification@gmail.com"
-                # msg["To"]=check4
-                # msg.set_content(f"Your password: {ppp}")
-                # email="aofnotification@gmail.com"
-                # password="oqgspkawnyeftyjw"
-                # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                #     smtp.login(email,password)
-                #     smtp.send_message(msg)
-                # checkpass=input("Enter the password: ")
-                # checkpass=checkpass.strip()
-                checkpass=ppp
+                print("Preparing to send the password to your email.")
+                msg= EmailMessage()
+                msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
+                msg["From"]="aofnotification@gmail.com"
+                msg["To"]=check4
+                msg.set_content(f"Your password: {ppp}")
+                email="aofnotification@gmail.com"
+                password="oqgspkawnyeftyjw"
+                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                    smtp.login(email,password)
+                    smtp.send_message(msg)
+                checkpass=input("Enter the password: ")
+                checkpass=checkpass.strip()
+                
             if checkpass==ppp or l==0:
-                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     
                     
@@ -103,7 +103,7 @@ while True:
                                 break
                         
                         
-                        with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                             settings["IP-S"] =ip
                             settings["firstconn"] = "1"
                             json.dump(settings, f, indent=4)
@@ -141,16 +141,17 @@ while True:
                             check7=1
                             
                         if check7==0:
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 settings["IP-U"] =ips
                                 settings["MAC"] =mac
-                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings, f, indent=4)
                     
 
                 if l==1:
                     print("Connecting to the server....")
+                    time.sleep(1)
                     l=0
 
                 while True:
@@ -180,10 +181,58 @@ while True:
                 
                 
                         
+                def check_inputs(rule,num):
+
+                    if num==1:
+                        if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule or "@" in rule or "$" in rule or ")" in rule or "(" in rule:
+                            return ("Your rule should not contain any of these symbols (# | % ~ ; & \\ @ $ ( ) ).")
                         
+                        if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
+                            return ("The rule contains strange elements. Rewrite it correctly.")
+                        
+                        if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
+                            return ("Enter a rule in PowerShell format")
+                        
+                        else:
+                            return "1"
+                        
+
+
+                    if num==2:
+                        if "#" in rule or "%" in rule or "|" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule or "@" in rule or "$" in rule or ")" in rule or "(" in rule:
+                            return ("Your rule should not contain any of these symbols (# | % ~ ; & \\ @ $ ( ) ).")
+                        
+                        chderu=su.run(f'powershell -Command Get-NetFirewallRule -DisplayName "{rule}"',shell=True,capture_output=True,text=True)
+                        chderu=str(chderu.stdout).strip()
+                        if "" in chderu and "DisplayName" not in chderu:
+                            return ("There is no rule by that name")
+                        
+                        else:
+                            return "1"
+
+
+
+                    if num==3:
+                        if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule or "@" in rule or "$" in rule or ")" in rule or "(" in rule:
+                            return ("Your rule should not contain any of these symbols (# | % ~ ; & \\ @ $ ( ) ).")
+                        
+                        if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
+                            return ("The rule contains strange elements. Rewrite it correctly.")
+                        
+                        if "new-netfirewallrule"  in rule.lower()  or "-displayname"  in rule.lower():
+                            return ("The rule contains strange elements. Rewrite it correctly.")
+                        
+                        chderu=su.run(f'powershell -Command Get-NetFirewallRule -DisplayName "{rule}"',shell=True,capture_output=True,text=True)
+                        chderu=str(chderu.stdout).strip()
+                        if "" in chderu and "DisplayName" not in chderu:
+                            return("There is no rule by that name")
+                        else:
+                            return "1"
+                        
+                    
                 
 
-                with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     ips=settings["IP-U"] 
                     mac=settings["MAC"] 
@@ -251,41 +300,43 @@ while True:
                                 
 
                             
-                            
-                        c.sendall(rolu.encode())
-                        c.recv(1024).decode()
-                        c.sendall(timerlog.encode())
-                        c.recv(1024).decode()
-                        c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                        c.recv(1024).decode()
-                        ips=str(ips)
-                        c.sendall(ips.encode())
-                        c.recv(1024).decode()
-                        c.sendall(mac.encode())
-                        check1=c.recv(1024).decode()
-                        check1=check1.replace("1","")
-                        check1=check1.strip()
-                        if check1=="firewall log.csv" or check1=="firewall log.csv1":
-                            
-                            msg= EmailMessage()
-                            msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
-                            msg["From"]="aofnotification@gmail.com"
-                            msg["To"]=check4
-                            msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
-                            email="aofnotification@gmail.com"
-                            password="oqgspkawnyeftyjw"
-                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                smtp.login(email,password)
-                                smtp.send_message(msg)
+                        if rolu!="exit":    
+                            c.sendall(rolu.encode())
+                            c.recv(1024).decode()
+                            if rolu=="on":
+                               timerlog="null" 
+                            c.sendall(timerlog.encode())
+                            c.recv(1024).decode()
+                            c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                            c.recv(1024).decode()
+                            ips=str(ips)
+                            c.sendall(ips.encode())
+                            c.recv(1024).decode()
+                            c.sendall(mac.encode())
+                            check1=c.recv(1024).decode()
+                            check1=check1.replace("1","")
+                            check1=check1.strip()
+                            if check1=="firewall log.csv" or check1=="firewall log.csv1":
+                                
+                                msg= EmailMessage()
+                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
+                                msg["From"]="aofnotification@gmail.com"
+                                msg["To"]=check4
+                                msg.set_content(f"Someone is reading the 'Firewall_log.csv' file.\n you should check the server's status to see if it has been compromised or not.")
+                                email="aofnotification@gmail.com"
+                                password="oqgspkawnyeftyjw"
+                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                    smtp.login(email,password)
+                                    smtp.send_message(msg)
                             
                         if rolu !="exit":
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 data = json.load(f)
                                 data["FWS"]=rolu
                                 if rolu=="off":
                                     data["timerF"]=timer
                                 
-                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(data,f,indent=4)
                             print("Firewall state has been changed.")
 
@@ -299,17 +350,10 @@ while True:
                             rule=rolu.replace("'",'"')
                             if rule=="exit":
                                 break
-                            if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
-                                print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
-                                continue
-                            if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
-                                print("The rule contains strange elements. Rewrite it correctly.")
-                                continue
-                            if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
-                                print("Enter a rule in PowerShell format")
-                                continue
-                            else:
+                            re=check_inputs(rule,1)
+                            if re=="1" :
                                 break
+                            print(re)
                         if rule!="exit":
                             while True:
                                 timer=input("Enter the timer value: ")
@@ -363,10 +407,10 @@ while True:
                             if check1=="add rule log.csv" or check1=="add rule log.csv1":
                                 
                                 msg= EmailMessage()
-                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=check4
-                                msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                                msg.set_content(f"Someone is reading the 'Add_rule_log.csv' file.\n you should check the server's status to see if it has been compromised or not.")
                                 email="aofnotification@gmail.com"
                                 password="oqgspkawnyeftyjw"
                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -390,7 +434,7 @@ while True:
                                 
                         
                             rule=f'powershell -Command {rule}'    
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 s=settings["ruleName"]
                                 s=list(s)
@@ -405,14 +449,14 @@ while True:
                                 s.append(rulename)
                                 settings["checkrulename"]=s
                                 settings["Rolue"]=rule
-                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
                             print("Rule added successfully.")
 
 
 
                     elif masge=="delete rule" or masge=="3":
-                        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
                             check6=settings["checkrulename"]
                             check6=list(check6)
@@ -423,20 +467,28 @@ while True:
                         while True:
                             delrule=input("Enter the rule name: ")
                             delrule=delrule.strip()
-                            if "#" in delrule or "%" in delrule or "|" in delrule or "~" in delrule or ";" in delrule or "&" in delrule or "\\" in delrule:
-                                print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
-                                continue
+                            if delrule=="exit":
+                                break
+
+                            
                             if delrule in check6:
                                 print("The rule can only be deleted when its validity period expires.")
                                 continue
-                            
-                            else:
+                            print("The rule is being checking...")
+                            time.sleep(1)
+                            re=check_inputs(delrule,2)
+                            if re=="1":
                                 break
+                            print(re)
+                            
+                            
+                            
+                            
                         if delrule!="exit":
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 settings["deleteR"]=delrule
-                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
 
                             on="del"
@@ -456,10 +508,10 @@ while True:
                             if check1=="delete rule log.csv" or check1=="delete rule log.csv1":
                                 
                                 msg= EmailMessage()
-                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=check4
-                                msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                                msg.set_content(f"Someone is reading the 'Delete_rule.csv' file.\n you should check the server's status to see if it has been compromised or not.")
                                 email="aofnotification@gmail.com"
                                 password="oqgspkawnyeftyjw"
                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -483,18 +535,10 @@ while True:
                                 rule=rolu.replace("'",'"')
                                 if rule=="exit":
                                     break
-                                if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule:
-                                    print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
-                                    continue
-                                if "-or" in rule.lower() or "if" in rule.lower() or "try" in rule.lower() or "catch" in rule.lower():
-                                    print("The rule contains strange elements. Rewrite it correctly.")
-                                    continue
-                                if "new-netfirewallrule" not in rule.lower()  or "-displayname" not in rule.lower():
-                                    print("Enter a rule in PowerShell format")
-                                    continue
-                                
-                                else:
+                                re=check_inputs(rule,1)
+                                if re=="1" :
                                     break
+                                print(re)
                             if rule=="exit":
                                 break
                             while True:
@@ -564,10 +608,10 @@ while True:
                             if check1=="add rule log.csv" or check1=="add rule log.csv1":
                                 
                                 msg= EmailMessage()
-                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=check4
-                                msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                                msg.set_content(f"Someone is reading the 'Add_rule_log.csv' file.\n you should check the server's status to see if it has been compromised or not.")
                                 email="aofnotification@gmail.com"
                                 password="oqgspkawnyeftyjw"
                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -594,7 +638,7 @@ while True:
                                 
                                 
                             rule=f'powershell -Command {rule}'   
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 settings["constan"]=constan
                                 if constan=="no":
@@ -615,7 +659,7 @@ while True:
                                     s.append(rulename)
                                     settings["checkrulename"]=s
                                 settings["Rolue"]=rule
-                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
                             print("Rule added successfully.")
 
@@ -623,15 +667,15 @@ while True:
 
                     
                     elif masge=="firewall state off all" or masge=="5":
-                
-                        c.sendall(masge.encode())
+                        
+                        c.sendall("firewall state off all".encode())
                         c.recv(1024).decode()
                         c.sendall("gg".encode())
                         print("The firewall will be turned off after 10 seconds.")
                         break  
                     elif masge=="firewall state on all" or masge=="6":
 
-                        c.sendall(masge.encode())
+                        c.sendall("firewall state on all".encode())
                         c.recv(1024).decode()
                         c.sendall("gg".encode())
                         print("The firewall will restart after 10 seconds.")
@@ -647,61 +691,68 @@ while True:
                         while True:
                             ruleac=input("Enter the rule name: ")
                             ruleac=ruleac.strip()
+                            if ruleac=="exit":
+                                break
                             
-                            if "#" in ruleac or "|" in ruleac or "%" in ruleac or "~" in ruleac or ";" in ruleac or "&" in ruleac or "\\" in ruleac:
-                                print("Your rule should not contain any of these symbols (# | % ~ ; & \\).")
-                                continue
-                            if "-or" in ruleac.lower() or "if" in ruleac.lower() or "try" in ruleac.lower() or "catch" in ruleac.lower():
-                                print("The rule contains strange elements. Rewrite it correctly.")
-                                continue
-                            if "new-netfirewallrule" in ruleac.lower()  or "-displayname"  in ruleac.lower():
-                                print("The rule contains strange elements. Rewrite it correctly.")
-                                continue
-                            else:
+                            print("The rule is being checking...")
+                            time.sleep(1)
+                            re=check_inputs(ruleac,3)
+                            if re=="1":
                                 break
+                            print(re)
 
-
-                        while True:
-                            action=input("Enter Rule state (Enable , Disable): ").lower().strip()
-                            if action=="enable" or action=="disable":
-                                pass
-                            else:
-                                print("Enter (enable/disable)")
-                                continue
-                            chderu=su.run(f'powershell -Command Get-NetFirewallRule -DisplayName "{ruleac}"',shell=True,capture_output=True,text=True)
-                            chderu=str(chderu.stdout)
-                            if "Enabled                       : True" in chderu and action=="enable":
-                                print("This rule is irlady enabled")
-                                continue
-                            if "Enabled                       : False" in chderu and action=="disable":
-                                print("This rule is irlady disabled")
-                                continue
-                            else:
-                                break
-
-                        if action=="enable":
-                            action1="e"
-                        else:
-                            action1="d"
-
-                        while True:
-                            timer=input("Enter the timer value: ")
-                            timer=timer.strip()
-                            timer=timer.lower()
-                            if timer.endswith("h") or timer.endswith("m"):
-                                break
-                            else:
-                                print("Please enter a valid timer value.")
-                                continue
                         if ruleac!="exit":
+                            while True:
+                                action=input("Enter Rule Action (Enable , Disable): ").lower().strip()
+                                if action=="enable" or action=="disable" or action=="exit":
+                                    pass
+                                else:
+                                    print("Enter (enable/disable)")
+                                    continue
+                                if action=="exit":
+                                    break
+                                
+
+                                print("The rule is being checking...")
+                                time.sleep(1)
+                                chderu=su.run(f'powershell -Command Get-NetFirewallRule -DisplayName "{ruleac}"',shell=True,capture_output=True,text=True)
+                                chderu=str(chderu.stdout).strip()
+                                if "Enabled                       : True" in chderu and action=="enable":
+                                    print ("This rule is currently enabled")
+                                    
+                                if "Enabled                       : False" in chderu and action=="disable":
+                                    print ("This rule is currently disabled")
+                                    
+                                else:
+                                    break  
+                                
+                            if action!="exit":
+
+                                if action=="enable":
+                                    action="Enable"
+                                    action1="e"
+                                else:
+                                    action="Disable"
+                                    action1="d"
+
+                                while True:
+                                    timer=input("Enter the timer value: ")
+                                    timer=timer.strip()
+                                    timer=timer.lower()
+                                    if timer.endswith("h") or timer.endswith("m"):
+                                        break
+                                    else:
+                                        print("Please enter a valid timer value.")
+                                        continue
+                        if ruleac!="exit" and action!="exit":
                             
-                            with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 if action=="enably":
                                     settings["Enaply list"]=[ruleac + "^" + timer]
                                 else:
                                     settings["Disaply list"]=[ruleac + "^" + timer]
-                                with open(r'C:\FWSH-files\settings.json', 'w',encoding='utf-8') as f:
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
 
                             on="rua"
@@ -725,10 +776,10 @@ while True:
                             if check1=="acction rule log.csv" or check1=="action rule log.csv1":
                                 
                                 msg= EmailMessage()
-                                msg["Subject"]=f"edit rule - ID({str(uuid.uuid4())[:8]})"
+                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
                                 msg["From"]="aofnotification@gmail.com"
                                 msg["To"]=check4
-                                msg.set_content(f"someone reading the server's log file '{check1}'\ndo the porotocole ")
+                                msg.set_content(f"Someone is reading the 'State_rule.csv' file.\n you should check the server's status to see if it has been compromised or not.")
                                 email="aofnotification@gmail.com"
                                 password="oqgspkawnyeftyjw"
                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -742,5 +793,5 @@ while True:
                 continue
                 
     except  Exception:
-        print("error")
+        
         continue

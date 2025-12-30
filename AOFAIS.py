@@ -6,23 +6,24 @@ import threading as th
 import socket as so
 import os
 
+
 # check all code
 
 try:
     
-    os.mkdir(r"C:\FWSH-file")
+    os.mkdir(r"C:\FS-Server")
 except Exception:
      pass
 
-pathfile=os.path.exists(r"C:\FWSH-file\serverSetting.json")
-print("1")
+pathfile=os.path.exists(r"C:\FS-Server\serverSetting.json")
+
 if pathfile==False:
     s='{"email": ""}'
     p=json.loads(s)
-    with open(r"C:\FWSH-file\serverSetting.json","w",encoding='utf-8')as f:
+    with open(r"C:\FS-Server\serverSetting.json","w",encoding='utf-8')as f:
         json.dump(p,f,indent=4)
 lll=1
-with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
+with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
     settings = json.load(f) 
   
 
@@ -70,7 +71,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
         
         
         if addId=="1":
-            with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
+            with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                 serverSetting = json.load(f)        
                 bossemail=serverSetting["email"]
                 bossemail=str(bossemail)
@@ -78,14 +79,14 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                 await writer.drain()
         
         elif addId!="add":
-            with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
+            with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                 serverSetting = json.load(f)
                 if serverSetting["email"]=="":
                     serverSetting["email"]=addId
-                    with open(r'C:\FWSH-file\serverSetting.json', 'w',encoding='utf-8') as f:
+                    with open(r'C:\FS-Server\serverSetting.json', 'w',encoding='utf-8') as f:
                         json.dump(serverSetting,f,indent=4)
 
-        with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
+        with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
             serverSetting = json.load(f)        
             bossemail=serverSetting["email"]
         
@@ -106,13 +107,13 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     clients.remove(d)
             
         while True:
-            print("yes")
+            
             try:
                 data= await reder.read(90000)
                 if not data:
                     break
                 dat=data.decode().strip()
-                print(dat)
+                
             except Exception:
                 pass
             try:
@@ -151,7 +152,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     mac=data.decode()
                     
                     try:
-                        s=pd.read_csv(r"C:\FWSH-file\firewall log.csv")
+                        s=pd.read_csv(r"C:\FS-Server\Firewall_log.csv")
                     except Exception:
                         datafrme={
                             "IP":["IP"],
@@ -162,7 +163,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         }
 
                         s=pd.DataFrame(datafrme)
-                        s.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                        s.to_csv(r"C:\FS-Server\Firewall_log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
@@ -173,7 +174,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
 
                     d=pd.DataFrame(datafrme)
                     try:
-                        d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\Firewall_log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     except Exception:
                         writer.write("firewall log.csv".encode())
                         await writer.drain()
@@ -217,7 +218,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     mac=data.decode()
                     
                     try:
-                        s=pd.read_csv(r"C:\FWSH-file\delete rule log.csv") 
+                        s=pd.read_csv(r"C:\FS-Server\Delete_rule.csv") 
                     except Exception:
                         datafrme={
                             "IP":["IP"],
@@ -227,7 +228,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         }
 
                         d=pd.DataFrame(datafrme)
-                        d.to_csv(r"C:\FWSH-file\delete rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\Delete_rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
 
 
                     datafrme={
@@ -239,7 +240,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
 
                     d=pd.DataFrame(datafrme)
                     try:
-                        d.to_csv(r"C:\FWSH-file\delete rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\Delete_rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     except Exception:
                         writer.write("delete rule log.csv".encode())
                         await writer.drain()
@@ -291,7 +292,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         break
                     mac=data.decode()
                     try:
-                        s=pd.read_csv(r"C:\FWSH-file\add rule log.csv")
+                        s=pd.read_csv(r"C:\FS-Server\Add_rule_log.csv")
                     except Exception:
                         datafrme={
                             "IP":["IP"],
@@ -304,7 +305,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         }
 
                         d=pd.DataFrame(datafrme)
-                        d.to_csv(r"C:\FWSH-file\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                        d.to_csv(r"C:\FS-Server\Add_rule_log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
 
 
                     datafrme={
@@ -319,7 +320,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
 
                     d=pd.DataFrame(datafrme)
                     try:
-                        d.to_csv(r"C:\FWSH-file\add rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\Add_rule_log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     except Exception:
                         writer.write("add rule log.csv".encode())
                         await writer.drain()
@@ -329,7 +330,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                 if dat=="firewall state off all" or dat=="5" :
                     T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                     try:
-                        s=pd.read_csv(r"C:\FWSH-file\firewall log.csv") 
+                        s=pd.read_csv(r"C:\FS-Server\Firewall_log.csv") 
                     except Exception:
                         datafrme={
                             "IP":["IP"],
@@ -340,7 +341,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         }
 
                         s=pd.DataFrame(datafrme)
-                        s.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        s.to_csv(r"C:\FS-Server\Firewall_log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     datafrme={
                             "IP":["ALL"],
                             "MAC":["ALL"],
@@ -351,7 +352,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
 
                     d=pd.DataFrame(datafrme)
                     try:
-                        d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\Firewall_log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     except Exception:
                         writer.write("firewall log.csv".encode())
                         await writer.drain()
@@ -362,11 +363,11 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     await writer.drain()
                     clos_fw(command="off")    
                         
-                
+                # delete it because it is not insasary
                 if dat=="firewall state on all" or dat=="6" :
                     T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                     try:
-                        s=pd.read_csv(r"C:\FWSH-file\firewall log.csv") 
+                        s=pd.read_csv(r"C:\FS-Server\Firewall_log.csv") 
                     except Exception:
                         datafrme={
                             "IP":["IP"],
@@ -377,7 +378,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         }
 
                         s=pd.DataFrame(datafrme)
-                        s.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        s.to_csv(r"C:\FS-Server\Firewall_log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     datafrme={
                             "IP":["ALL"],
                             "MAC":["ALL"],
@@ -388,7 +389,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
 
                     d=pd.DataFrame(datafrme)
                     try:
-                        d.to_csv(r"C:\FWSH-file\firewall log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\Firewall_log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     except Exception:
                         writer.write("firewall log.csv".encode())
                         await writer.drain()
@@ -415,7 +416,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     mac=data.decode()
                     T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                     try:
-                        s=pd.read_csv(r"C:\FWSH-file\issue FWS.csv") 
+                        s=pd.read_csv(r"C:\FS-Server\FirewallTamper.csv") 
                     except Exception:
                         datafrme={
                             "IP":["IP"],
@@ -425,7 +426,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         }
 
                         s=pd.DataFrame(datafrme)
-                        s.to_csv(r"C:\FWSH-file\issue FWS.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        s.to_csv(r"C:\FS-Server\FirewallTamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
@@ -435,7 +436,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
 
                     d=pd.DataFrame(datafrme)
                     try:
-                        d.to_csv(r"C:\FWSH-file\issue FWS.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\FirewallTamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     except Exception:
                         writer.write("issue FWS.csv".encode())
                         await writer.drain()
@@ -444,7 +445,11 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
 
                 
 
-                if dat=="hackAdd":
+                if dat=="hackAdd" or dat=="hackDel":
+                    if dat=="hackDel":
+                        hack="delete"
+                    else:
+                        hack="add"
                     writer.write("1".encode())
                     await writer.drain()
                     data= await reder.read(90000)
@@ -459,7 +464,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     mac=data.decode()
                     T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
                     try:
-                        s=pd.read_csv(r"C:\FWSH-file\issue rule.csv") 
+                        s=pd.read_csv(r"C:\FS-Server\RuleTamper.csv") 
                     except Exception:
                         datafrme={
                             "IP":["IP"],
@@ -469,65 +474,24 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         }
 
                         s=pd.DataFrame(datafrme)
-                        s.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        s.to_csv(r"C:\FS-Server\RuleTamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
-                            "STATE":["add"],
+                            "STATE":[hack],
                             "TIME":[T]
                         }
 
                     d=pd.DataFrame(datafrme)
                     try:
-                        d.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\RuleTamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     except Exception:
                         writer.write("issue rule.csv".encode())
                         await writer.drain()
                     writer.write("1".encode())
                     await writer.drain()
 
-
-                if dat=="hackDel":
-                    writer.write("1".encode())
-                    await writer.drain()
-                    data= await reder.read(90000)
-                    if not data:
-                        break
-                    ips=data.decode()
-                    writer.write("1".encode())
-                    await writer.drain()
-                    data= await reder.read(90000)
-                    if not data:
-                        break
-                    mac=data.decode()
-                    T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
-                    try:
-                        s=pd.read_csv(r"C:\FWSH-file\issue rule.csv") 
-                    except Exception:
-                        datafrme={
-                            "IP":["IP"],
-                            "MAC":["MAC"],
-                            "STATE":["STATE"],
-                            "TIME":["TIME"]
-                        }
-
-                        s=pd.DataFrame(datafrme)
-                        s.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
-                    datafrme={
-                            "IP":[ips],
-                            "MAC":[mac],
-                            "STATE":["delete"],
-                            "TIME":[T]
-                        }
-
-                    d=pd.DataFrame(datafrme)
-                    try:
-                        d.to_csv(r"C:\FWSH-file\issue rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
-                    except Exception:
-                        writer.write("issue rule.csv".encode())
-                        await writer.drain()
-                    writer.write("1".encode())
-                    await writer.drain()
+                
 
 
 
@@ -577,7 +541,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                     mac=data.decode()
                     
                     try:
-                        s=pd.read_csv(r"C:\FWSH-file\action rule log.csv")
+                        s=pd.read_csv(r"C:\FS-Server\State_rule.csv")
                     except Exception:
                         datafrme={
                             "IP":["IP"],
@@ -589,7 +553,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
                         }
 
                         s=pd.DataFrame(datafrme)
-                        s.to_csv(r"C:\FWSH-file\action rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                        s.to_csv(r"C:\FS-Server\State_rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
@@ -601,7 +565,7 @@ with open(r'C:\FWSH-file\serverSetting.json', 'r',encoding='utf-8') as f:
 
                     d=pd.DataFrame(datafrme)
                     try:
-                        d.to_csv(r"C:\FWSH-file\action rule log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\State_rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     except Exception:
                         writer.write("action rule log.csv".encode())
                         await writer.drain()
