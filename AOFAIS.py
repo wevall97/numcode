@@ -6,8 +6,9 @@ import threading as th
 import socket as so
 import os
 
-
+# type "Rule" instad of anythings sayed "rule name"
 # check all code
+# اذكر انك لازم في كتلوج المستخدمين انو netsh سوف يتم حذفها عبر مايكرسوفت عشان كده النظام بيدعم اوامر power shell يس
 
 try:
     
@@ -22,7 +23,7 @@ if pathfile==False:
     p=json.loads(s)
     with open(r"C:\FS-Server\serverSetting.json","w",encoding='utf-8')as f:
         json.dump(p,f,indent=4)
-lll=1
+#lll=1
 with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
     settings = json.load(f) 
   
@@ -60,7 +61,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
 
     th.Thread(target=main).start()
     async def h(reder,writer):
-        global password1,lll,status,from_
+        #global lll
         writer.write('1'.encode())
         await writer.drain()
         try:
@@ -74,17 +75,17 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
             with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                 serverSetting = json.load(f)        
                 bossemail=serverSetting["email"]
-                bossemail=str(bossemail)
+                #bossemail=str(bossemail)
                 writer.write(bossemail.encode())
                 await writer.drain()
         
         elif addId!="add":
             with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                 serverSetting = json.load(f)
-                if serverSetting["email"]=="":
-                    serverSetting["email"]=addId
-                    with open(r'C:\FS-Server\serverSetting.json', 'w',encoding='utf-8') as f:
-                        json.dump(serverSetting,f,indent=4)
+                #if serverSetting["email"]=="":
+                serverSetting["email"]=addId
+                with open(r'C:\FS-Server\serverSetting.json', 'w',encoding='utf-8') as f:
+                    json.dump(serverSetting,f,indent=4)
 
         with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
             serverSetting = json.load(f)        
@@ -119,7 +120,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
             try:
 
                 if dat=="gg":
-                    
+                    # make a test in this
                     break
                 if dat=="off" or dat=="on":
                     
@@ -223,7 +224,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                         datafrme={
                             "IP":["IP"],
                             "MAC":["MAC"],
-                            "Delete_Ru":["Delete_Ru"],
+                            "Delete_Rule":["Delete_Rule"],
                             "TIME":["TIME"]
                         }
 
@@ -234,7 +235,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
-                            "Delete_Ru":[deleteR],
+                            "Delete_Rule":[deleteR],
                             "TIME":[timerlog]
                         }
 
@@ -246,6 +247,8 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                         await writer.drain()
                     writer.write("1".encode())
                     await writer.drain()
+
+
 
                 if dat=="addrule":
                     writer.write("1".encode())
@@ -300,7 +303,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                             "Rule_Name":["Rule_Name"],
                             "RULE":["RULE"],
                             "TIMER":["TIMER"],
-                            "CONSTAN":["CONSTAN"],
+                            "Permanent":["Permanent"],
                             "TIME":["TIME"]
                         }
 
@@ -314,7 +317,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                             "Rule_Name":[rulename],
                             "RULE":[RULE],
                             "TIMER":[timerlog],
-                            "CONSTAN":[constan],
+                            "Permanent":[constan],# get for it a new name
                             "TIME":[T]
                         }
 
@@ -327,8 +330,18 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     writer.write("1".encode())
                     await writer.drain()
                 
+
+
                 if dat=="firewall state off all" or dat=="5" :
-                    T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    T=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+
                     try:
                         s=pd.read_csv(r"C:\FS-Server\Firewall_log.csv") 
                     except Exception:
@@ -362,10 +375,20 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     writer.write("1".encode())
                     await writer.drain()
                     clos_fw(command="off")    
-                        
+
+
+
                 # delete it because it is not insasary
                 if dat=="firewall state on all" or dat=="6" :
-                    T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    T=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+
                     try:
                         s=pd.read_csv(r"C:\FS-Server\Firewall_log.csv") 
                     except Exception:
@@ -414,9 +437,9 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     if not data:
                         break
                     mac=data.decode()
-                    T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+                    T=str(time.strftime('%Y-%m-%d %H:%M:%S'))#check it 
                     try:
-                        s=pd.read_csv(r"C:\FS-Server\FirewallTamper.csv") 
+                        s=pd.read_csv(r"C:\FS-Server\Firewall_Tamper.csv") 
                     except Exception:
                         datafrme={
                             "IP":["IP"],
@@ -426,7 +449,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                         }
 
                         s=pd.DataFrame(datafrme)
-                        s.to_csv(r"C:\FS-Server\FirewallTamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        s.to_csv(r"C:\FS-Server\Firewall_Tamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
@@ -436,7 +459,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
 
                     d=pd.DataFrame(datafrme)
                     try:
-                        d.to_csv(r"C:\FS-Server\FirewallTamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\Firewall_Tamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     except Exception:
                         writer.write("issue FWS.csv".encode())
                         await writer.drain()
@@ -445,11 +468,26 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
 
                 
 
-                if dat=="hackAdd" or dat=="hackDel":
-                    if dat=="hackDel":
-                        hack="delete"
-                    else:
-                        hack="add"
+                if dat=="hackDel":
+                    
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    Program_Name=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    Program_Path=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    T=data.decode()
                     writer.write("1".encode())
                     await writer.drain()
                     data= await reder.read(90000)
@@ -462,29 +500,290 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     if not data:
                         break
                     mac=data.decode()
-                    T=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    dn=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    na=data.decode()
+                    
                     try:
-                        s=pd.read_csv(r"C:\FS-Server\RuleTamper.csv") 
+                        s=pd.read_csv(r"C:\FS-Server\Delete_Rule_Tamper.csv") 
                     except Exception:
                         datafrme={
                             "IP":["IP"],
                             "MAC":["MAC"],
-                            "STATE":["STATE"],
+                            "Program_Name":["Program_Name"],
+                            "Program_Path":["Program_Path"],
+                            "DisplayName":["DisplayName"],
+                            "Name":["Name"],
                             "TIME":["TIME"]
                         }
 
                         s=pd.DataFrame(datafrme)
-                        s.to_csv(r"C:\FS-Server\RuleTamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        s.to_csv(r"C:\FS-Server\Delete_Rule_Tamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
-                            "STATE":[hack],
+                            "Program_Name":[Program_Name],
+                            "Program_Path":[Program_Path],
+                            "DisplayName":[dn],
+                            "Name":[na],
                             "TIME":[T]
                         }
 
                     d=pd.DataFrame(datafrme)
                     try:
-                        d.to_csv(r"C:\FS-Server\RuleTamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                        d.to_csv(r"C:\FS-Server\Delete_Rule_Tamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                    except Exception:
+                        writer.write("issue rule.csv".encode())
+                        await writer.drain()
+                    writer.write("1".encode())
+                    await writer.drain()
+
+
+
+                if dat=="hackMod":
+
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    Program_Name=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    Program_Path=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    ips=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    mac=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    dn=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    na=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    ii=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    gema=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    T=data.decode()
+                    
+                    try:
+                        s=pd.read_csv(r"C:\FS-Server\Modified_Rule_Tamper.csv") 
+                    except Exception:
+                        datafrme={
+                            "IP":["IP"],
+                            "MAC":["MAC"],
+                            "Program_Name":["Program_Name"],
+                            "Program_Path":["Program_Path"],
+                            "DisplayName":["DisplayName"],
+                            "Name":["Name"],
+                            "Modified item":["Modified item"],
+                            "New value":["New value"],
+                            "TIME":["TIME"]
+                        }
+
+                        s=pd.DataFrame(datafrme)
+                        s.to_csv(r"C:\FS-Server\Modified_Rule_Tamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                    datafrme={
+                            "IP":[ips],
+                            "MAC":[mac],
+                            "Program_Name":[Program_Name],
+                            "Program_Path":[Program_Path],
+                            "DisplayName":[dn],
+                            "Name":[na],
+                            "Modified item":[ii],
+                            "New value":[gema],
+                            "TIME":[T]
+                        }
+
+                    d=pd.DataFrame(datafrme)
+                    try:
+                        d.to_csv(r"C:\FS-Server\Modified_Rule_Tamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                    except Exception:
+                        writer.write("issue rule.csv".encode())
+                        await writer.drain()
+                    writer.write("1".encode())
+                    await writer.drain()
+
+                
+
+
+                if dat=="hackAdd":
+                    
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    Program_Name=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    Program_Path=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    ips=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    mac=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    dn=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    na=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    di=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    ac=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    pr=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    en=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    pro=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    lo=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    re=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    pg=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    T=data.decode()
+                    
+                    try:
+                        s=pd.read_csv(r"C:\FS-Server\Add_Rule_Tamper.csv") 
+                    except Exception:
+                        datafrme={
+                            "IP":["IP"],
+                            "MAC":["MAC"],
+                            "Program_Name":["Program_Name"],
+                            "Program_Path":["Program_Path"],
+                            "DisplayName":["DisplayName"],
+                            "Name":["Name"],
+                            "Direction":["Direction"],
+                            "Action":["Action"],
+                            "Profile":["Profile"],
+                            "Enabled":["Enabled"],
+                            "Protocol":["Protocol"],
+                            "LocalPort":["LocalPort"],
+                            "RemotePort":["RemotePort"],
+                            "Program":["Program"],
+                            "TIME":["TIME"]
+                        }
+
+                        s=pd.DataFrame(datafrme)
+                        s.to_csv(r"C:\FS-Server\Add_Rule_Tamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                    datafrme={
+                            "IP":[ips],
+                            "MAC":[mac],
+                            "Program_Name":[Program_Name],
+                            "Program_Path":[Program_Path],
+                            "DisplayName":[dn],
+                            "Name":[na],
+                            "Direction":[di],
+                            "Action":[ac],
+                            "Profile":[pr],
+                            "Enabled":[en],
+                            "Protocol":[pro],
+                            "LocalPort":[lo],
+                            "RemotePort":[re],
+                            "Program":[pg],
+                            "TIME":[T]
+                        }
+
+                    d=pd.DataFrame(datafrme)
+                    try:
+                        d.to_csv(r"C:\FS-Server\Add_Rule_Tamper.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
                     except Exception:
                         writer.write("issue rule.csv".encode())
                         await writer.drain()
@@ -546,7 +845,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                         datafrme={
                             "IP":["IP"],
                             "MAC":["MAC"],
-                            "RULE_Name":["RULE_Name"],
+                            "RULE":["RULE"],
                             "ACTION":["ACTION"],
                             "TIMER":["TIMER"],
                             "TIME":["TIME"]
@@ -557,7 +856,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
-                            "RULE_Name":[rulename],
+                            "RULE":[rulename],
                             "ACTION":[action],
                             "TIMER":[T],
                             "TIME":[timerlog]
@@ -574,15 +873,9 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
 
 
 
-
-                
-
             except Exception:
             
                 break
-
-
-
 
 
         try:          
@@ -592,7 +885,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
             pass
 
     async def m():
-        s=await sa.start_server(h,'0.0.0.0',9999)
-        async with s:
-            await s.serve_forever()
+        server=await sa.start_server(h,'0.0.0.0',9999)
+        async with server:
+            await server.serve_forever()
     sa.run(m())
