@@ -119,9 +119,9 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                 pass
             try:
 
-                if dat=="gg":
-                    # make a test in this
-                    break
+                # if dat=="gg":
+                #     # make a test in this
+                #     break
                 if dat=="off" or dat=="on":
                     
                     writer.write("1".encode())
@@ -369,11 +369,12 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     except Exception:
                         writer.write("firewall log.csv".encode())
                         await writer.drain()
-                    writer.write("1".encode())
-                    await writer.drain()
+
+                    # writer.write("1".encode())
+                    # await writer.drain()
                     time.sleep(1.5)
-                    writer.write("1".encode())
-                    await writer.drain()
+                    # writer.write("1".encode())
+                    # await writer.drain()
                     clos_fw(command="off")    
 
 
@@ -416,11 +417,12 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     except Exception:
                         writer.write("firewall log.csv".encode())
                         await writer.drain()
-                    writer.write("1".encode())
-                    await writer.drain()
+
+                    # writer.write("1".encode())
+                    # await writer.drain()
                     time.sleep(1.5)
-                    writer.write("1".encode())
-                    await writer.drain()
+                    # writer.write("1".encode())
+                    # await writer.drain()
                     clos_fw(command="on")
 
                 
@@ -476,6 +478,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     if not data:
                         break
                     Program_Name=data.decode()
+
                     writer.write("1".encode())
                     await writer.drain()
                     data= await reder.read(90000)
@@ -512,6 +515,13 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     if not data:
                         break
                     na=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    white=data.decode()
                     
                     try:
                         s=pd.read_csv(r"C:\FS-Server\Delete_Rule_Tamper.csv") 
@@ -521,6 +531,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                             "MAC":["MAC"],
                             "Program_Name":["Program_Name"],
                             "Program_Path":["Program_Path"],
+                            "white list":["white list"],
                             "DisplayName":["DisplayName"],
                             "Name":["Name"],
                             "TIME":["TIME"]
@@ -533,6 +544,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                             "MAC":[mac],
                             "Program_Name":[Program_Name],
                             "Program_Path":[Program_Path],
+                            "white list":[white],
                             "DisplayName":[dn],
                             "Name":[na],
                             "TIME":[T]
@@ -605,6 +617,13 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     if not data:
                         break
                     T=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    white=data.decode()
                     
                     try:
                         s=pd.read_csv(r"C:\FS-Server\Modified_Rule_Tamper.csv") 
@@ -614,6 +633,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                             "MAC":["MAC"],
                             "Program_Name":["Program_Name"],
                             "Program_Path":["Program_Path"],
+                            "white list":["white list"],
                             "DisplayName":["DisplayName"],
                             "Name":["Name"],
                             "Modified item":["Modified item"],
@@ -628,6 +648,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                             "MAC":[mac],
                             "Program_Name":[Program_Name],
                             "Program_Path":[Program_Path],
+                            "white list":[white],
                             "DisplayName":[dn],
                             "Name":[na],
                             "Modified item":[ii],
@@ -739,6 +760,13 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     if not data:
                         break
                     T=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    white=data.decode()
                     
                     try:
                         s=pd.read_csv(r"C:\FS-Server\Add_Rule_Tamper.csv") 
@@ -748,6 +776,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                             "MAC":["MAC"],
                             "Program_Name":["Program_Name"],
                             "Program_Path":["Program_Path"],
+                            "white list":["white list"],
                             "DisplayName":["DisplayName"],
                             "Name":["Name"],
                             "Direction":["Direction"],
@@ -768,6 +797,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                             "MAC":[mac],
                             "Program_Name":[Program_Name],
                             "Program_Path":[Program_Path],
+                            "white list":[white],
                             "DisplayName":[dn],
                             "Name":[na],
                             "Direction":[di],
@@ -809,14 +839,14 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     data= await reder.read(90000)
                     if not data:
                         break
-                    T=data.decode()
+                    component=data.decode()
 
                     writer.write("1".encode())
                     await writer.drain()
                     data= await reder.read(90000)
                     if not data:
                         break
-                    action=data.decode()
+                    newvalue=data.decode()
 
                     writer.write("1".encode())
                     await writer.drain()
@@ -846,8 +876,8 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                             "IP":["IP"],
                             "MAC":["MAC"],
                             "RULE":["RULE"],
-                            "ACTION":["ACTION"],
-                            "TIMER":["TIMER"],
+                            "component":["Component"],
+                            "newvalue":["NewValue"],
                             "TIME":["TIME"]
                         }
 
@@ -857,8 +887,8 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                             "IP":[ips],
                             "MAC":[mac],
                             "RULE":[rulename],
-                            "ACTION":[action],
-                            "TIMER":[T],
+                            "Component":[component],
+                            "NewValue":[newvalue],
                             "TIME":[timerlog]
                         }
 
@@ -872,7 +902,23 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     await writer.drain()
 
 
-
+                if dat=="settings":
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    email=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
+                        serverSetting = json.load(f)
+                        serverSetting["email"]=email
+                        with open(r'C:\FS-Server\serverSetting.json', 'w',encoding='utf-8') as f:
+                            json.dump(serverSetting,f,indent=4)
+                    time.sleep(1.5)
+                    clos_fw(command=email)
+                    
             except Exception:
             
                 break

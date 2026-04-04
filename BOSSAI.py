@@ -10,7 +10,7 @@ import smtplib
 import re
 
 # chick the name of the commend "rule state"
-
+# check anythings had "exit" in it
 # check all code
 print("checking system files...")
 def poewrshell(ordar):
@@ -36,7 +36,7 @@ while True:
         pathfile=os.path.exists(r"C:\FS-File\settings.json")
 
         if pathfile==False:
-            s='{"user-state": "ADMEN","email": "","IP-S": "","IP-U": "","MAC": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","checkrulename": [],"ruleName": [],"Rolue": "null","constan": "no","timerR": [],"Enaply list": [],"Disaply list": [],"edit_wait": "0","path_proName_PID": "","white list": [],"white list checker": ""}'
+            s='{"user-state": "ADMEN","email": "","IP-S": "","IP-U": "","MAC": "","firstconn": "0","FWS": "","timerF": "","deleteR": "null","checkrulename": [],"ruleName": [],"Rolue": "null","constan": "no","timerR": [],"path_proName_PID": "","white list": [],"white list checker": "","modify_rule": "null"}'
             p=json.loads(s)
             with open(r"C:\FS-File\settings.json","w",encoding='utf-8')as f:
                 json.dump(p,f,indent=4)
@@ -78,7 +78,7 @@ while True:
                 # msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
                 # msg["From"]="aofnotification@gmail.com"
                 # msg["To"]=check4
-                # msg.set_content(f"Your password: {ppp}")
+                # msg.set_content(f"This is your password to verify your identity and connect to the server:\n{ppp}\nIf you did not request this password, please check your account security immediately.\n\n\nSecurity System:\nFS System")
                 # email="aofnotification@gmail.com"
                 # password="oqgspkawnyeftyjw"
                 # with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -206,11 +206,13 @@ while True:
                             c.connect((ip, 9999))
                         except ConnectionRefusedError:
                             print("The server is shut down.")
-                            #exit() تعديل
+                            time.sleep(20)
+                            exit() 
                             break 
                         except Exception:
                             print(f"Something happened to the server IP; it has been changed to '{ip}'.")
-                            #exit() تعديل
+                            time.sleep(20)
+                            exit() 
                             break
                         
                         chck=c.recv(1024).decode('utf-8')
@@ -238,6 +240,8 @@ while True:
                         if "new-netfirewallrule" not in rule.lower() : #or "-displayname" not in rule.lower():#end
                             return ("Enter a rule in PowerShell format")
                         
+                        if "-displayname" not in rule.lower():
+                            return ("The rule should contain the '-DisplayName' parameter to specify the rule name.")
                         else:
                             return "1"
                         
@@ -289,7 +293,7 @@ while True:
                     mac=settings["MAC"] 
                 print("enter (help) for help")
                 while True:
-                    
+                    print("in loop")
                     masge=input("Enter your message: ")
                     masge=masge.strip().lower() # تعديل
                     
@@ -304,8 +308,93 @@ while True:
 6. Firewall State On All : To enable the firewall for all connected devices.
 7. Rule State : To disable or enable a specific rule.
 8. White List : To manage the white list.
+9. Settings : To change your email or the server IP address.
 '''
                         print(help)
+
+                    if masge=="settings" or masge=="9":
+                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                            settings = json.load(f)
+                            print("Your Email: "+settings["email"])
+                            print("IP Server: "+settings["IP-S"]+"\n")
+                            while True:
+                                newstt=input("To change your email, type 'email'. To change your IP Server, type 'IP' or (exit): ").strip()
+                                if newstt.lower()=="exit":
+                                    break
+                                if newstt.lower()=="email":
+                                    while True:
+                                        emai=input("Enter your new Email Address: ")
+                                        if "@gmail.com" in emai :
+                                            emai=emai.strip()
+                                            settings["email"]=emai
+                                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                json.dump(settings,f,indent=4)
+                                                break
+                                        else:
+                                            print("Please enter a valid email address.")
+                                            continue
+                                    c.sendall("settings".encode())
+                                    c.recv(1024).decode()
+                                    c.sendall(emai.encode())
+                                    c.recv(1024).decode()
+                                    print("Email updated successfully.")
+                                    break
+
+                                elif newstt.lower()=="ip":
+                                    while True:
+                                        ip=input("Enter new Server IP address: ")
+                                        ip=ip.strip()
+                                        
+                                        row=[]
+                                        chnum=["1","2","3","4","5","6","7","8","9","0","."] 
+                                        for cnum in ip:
+                                            if cnum not in chnum:
+                                                cnum="block"
+                                                break
+                                        if cnum=="block":
+                                            print("Invalid IP address entered.")
+                                            continue
+
+                                        if ip.endswith(".") or ip.startswith("."):
+                                            print("Invalid IP address entered.")
+                                            continue
+                                        
+                                        if "." not in ip:
+                                            print("Invalid IP address entered.")
+                                            continue
+
+                                        for i in ip:
+                                            row.append(i)
+                                            if i==".":
+                                                lenrow=len(row)
+                                                if lenrow==4:
+                                                    jl=''.join(row)
+                                                    jl=jl[:-1]
+                                                    jl=int(jl)
+                                                    if jl>255:
+                                                        lenrow="block"
+                                                        break
+                                                    else:
+
+                                                        row.clear()  
+                                                elif lenrow>4:
+                                                    row.clear()
+                                                    lenrow="block"
+                                                    break
+                                                else:
+                                                    row.clear()
+                                        
+                                        if lenrow=="block":
+                                            print("Invalid IP address entered.")
+                                            continue
+                                        else:
+                                            break
+                                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                        settings["IP-S"] =ip
+                                        json.dump(settings, f, indent=4)
+                                    print("IP Server updated successfully.")
+
+
                     if masge=="white list" or masge=="8":
                         m='''
 You can add programs to the white list to prevent them from being blocked by the System.
@@ -336,7 +425,7 @@ To exit the white list management, enter 'exit'.
                                         s=data["white list"]
                                         s=list(s)
                                         if programe+propath in s:
-                                            print("ok")
+                                            print("The program is already in the white list.")
                                             continue
                                         
                                         s.append(programe+propath)
@@ -357,7 +446,7 @@ To exit the white list management, enter 'exit'.
                                         s=data["white list"]
                                         s=list(s)
                                         if programe+propath not in s:
-                                            print("ok") 
+                                            print("The program is not in the white list.")
                                             continue
                                         s.remove(programe+propath)
                                         data["white list"]=s
@@ -488,7 +577,7 @@ To exit the white list management, enter 'exit'.
                                 break
 
                             if "'" in rule:
-                                print("ok")
+                                print("The rule should not contain single quotes ('). Use double quotes (\") instead.")
                                 continue
                             #rule=rolu.replace("'",'"')
                             
@@ -559,6 +648,9 @@ To exit the white list management, enter 'exit'.
                                             break
                                     break
 
+                            if rulename.startswith(("'",'"')) and rulename.endswith(("'",'"')):
+                                rulename=rulename[1:-1]
+                                
                             c.sendall("addrule".encode())#تعديل
                             c.recv(1024).decode()
                             c.sendall(rulename.encode())
@@ -650,26 +742,28 @@ To exit the white list management, enter 'exit'.
                                 ruty="DisplayName"
                                 break
                             else:
-                                print("ok")
+                                print("Enter 'DisplayName' or 'Name'")
                                 continue
 
-                        while True:
-                            delrule=input(f"Enter the rule {ruty} or (exit): ")#تعديل
-                            delrule=delrule.strip()
-                            if delrule=="exit":
-                                break
+                        delrule="exit"
+                        if ruty!="exit":
+                            while True:
+                                delrule=input(f"Enter the rule {ruty} or (exit): ")#تعديل
+                                delrule=delrule.strip()
+                                if delrule=="exit":
+                                    break
 
-                            
-                            if delrule in check6:
-                                print("The rule can only be deleted when its validity period expires.")
-                                continue
+                                
+                                if delrule in check6:
+                                    print("The rule can only be deleted when its validity period expires.")
+                                    continue
 
-                            print("The rule is being checking...")
-                            time.sleep(1)
-                            ree=check_inputs(delrule,2,ruty)
-                            if ree=="1":
-                                break
-                            print(ree)
+                                print("The rule is being checking...")
+                                time.sleep(1)
+                                ree=check_inputs(delrule,2,ruty)
+                                if ree=="1":
+                                    break
+                                print(ree)
                             
                             
                             
@@ -887,9 +981,11 @@ To exit the white list management, enter 'exit'.
                         
                         c.sendall("firewall state off all".encode())
                         c.recv(1024).decode()
-                        c.sendall("gg".encode())
-                        print("The firewall will be turned off in 10 seconds.")#تعديل
-                        break  
+                        c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                        c.recv(1024).decode()
+                        # c.sendall("gg".encode())
+                        print("The firewall will be turned off.")#تعديل
+                        # break  
 
 
                     elif masge=="firewall state on all" or masge=="6":
@@ -898,16 +994,18 @@ To exit the white list management, enter 'exit'.
                         c.recv(1024).decode()
                         c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
                         c.recv(1024).decode()
-                        c.sendall("gg".encode())
-                        print("The firewall will restart in 10 seconds.")#تعديل
-                        break
+                        # c.sendall("gg".encode())
+                        print("The firewall will restart.")#تعديل
+                        # break
 
                 
                     
 
                     elif masge=="rule state" or masge=="7":#تعديل جماعي 
-                        print("If you want to exit enter (exit)")
                         
+                        rulerow=[]
+                        theend=0
+                        print("if you want to exit enter (exit)")
                         while True:
                             ruty=input("Do you want to enter the rule 'DisplayName' or 'Name': ")
                             ruty=ruty.strip().lower()
@@ -920,107 +1018,154 @@ To exit the white list management, enter 'exit'.
                                 ruty="DisplayName"
                                 break
                             else:
-                                print("ok")
+                                print("Enter a valid option.")
                                 continue
 
-                        while True:
-                            ruleac=input(f"Enter the rule`s {ruty}: ")
-                            ruleac=ruleac.strip()
-                            if ruleac=="exit":
-                                break
-                            # chderu=poewrshell(f'Get-NetFirewallRule -DisplayName "{ruleac}"')
-                            # chderu=str(chderu.stdout).strip()
-                            
-                            print("The rule is being checking...")
-                            time.sleep(1)
-                            ree=check_inputs(ruleac,3,ruty)
-                            if ree=="1":
-                                break
-                            print(ree)
-                        action="exit"
-                        if ruleac!="exit":
-                            while True:
-                                action=input("Enter Rule Enable (True , False): ").lower().strip()
-                                if action=="true" or action=="false" or action=="exit":
-                                    pass
-                                else:
-                                    print("Enter (true/false)")
-                                    continue
-                                if action=="exit":
-                                    break
-                                
+                        delrule="exit"
+                        if ruty!="exit":
 
+                            while True:
+                                delrule=input(f"Enter the rule {ruty} or (exit): ")
+                                delrule=delrule.strip()
+                                if delrule=="exit":
+                                    break
                                 print("The rule is being checking...")
                                 time.sleep(1)
-                                chderu=poewrshell(f'Get-NetFirewallRule -{ruty} "{ruleac}"')
-                                chderu=list(chderu)
-                                chderu=''.join(chderu)
-                                if "Enabled                       : True" in chderu and action=="true":
-                                    print ("This rule is currently enabled (true)")
-                                    
-                                elif "Enabled                       : False" in chderu and action=="false":
-                                    print ("This rule is currently disabled (false)")
-                                    
-                                else:
-                                    break  
-                                
-                            if action!="exit":
+                                ree=check_inputs(delrule,3,ruty)
+                                if ree=="1":
+                                    break
+                                print(ree)
 
-                                if action=="true":
-                                    action="Enable"
-                                    action1="e"
-                                else:
-                                    action="Disable"
-                                    action1="d"
+                        if delrule!="exit":
 
-                                while True:
-                                    co=0 
-                                    timer=input("Enter the timer value: ")
-                                    timer=timer.strip().lower() # تعديل
+                            getrules=f'$rule = Get-NetFirewallRule -{ruty} "{delrule}"; $port = Get-NetFirewallPortFilter -AssociatedNetFirewallRule $rule; $app = Get-NetFirewallApplicationFilter -AssociatedNetFirewallRule $rule; [PSCustomObject]@{{ DisplayName=$rule.DisplayName; Name=$rule.Name; Direction=$rule.Direction; Action=$rule.Action; Profile=$rule.Profile; Enabled=$rule.Enabled; Protocol=$port.Protocol; LocalPort=$port.LocalPort; RemotePort=$port.RemotePort; Program=$app.Program }}'
+                            chderu,error=poewrshell(getrules)      
+                            chderu1=list(chderu)
+                            chderu2=list(chderu.replace('\n','').replace(' ',''))
+                            chderu1=''.join(chderu1)
+                            chderu2=''.join(chderu2)
+                            print(chderu1)
+                            print("component   :value\n")
 
-                                    if not (timer.endswith("m") or  timer.endswith("h")):#تعديل
-                                        print("Please enter a valid timer value.")
-                                        continue
+                        if delrule!="exit":
 
-                                    smol=["1","2","3","4","5","6","7","8","9","0","m","h"]
-                                    for smolrimer in timer:
-                                        if smolrimer not in smol:
-                                            print("Please enter a valid timer value.") #تعديل 
-                                            co=1
-                                            break
-
-                                    if co==1:
-                                        continue
-
-                                    morh=[]
-                                    for smolrimer in timer:
-                                        morh.append(smolrimer)
-                                        if smolrimer =="h" or smolrimer =="m":#تعديل
-                                            break
-                                    timer=''.join(morh)
-
-                                    if timer.endswith("m") or timer.endswith("h"):
+                            while True: 
+                                while True:   
+                                    component=input("Enter the component you want to change (Action, Direction, Enabled,...) or (exit): ")
+                                    component=component.strip()
+                                    if component.lower()=="exit":
                                         break
-                                    
-                        if ruleac!="exit" and action!="exit":
-                            
+
+                                   
+
+                                    if component.lower() in ["displayname","name","action","direction","enabled","localport","protocol","remoteport","profile","program"]:
+                                        break
+                                    else:
+                                        print("Enter a valid component.")
+                                        continue
+
+                                if component.lower()=="exit":
+                                    delrule="exit"
+                                    break
+                                
+                                while True:
+                                    newvalue=input(f"Enter the new value of '{component}' or (exit): ").strip()
+
+                                    if newvalue=="exit":
+                                        break
+
+                                    if f"{component.lower()}:{newvalue.lower()}" in chderu2.lower():
+                                        print(f"'{component}' already has this value")
+                                        
+                                        continue
+
+                                    if component.lower()=="action":
+                                        if newvalue.lower() not in ["allow","block"]:
+                                            print("Enter a valid action (allow/block).")
+                                            
+                                            continue
+
+                                    if component.lower()=="direction":
+                                        if newvalue.lower() not in ["inbound","outbound"]:
+                                            print("Enter a valid direction (inbound/outbound).")
+                                            continue
+
+                                    if component.lower()=="enabled":
+                                        if newvalue.lower() not in ["true","false"]:
+                                            print("Enter a valid enabled value (true/false).")
+                                            continue
+
+                                    if component.lower()=="profile":
+                                        if newvalue.lower() not in ["domain","private","public"]:
+                                            print("Enter a valid profile (domain/private/public).")
+                                            continue
+
+                                    if component.lower()=="protocol":
+                                        if newvalue.lower() not in ["tcp","udp","icmp"]:
+                                            print("Enter a valid protocol (tcp/udp/icmp).")
+                                            continue
+
+                                    if component.lower()=="localport" or component.lower()=="remoteport":
+                                        if not newvalue.isdigit() or int(newvalue)<1 or int(newvalue)>65535:
+                                            print("Enter a valid port number (1-65535).")
+                                            continue
+
+                                    if component.lower()=="program":
+                                        newvalue=newvalue.replace('"','')
+                                        if not newvalue.endswith(".exe"):
+                                            print("Enter a valid program path (should end with .exe).")
+                                            continue
+
+                                    if component.lower()=="displayname" or component.lower()=="name":
+                                        if "#" in newvalue or "|" in newvalue or "%" in newvalue or "~" in newvalue or ";" in newvalue or "&" in newvalue or "\\" in newvalue or "@" in newvalue or "$" in newvalue or ")" in newvalue or "(" in newvalue:
+                                            print("Your rule should not contain any of these symbols (# | % ~ ; & \\ @ $ ( ) )")
+                                            continue
+
+                                        if "-or " in newvalue.lower() or "if " in newvalue.lower() or "try " in newvalue.lower() or "catch " in newvalue.lower():
+                                            print("The rule contains strange elements. Rewrite it correctly.")
+                                            continue
+
+                                        if "new-netfirewallrule"  in newvalue.lower()  or "-displayname"  in newvalue.lower():
+                                            print("The rule contains strange elements. Rewrite it correctly.")
+                                            continue
+
+                                    if component.lower() in ["direction","action","profile","enabled"]:
+                                        rulerow.append(f'Set-NetFirewallRule -{ruty} "{delrule}" -{component} {newvalue} ')
+
+                                    if component.lower() in ["protocol","localport","remoteport"]:
+                                        rulerow.append(f'Get-NetFirewallRule -{ruty} "{delrule}" | Get-NetFirewallPortFilter | Set-NetFirewallPortFilter -{component} {newvalue} ')
+
+                                    if component.lower()=="program":
+                                        rulerow.append(f'Get-NetFirewallRule -{ruty} "{delrule}" | Get-NetFirewallApplicationFilter | Set-NetFirewallApplicationFilter -{component} "{newvalue}" ')
+
+                                    break
+
+                                # theend=1
+                                break
+                            # if theend==1:
+                            #     break
+                            if newvalue.lower()=="exit":
+                                delrule="exit"
+                                break
+                                
+
+                        if delrule!="exit":
+
+                            rulerow=''.join(rulerow)
                             with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
-                                if action=="Enable":
-                                    settings["Enaply list"]=[ruleac + "^" + timer + "wevall" + ruty]
-                                else:
-                                    settings["Disaply list"]=[ruleac + "^" + timer + "wevall" + ruty]
-
+                                settings["modify_rule"]=rulerow
                                 with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
+                            print("Rule modified successfully.")
 
                             c.sendall("rua".encode())
                             c.recv(1024).decode()
-                            c.sendall(ruleac.encode())
+                            c.sendall(delrule.encode())
                             c.recv(1024).decode()
-                            c.sendall(timer.encode())
+                            c.sendall(component.encode())
                             c.recv(1024).decode()
-                            c.sendall(action.encode())
+                            c.sendall(newvalue.encode())
                             c.recv(1024).decode()
                             c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
                             c.recv(1024).decode()
@@ -1044,7 +1189,6 @@ To exit the white list management, enter 'exit'.
                                     smtp.login(email,password)
                                     smtp.send_message(msg)
                             
-                            print(f"The Rule state of : '{ruleac}' change successfully.")
                 
             else:
                 print("Rewrite the correct code")

@@ -4,7 +4,6 @@ import socket as sk
 import threading as th
 import json
 import fireSett as fs
-import asyncio as sa
 import smtplib
 from email.message import EmailMessage
 import os
@@ -19,6 +18,8 @@ import psutil
 from winotify import Notification
 import winsound
 import risk_score as rs
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
 
 # check all code
@@ -66,10 +67,10 @@ function Get-IPScope($ip) {
     [PSCustomObject]@{
         DisplayName = $_.DisplayName
         Name        = $_.Name
-        Direction   = [int]$_.Direction
-        Action      = [int]$_.Action
-        Profile     = [int]$_.Profile
-        Enabled     = [int]$_.Enabled
+        Direction   = $_.Direction.ToString()
+        Action      = $_.Action.ToString()
+        Profile     = $_.Profile.ToString()
+        Enabled     = $_.Enabled.ToString()
         Protocol    = $p.Protocol
         LocalPort   = $p.LocalPort
         RemotePort  = $p.RemotePort
@@ -124,10 +125,10 @@ function Get-IPScope($ip) {
     [PSCustomObject]@{
         DisplayName = $_.DisplayName
         Name        = $_.Name
-        Direction   = [int]$_.Direction
-        Action      = [int]$_.Action
-        Profile     = [int]$_.Profile
-        Enabled     = [int]$_.Enabled
+        Direction   = $_.Direction.ToString()
+        Action      = $_.Action.ToString()
+        Profile     = $_.Profile.ToString()
+        Enabled     = $_.Enabled.ToString()
         Protocol    = $p.Protocol
         LocalPort   = $p.LocalPort
         RemotePort  = $p.RemotePort
@@ -169,7 +170,7 @@ FS System
 
 
 
-def add_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,T):
+def add_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,T,white_list):
     
     c.sendall("hackAdd".encode())
     c.recv(1024).decode()
@@ -202,11 +203,13 @@ def add_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,Direction,
     c.sendall(Program.encode())
     c.recv(1024).decode()
     c.sendall(T.encode())
+    c.recv(1024).decode()  
+    c.sendall(white_list.encode())
     check1=c.recv(1024).decode()
     check1=check1.replace("1","")
     check1=check1.strip()
 
-def delete_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,T):
+def delete_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,T,white_list):
     
     c.sendall("hackDel".encode())
     c.recv(1024).decode()
@@ -223,11 +226,13 @@ def delete_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,T):
     c.sendall(DisplayName.encode())
     c.recv(1024).decode()
     c.sendall(Name.encode())
+    c.recv(1024).decode()
+    c.sendall(white_list.encode())
     check1=c.recv(1024).decode()
     check1=check1.replace("1","")
     check1=check1.strip()
 
-def modefiy_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,ii,gema,T):
+def modefiy_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,ii,gema,T,white_list ):
 
     c.sendall("hackMod".encode())
     c.recv(1024).decode()
@@ -248,16 +253,19 @@ def modefiy_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,ii,gem
     c.sendall(gema.encode())
     c.recv(1024).decode()
     c.sendall(T.encode())
+    c.recv(1024).decode()
+    c.sendall(white_list.encode())
     check1=c.recv(1024).decode()
     check1=check1.replace("1","")
     check1=check1.strip()
+
 
 go=1
 pro=1
 ere=0
 block=1  
 pas=0
-
+trw=1
 pathfile=os.path.exists(r"C:\FS-File\loop.txt")
 if pathfile==False:
     with open(r"C:\FS-File\loop.txt","w",encoding='utf-8')as f:
@@ -300,7 +308,66 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
         output, error = p.communicate()
         return output, error
     
+    poewrshell(ta)   
 
+    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+        settings = json.load(f) 
+
+        if settings["user-state"]=="USER":
+            bossemail=settings["bossemail"]
+            settings["advance-mode"]="0"
+            settings["advance-password"]="0"
+
+        if settings["FWS"]=="":
+            settings["FWS"]="null"
+            
+        if settings["timerF"]=="":
+            settings["timerF"]="0"
+            
+        if settings["Rolue"]!="null":
+            settings["Rolue"]="null"
+            
+        if settings["FWS"]=="off" or settings["FWS"]=="on" or settings["FWS"]=="off-all":
+            settings["FWS"]="null"
+            
+        if settings["timerF"]!="0":
+            settings["timerF"]="0"
+            
+        if settings["timerR"]!=[]:
+            settings["timerR"]=[]
+            
+        if settings["ruleName"]!=[]:
+            settings["ruleName"]=[] 
+            
+        if settings["checkrulename"]!=[]: 
+            for aa in settings["checkrulename"]:
+                reslt,error=poewrshell(f'Remove-NetFirewallRule -DisplayName "{aa}"')
+                if error:
+                    poewrshell(f'Remove-NetFirewallRule -Name "{aa}"')
+            settings["checkrulename"]=[]
+            
+        if settings["constan"]!="no":
+            settings["constan"]="no"
+        
+        if settings["deleteR"]!="null":
+            settings["deleteR"]="null"
+
+        if settings["modify_rule"]!="null":
+            settings["modify_rule"]="null"
+        
+        if settings["path_proName_PID"]!="":
+            settings["path_proName_PID"]=""
+
+        if settings["white list checker"]!="":
+            settings["white list checker"]=""
+        
+        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+            json.dump(settings,f,indent=4)
+
+        email_rvs=settings["email"]
+        user_state=settings["user-state"]
+        mac=settings["MAC"]
+        
     FIREWALL_KEYWORDS = [
         'New-NetFirewallRule',
         'Set-NetFirewallRule',
@@ -377,10 +444,11 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 if is_target_process(name) and is_firewall_related(cmd_line, name) and parent_name=="powershell.exe":
                                     block=0
 
-                                elif is_target_process(name) and is_firewall_related(cmd_line, name) and parent_name=="hack tool.exe":
-                                    print("jr")
+                                elif is_target_process(name) and is_firewall_related(cmd_line, name) and parent_name!="python.exe":
                                     path = f'''(Get-AuthenticodeSignature "{parent_path}").Status'''
                                     chick_vil, error = poewrshell(path)
+                                    chick_vil=list(chick_vil)
+                                    chick_vil=''.join(chick_vil)
                                     print(chick_vil.strip())   
                                     print(parent_name)
                                     with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
@@ -407,13 +475,12 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
     th.Thread(target=mal_dit).start()
 
 
-
+    
     while True:
         # try:
             
-            pathfile=os.path.exists(r"C:\FS-File\firewall_light.json")
             
-            poewrshell(ta)            
+                     
             pathfile=os.path.exists(r"C:\FS-File\sent_ids.txt")
             if pathfile==False:
                 with open(r"C:\FS-File\sent_ids.txt","w",encoding='utf-8')as f:
@@ -421,34 +488,45 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
 
             #check firewall state    
             a,error=poewrshell('Get-NetFirewallProfile | Select-Object Enabled')
+            a=list(a)
+            a=''.join(a)
+
             # a=a.stdout  
             if "False" in a: 
                 poewrshell(r"Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True")
 
 
             try:
+                result, error = poewrshell("Get-NetAdapter | Select-Object MacAddress")
+                result=list(result)
+                result=''.join(result)
+                mac = [lmac.strip() for lmac in result.splitlines() if "-" in lmac] # تعديل
+                mac=mac[-1]  
+            except Exception:
+                mac="null"
+                
+            ip=settings["IP-S"]
+            try:
                 try:
-                    
-                    s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
-                    s.connect(("1.1.1.1",80))
-                    ips=s.getsockname()[0]
-                    s.close()
+                    server=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+                    server.connect(("1.1.1.1",80))
+                    ips=server.getsockname()[0]
+                    server.close()
                 except Exception:
                     
-                    s=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
-                    s.connect(("8.8.8.8",443))
-                    ips=s.getsockname()[0]
-                    s.close()
+                    server=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+                    server.connect(("8.8.8.8",443))
+                    ips=server.getsockname()[0]
+                    server.close()
             except Exception:
-                pas=1
-            
-            if pas==0:
-                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                    settings = json.load(f) 
-                    settings["IP-U"]=ips
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                    pas=1
+                ips="null"
+                
+            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                settings = json.load(f)
+                settings["IP-U"] =ips
+                settings["MAC"] =mac
+                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                    json.dump(settings, f, indent=4)
             #conn with the praimry conn   
             while True:
                 try:
@@ -471,69 +549,26 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     
                         
             #return D:\FS-File\settings.json to the defult
-            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                settings = json.load(f) 
-                if settings["user-state"]=="USER":
-                    bossemail=settings["bossemail"]
-                if settings["FWS"]=="":
-                    settings["FWS"]="null"
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                if settings["timerF"]=="":
-                    settings["timerF"]="0"
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                if settings["Rolue"]!="null":
-                    settings["Rolue"]="null"
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                if settings["FWS"]=="off" or settings["FWS"]=="on" or settings["FWS"]=="off-all":
-                    settings["FWS"]="null"
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                if settings["timerF"]!="0":
-                    settings["timerF"]="0"
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                if settings["timerR"]!=[]:
-                    settings["timerR"]=[]
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                if settings["ruleName"]!=[]:
-                    settings["ruleName"]=[]
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                if settings["checkrulename"]!=[]: 
-                    for aa in settings["checkrulename"]:
-                        poewrshell(f'Remove-NetFirewallRule -DisplayName "{aa}"')
-                    settings["checkrulename"]=[]
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                if settings["constan"]!="no":
-                    settings["constan"]="no"
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                
-                if settings["deleteR"]!="null":
-                    settings["deleteR"]="null"
-                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                        json.dump(settings,f,indent=4)
-                email_rvs=settings["email"]
-                user_state=settings["user-state"]
-                mac=settings["MAC"]
+            
 
             ps_script = """
-$log = New-Object System.Diagnostics.Eventing.Reader.EventLogWatcher('Microsoft-Windows-Windows Firewall With Advanced Security/Firewall')
-Register-ObjectEvent $log EventRecordWritten -Action {
+$TARGET_IDS = @(2002, 2004, 2005, 2006, 2097, 2099, 2052, 2082)
+
+$watcher = New-Object System.Diagnostics.Eventing.Reader.EventLogWatcher(
+    'Microsoft-Windows-Windows Firewall With Advanced Security/Firewall'
+)
+
+Register-ObjectEvent $watcher EventRecordWritten -Action {
+    $ids = @(2002, 2004, 2005, 2006, 2097, 2099, 2052, 2082)
     $id = $Event.SourceEventArgs.EventRecord.Id
-    [Console]::WriteLine("FW_EVENT:$id")
-    [Console]::Out.Flush()
+    if ($ids -contains $id) {
+        [Console]::WriteLine($id)
+        [Console]::Out.Flush()
+    }
 }
-$log.Enabled = $true
-while($true) { Start-Sleep -Milliseconds 100 }
+
+$watcher.Enabled = $true
+while ($true) { Start-Sleep -Seconds 10 }
 """
 
             pp = su.Popen(
@@ -544,44 +579,6 @@ while($true) { Start-Sleep -Milliseconds 100 }
                 bufsize=1)
             
 
-            def check_state(num,state):
-                num=str(num)
-                if state.lower()=="direction":
-                    if num=="1":
-                        return "Inbound"
-                    elif num=="2":
-                        return "Outbound"
-                
-                if state.lower()=="action":
-                    if num=="2":
-                        return "Allow"
-                    elif num=="1":
-                        return "Block"
-                
-                if state.lower()=="profile":
-                    if num=="1":
-                        return "Domain"
-                    elif num=="2":
-                        return "Private"
-                    elif num=="4":
-                        return "Public"
-                    elif num=="3":
-                        return "Domain + Private"
-                    elif num=="5":
-                        return "Domain + Public"
-                    elif num=="6":
-                        return "Private + Public"
-                    elif num=="7":
-                        return "Domain + Private + Public"
-                    elif num=="0":
-                        return "Any"
-                    
-                if state.lower()=="enabled":
-                    if num=="1":
-                        return "True"
-                    else:
-                        return "False"
-                    
             
 
             def ckeck_email():
@@ -669,7 +666,7 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                             msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content(f"Your password: {ran}")
+                                            msg.set_content(f"This is your password to verify your identity and connect to the server:\n{ran}\nIf you did not request this password, please check your account security immediately.\n\n\nSecurity System:\nFS System")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -686,7 +683,7 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                             msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content(f"The official did not approve your request.")
+                                            msg.set_content(f"The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -696,34 +693,42 @@ while($true) { Start-Sleep -Milliseconds 100 }
 
                                         if firest=="approved" and l2=="&":
                                             
+                                            rowo=[]
+                                            rowo1=[]
+                                            for y in l:
+                                                if y=="*":
+                                                    break
+                                                rowo.append(y)
+                                            rowo=''.join(rowo)
+                                            l=l[len(rowo)+1:]
+
+                                            for y in l:
+                                                if y=="^":
+                                                    break
+                                                rowo1.append(y)
+                                            rowo1=''.join(rowo1)
+                                            l=l[len(rowo1)+1:]
+
+                                            z=l.index("wevall")
+                                            z+=6
+                                            component=l[:z]
+                                            component=component.replace("wevall","")
+                                            newvalue=l[z:]
+
                                             with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                                 settings = json.load(f)
-                                                if l.endswith("e"):
-                                                    l=l[:-1]
-                                                    settings["Enaply list"]=[l]
-                                                    action="Enable"
-                                                else:
-                                                    l=l[:-1]
-                                                    settings["Disaply list"]=[l]
-                                                    action="Disable"
+                                                settings["modify_rule"]=rowo
                                                 with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
-
-
-                                            if l.endswith("m") or l.endswith("h"):
-                                                z=l.index("^")
-                                                bb=l[z:]
-                                                aa=l.replace(bb,"")
-                                                bb=bb.replace("^","")
                                                 
                                             on="rua"
                                             c.sendall(on.encode())
                                             c.recv(1024).decode()
-                                            c.sendall(aa.encode())
+                                            c.sendall(rowo1.encode())
                                             c.recv(1024).decode()
-                                            c.sendall(bb.encode())
+                                            c.sendall(component.encode())
                                             c.recv(1024).decode()
-                                            c.sendall(action.encode())
+                                            c.sendall(newvalue.encode())
                                             c.recv(1024).decode()
                                             c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
                                             c.recv(1024).decode()
@@ -750,7 +755,7 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                             msg["Subject"]=f"Request approval - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("The base state was successfully changed.")
+                                            msg.set_content("The base state was successfully changed.\n\n\nSecurity System:\nFS System")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -764,7 +769,7 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                             msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("The official did not approve your request.")
+                                            msg.set_content("The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -773,6 +778,7 @@ while($true) { Start-Sleep -Milliseconds 100 }
 
 
                                         if firest=="approved" and l2=="|":
+
                                             
                                             with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                                 settings = json.load(f)
@@ -780,6 +786,12 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                                 
                                                 with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                                     json.dump(settings,f,indent=4)
+
+                                            z=l.index("wevall")
+                                            z=z+6
+                                            l=l.replace(l[z:],"")
+                                            l=l.replace("wevall","")
+
                                             on="del"
                                             c.sendall(on.encode())
                                             c.recv(1024).decode()
@@ -810,7 +822,7 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                             msg["Subject"]=f"Request approva - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("Rule delete successfully.")
+                                            msg.set_content("The rule was successfully deleted.\n\n\nSecurity System:\nFS System")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -822,7 +834,7 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                             msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("The official did not approve your request.")
+                                            msg.set_content("The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -884,6 +896,9 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                                             row.clear()
                                                             break
                                                     break
+                                            if rulename.startswith(("'",'"')) and rulename.endswith(("'",'"')):
+                                                rulename=rulename[1:-1]
+
                                             on="addrule"
                                             c.sendall(on.encode())
                                             c.recv(1024).decode()
@@ -958,7 +973,7 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                             msg["Subject"]=f"Request approval - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("Rule ADD successfully.")
+                                            msg.set_content("The rule was successfully added.\n\n\nSecurity System:\nFS System")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -985,7 +1000,7 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                             msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
                                             msg["From"]="aofnotification@gmail.com"
                                             msg["To"]=email_rvs
-                                            msg.set_content("The official did not approve your request.")
+                                            msg.set_content("The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
                                             email="aofnotification@gmail.com"
                                             password="oqgspkawnyeftyjw"
                                             with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
@@ -1014,42 +1029,103 @@ while($true) { Start-Sleep -Milliseconds 100 }
 
             def thp():
                 rtime=str(time.strftime('%Y-%m-%d %H:%M:%S'))
-                global tr,ed,pp,output,error,ta,ta1,block,ere,pro,go,deleteR
+                global tr,pp,output,error,ta,ta1,block,ere,pro,go,deleteR
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                    settings = json.load(f)
+                    ips=settings["IP-U"]
+                    mac=settings["MAC"]
+                    user_email=settings["email"]
+                    check=settings["FWS"]
+
                 for linep in iter(pp.stdout.readline, ''):
                     linep = linep.strip()
                     
                     if linep:
                         print("in dady: ",tr)
-                        if "FW_EVENT:" in linep and tr==0:
-                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                settings = json.load(f)
-                                ips=settings["IP-U"]
-                                mac=settings["MAC"]
-                                user_email=settings["email"]
+                        if "2082" in linep and tr==0:
+                            
 
-                            output, error =poewrshell(ta1)
+                            if check=="null":
+                                print("in 1")
+                                a=poewrshell('Get-NetFirewallProfile | Select-Object Enabled')
+                                a=list(a)
+                                a=''.join(a)
+                                if "False" in a and check=="null" :
+                                    print("in 2")
+                                    poewrshell('Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True')
+                                    #send to server to add to the csv file
+                                    c.sendall("hackOff".encode())
+                                    c.recv(1024).decode()
+                                    ips=str(ips)
+                                    c.sendall(ips.encode())
+                                    c.recv(1024).decode()
+                                    c.sendall(mac.encode())
+                                    check1=c.recv(1024).decode()
+                                    check1=check1.replace("1","")
+                                    check1=check1.strip()
+                                    time.sleep(0.1)
+                                    
+                                    if check1=="issue FWS.csv" or check1=="issue FWS.csv1":
+                                        
+                                        msg= EmailMessage()
+                                        msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
+                                        msg["From"]="aofnotification@gmail.com"
+                                        msg["To"]=email_rvs
+                                        msg.set_content(f"Someone is reading the 'FirewallTamper.csv' file.\n you should check the server's status to see if it has been compromised or not.")
+                                        email="aofnotification@gmail.com"
+                                        password="oqgspkawnyeftyjw"
+                                        with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                            smtp.login(email,password)
+                                            smtp.send_message(msg)
+                                    #send email to the user
+                                    msg= EmailMessage()
+                                    msg["Subject"]=f"Detect stop attempt - ID({str(uuid.uuid4())[:8]})"
+                                    msg["From"]="aofnotification@gmail.com"
+                                    msg["To"]=email_rvs
+                                    msg.set_content(f"An attempt was made to disable the firewall on your device, but it was blocked by FS System.\nIf you did not make this change, please check your device's security immediately.\n\n\nSecurity System:\nFS System")
+                                    email="aofnotification@gmail.com"
+                                    password="oqgspkawnyeftyjw"
+                                    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                        smtp.login(email,password)
+                                        smtp.send_message(msg)
+
+                        if ("2004" in linep or "2005" in linep or "2006" in linep or "2097" in linep or "2099" in linep or "2052" in linep)and (tr==0):
                             op1=0
                             op=0
-                            while True:
-                                try:
-                                    with open(r"C:\FS-File\firewallcopy.json", "r", encoding="utf-8-sig") as fc:
-                                        firecopy = json.load(fc)
-                                        break
-                                except Exception:
-                                    continue
+                            if trw==1:
+                                print("macking file")
+                                output, error =poewrshell(ta1)
+                                
+                            
+                            
+                                while True:
+                                    try:
+                                        with open(r"C:\FS-File\firewallcopy.json", "r", encoding="utf-8-sig") as fc:
+                                            firecopy = json.load(fc)
+                                            break
+                                    except Exception:
+                                        continue
 
-                            with open(r"C:\FS-File\firewall_light.json", "r", encoding="utf-8-sig") as f:
-                                firelight = json.load(f)
+                                with open(r"C:\FS-File\firewall_light.json", "r", encoding="utf-8-sig") as f:
+                                    firelight = json.load(f)
                                 
 
+                                for i in firelight:
+                                    if i not in firecopy:
+                                        op=1
 
-                            for i in firelight:
-                                if i not in firecopy:
-                                    op=1
+                                for i in firecopy:
+                                    if i not in firelight:
+                                        op1=1
 
-                            for i in firecopy:
-                                if i not in firelight:
-                                    op1=1
+                            if (op==0 and op1==0) and (trw==1):
+                                def end():
+                                    global trw
+                                    trw=0
+                                    time.sleep(2)
+                                    trw=1
+                                th.Thread(target=end).start()
+
                             print("op:",op)
                             print("op1:",op1)
                             if op==0 and op1==1:
@@ -1072,6 +1148,8 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                         settings = json.load(f)
                                         
                                         ppp=settings["path_proName_PID"]
+                                        if ppp=="":
+                                            ere=1
                                         ppp1=ppp
                                         ppp=""
                                         settings["path_proName_PID"]=ppp
@@ -1096,6 +1174,7 @@ while($true) { Start-Sleep -Milliseconds 100 }
 
                                         if whi_ls in settings["white list"]:
                                             whi_ls=True
+                                            poewrshell(ta)
                                         else:
                                             whi_ls=False
 
@@ -1109,16 +1188,12 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                         DisplayName=i["DisplayName"]
                                         Name=i["Name"]
                                         Direction=i["Direction"]
-                                        Direction=check_state(Direction,"Direction")
 
                                         Action=i["Action"]
-                                        Action=check_state(Action,"Action")
 
                                         Profile=i["Profile"]
-                                        Profile=check_state(Profile,"Profile")
 
                                         Enabled=i["Enabled"]
-                                        Enabled=check_state(Enabled,"Enabled")
 
                                         Protocol=i["Protocol"]
                                         LocalPort=i["LocalPort"]
@@ -1149,19 +1224,23 @@ while($true) { Start-Sleep -Milliseconds 100 }
                                             elif Program!="Any":
                                                 path = f'''(Get-AuthenticodeSignature "{Program}").Status'''
                                                 chick_vil, error = poewrshell(path)
+                                                chick_vil=list(chick_vil)
+                                                chick_vil=''.join(chick_vil)
+
                                                 if error:
                                                     chick_vil="UnknownError"
                                                 if whi_ls==True:
                                                     chick_vil="Valid"
+                                                    
                                                 ricor=rs.risk_score_add_vrifiy(chick_vil.strip(),Action,Direction,Protocol,LocalPort,IPScope)
                                             
                                             else:
                                                 ricor=rs.risk_score_add_not_vrifiy(Action,Direction,Protocol,LocalPort,IPScope)
                                             if ricor <= 85 :
                                                 # Allow + Log
-                                                add_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime)
+                                                add_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime,"YES")
                                                 print("allow + log")
-                                                pass
+                                                poewrshell(ta)
                                             
                                             elif ricor <= 120 or ricor <= 180 or ricor>181:
                                                 # Block + Alert
@@ -1187,31 +1266,32 @@ Action: Block'''
                                                     
                                                     email_notif("UNKNOWN","UNKNOWN","ADDING RULE","BLOCK",user_email) 
 
-                                                with open(r"C:\FS-File\loop.txt", "+a",encoding='utf-8') as f:
-                                                    f.write(pro_name+pro_path+Program+LocalPort+Protocol+Profile+Action+Direction+"\n")
+                                                # with open(r"C:\FS-File\loop.txt", "+a",encoding='utf-8') as f:
+                                                #     f.write("UNKNOWN"+"UNKNOWN"+Program+LocalPort+Protocol+Profile+Action+Direction+"\n")
                                                 #not_loop=1
-                                                add_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime)
+                                                add_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime,"NO")
 
                                         
                                         if pro==1:
                                             path = f'''(Get-AuthenticodeSignature "{pro_path}").Status'''
                                             vrifiy1, error = poewrshell(path)
+                                            vrifiy1=list(vrifiy1)
+                                            vrifiy1=''.join(vrifiy1)
+
                                             if whi_ls==True:
                                                 vrifiy1="Valid"
                                             ricor=rs.risk_score_add_vrifiy(vrifiy1.strip(),Action,Direction,Protocol,LocalPort,IPScope)
                                             
                                             if whi_ls:
-
                                                 print("allow + log") 
-                                                add_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime)
-
-
+                                                add_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime,"YES")
+ 
                                             elif ricor <= 85 :
                                                 # Allow + Log
                                                
-                                                add_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime)
+                                                add_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime,"NO")
                                                 print("allow + log")
-                                                pass
+                                                poewrshell(ta)
                                             
                                             elif ricor <= 120:
                                                 # Block + Alert
@@ -1272,7 +1352,7 @@ Action: Block + Kill Program
                                                     # delete the rule from the file
                                                 go=1
                                                 poewrshell(f'Remove-NetFirewallRule -Name "{i["Name"]}"')
-                                                add_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime)
+                                                add_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime,"NO")
 
 
 
@@ -1306,7 +1386,7 @@ Action: Block + Kill Program
                                                         time.sleep(0.2)
                                                     email_notif(pro_name,pro_path,"ADDING RULE","KILL PROGRAM + BLOCK") 
 
-                                                    add_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,str(time.strftime('%Y-%m-%d %H:%M:%S')))
+                                                    add_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,rtime,"NO")
 
                                                 
                                         pro=1    
@@ -1332,6 +1412,8 @@ Action: Block + Kill Program
                                         settings = json.load(f)
                                         
                                         ppp=settings["path_proName_PID"]
+                                        if ppp=="":
+                                            ere=1
                                         ppp1=ppp
                                         ppp=""
                                         settings["path_proName_PID"]=ppp
@@ -1355,6 +1437,7 @@ Action: Block + Kill Program
 
                                         if whi_ls in settings["white list"]:
                                             whi_ls=True
+                                            poewrshell(ta)
                                         else:
                                             whi_ls=False
                                         with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
@@ -1369,16 +1452,12 @@ Action: Block + Kill Program
                                         DisplayName=i["DisplayName"]
                                         Name=i["Name"]
                                         Direction=i["Direction"]
-                                        Direction=check_state(Direction,"Direction")
 
                                         Action=i["Action"]
-                                        Action=check_state(Action,"Action")
 
                                         Profile=i["Profile"]
-                                        Profile=check_state(Profile,"Profile")
 
                                         Enabled=i["Enabled"]
-                                        Enabled=check_state(Enabled,"Enabled")
 
                                         Protocol=i["Protocol"]
                                         LocalPort=i["LocalPort"]
@@ -1403,6 +1482,8 @@ Action: Block + Kill Program
                                             print(10)
                                             pro=0
                                             chi,error=poewrshell(rf'Test-Path "{Program}"')
+                                            chi=list(chi)
+                                            chi=''.join(chi)
                                             ricor=rs.risk_score_delete_not_vrifiy(DisplayName+" "+Name,Program,Action,Direction,Protocol,LocalPort,IPScope,chi.strip())
                                             if ricor=="Block":
                                                 if not_loop==0:
@@ -1423,8 +1504,8 @@ Action: Block
                                                     email_notif("UNKNOWN","UNKNOWN","DELETEING RULE","BLOCK",user_email) 
 
                                                         
-                                                with open(r"C:\FS-File\loop-2.txt", "+a",encoding='utf-8') as f:
-                                                    f.write(pro_name+pro_path+Program+LocalPort+Protocol+Profile+Action+Direction+"\n")
+                                                # with open(r"C:\FS-File\loop-2.txt", "+a",encoding='utf-8') as f:
+                                                #     f.write(pro_name+pro_path+Program+LocalPort+Protocol+Profile+Action+Direction+"\n")
 
                                                 
                                              
@@ -1432,13 +1513,14 @@ Action: Block
                                                 addrule=f'New-NetFirewallRule -DisplayName "{DisplayName}" -Name "{Name}" -Direction {Direction} -Action {Action} -Profile {Profile} -Enabled {Enabled} -Protocol {Protocol} -LocalPort {LocalPort} -RemotePort {RemotePort} -Program "{Program}"'
                                                 poewrshell(addrule)
                                                 print("block + alert")
-                                                delete_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,rtime)
+                                                delete_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,rtime,"NO")
 
                                             
                                             elif ricor <= 85 :
                                                 # Allow + Log
                                                 print("allow + log")
-                                                delete_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,rtime)
+                                                delete_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,rtime,"NO")
+                                                poewrshell(ta)
                                             elif ricor <= 120 or ricor <= 180 or ricor>181:
                                                 # Block + Alert
                                                 print("block + alert")
@@ -1460,12 +1542,12 @@ Action: Block
                                                     email_notif("UNKNOWN","UNKNOWN","DELETEING RULE","BLOCK",user_email) 
 
                                                         
-                                                with open(r"C:\FS-File\loop-2.txt", "+a",encoding='utf-8') as f:
-                                                    f.write(pro_name+pro_path+Program+LocalPort+Protocol+Profile+Action+Direction+"\n")
+                                                # with open(r"C:\FS-File\loop-2.txt", "+a",encoding='utf-8') as f:
+                                                #     f.write(pro_name+pro_path+Program+LocalPort+Protocol+Profile+Action+Direction+"\n")
 
                                                 addrule=f'New-NetFirewallRule -DisplayName "{DisplayName}" -Name "{Name}" -Direction {Direction} -Action {Action} -Profile {Profile} -Enabled {Enabled} -Protocol {Protocol} -LocalPort {LocalPort} -RemotePort {RemotePort} -Program "{Program}"'
                                                 poewrshell(addrule)
-                                                delete_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,rtime)
+                                                delete_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,rtime,"NO")
 
 
                                             
@@ -1475,21 +1557,31 @@ Action: Block
                                         if pro==1:
                                             path = f'''(Get-AuthenticodeSignature "{pro_path}").Status'''
                                             vrifiy1, error = poewrshell(path)
+                                            vrifiy1=list(vrifiy1)
+                                            vrifiy1=''.join(vrifiy1)
+
 
                                             if whi_ls==True:
                                                 vrifiy1="Valid"
                                             tre=rf'(Get-AuthenticodeSignature "{pro_path}").SignerCertificate.GetNameInfo("SimpleName",$false)'
                                             compony_name,error=poewrshell(tre)
+                                            compony_name=list(compony_name)
+                                            compony_name=''.join(compony_name)
+                                            #################################################################################################################check what will hapend if "compony_name==""" the come
                                             if compony_name=="":
                                                 compony_name="unknwon"
                                             if Program!="System":
                                                 chi,error=poewrshell(rf'Test-Path "{Program}"')
+                                                chi=list(chi)
+                                                chi=''.join(chi)
+
 
 
                                             if (compony_name=="Microsoft Windows" and Program =="System") or (compony_name=="Microsoft Windows" and "WINDOWS\system" in Program):
                                                 #Log
                                                 print(11)
-                                                delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime)
+                                                delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime,"NO")
+                                                poewrshell(ta)
                                             elif (compony_name!="Microsoft Windows" and Program =="System") or (compony_name!="Microsoft Windows" and "WINDOWS\system" in Program):
                                                 # Block + Alert + log
                                                 print("resit + alert")
@@ -1543,7 +1635,7 @@ Action: Block + Kill Program
                                                 go=1
                                                 addrule=f'New-NetFirewallRule -DisplayName "{DisplayName}" -Name "{Name}" -Direction {Direction} -Action {Action} -Profile {Profile} -Enabled {Enabled} -Protocol {Protocol} -LocalPort {LocalPort} -RemotePort {RemotePort} -Program "{Program}"'
                                                 poewrshell(addrule)
-                                                delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime)
+                                                delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime,"NO")
 
                                             
 
@@ -1561,11 +1653,12 @@ Action: Block + Kill Program
                                                 if whi_ls:
 
                                                     print("allow + log") 
-                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime)
+                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime,"YES")
 
                                                 elif compony_name.lower()in Program.lower():
                                                     #log
-                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime)
+                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime,"NO")
+                                                    poewrshell(ta)
                                                     print(14)
                                                     # pass
                                                 
@@ -1625,21 +1718,21 @@ Action: Block + Kill Program
                                                     go=1
                                                     addrule=f'New-NetFirewallRule -DisplayName "{DisplayName}" -Name "{Name}" -Direction {Direction} -Action {Action} -Profile {Profile} -Enabled {Enabled} -Protocol {Protocol} -LocalPort {LocalPort} -RemotePort {RemotePort} -Program "{Program}"'
                                                     poewrshell(addrule)
-                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime)
+                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime,"NO")
                                                     
                                                 
                                                 
                                                 elif vrifiy1=="Valid" and chi=="False":
                                                     #log
-                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime)
+                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime,"NO")
                                                     print(16)
-                                                    pass
+                                                    poewrshell(ta)
 
                                                 elif vrifiy1=="Valid" and chi=="True" and compony==True:
                                                     #log
-                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime)
+                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime,"NO")
                                                     print(17)
-                                                    pass
+                                                    poewrshell(ta)
                                             
                                                 elif vrifiy1=="Valid" and chi=="True" and compony_name==False:
                                                     print("resit + alert")
@@ -1696,14 +1789,15 @@ Action: Block + Kill Program
                                                     go=1
                                                     addrule=f'New-NetFirewallRule -DisplayName "{DisplayName}" -Name "{Name}" -Direction {Direction} -Action {Action} -Profile {Profile} -Enabled {Enabled} -Protocol {Protocol} -LocalPort {LocalPort} -RemotePort {RemotePort} -Program "{Program}"'
                                                     poewrshell(addrule)
-                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime)
+                                                    delete_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,rtime,"NO")
                                         pro=1       
 
                                         
-                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                settings = json.load(f)
-                                eds=settings["edit_wait"]
-                            if eds == "0":
+                            # with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                            #     settings = json.load(f)
+                            #     eds=settings["edit_wait"]
+                            # if eds == "0":
+                            if tr==0:
                                 if op==1 and op1==1:
 
                                     if block==0:
@@ -1726,6 +1820,8 @@ Action: Block + Kill Program
                                             settings = json.load(f)
                                             
                                             ppp=settings["path_proName_PID"]
+                                            if ppp=="":
+                                                ere=1
                                             ppp1=ppp
                                             ppp=""
                                             settings["path_proName_PID"]=ppp
@@ -1749,6 +1845,7 @@ Action: Block + Kill Program
 
                                             if whi_ls in settings["white list"]:
                                                 whi_ls=True
+                                                poewrshell(ta)
                                             else:
                                                 whi_ls=False
                                     
@@ -1761,16 +1858,12 @@ Action: Block + Kill Program
                                         if iz not in firelight:
                                             Program1=iz["Program"]
                                             Direction1=iz["Direction"]
-                                            Direction1=check_state(Direction1,"Direction")
 
                                             Action1=iz["Action"]
-                                            Action1=check_state(Action1,"Action")
 
                                             Profile1=iz["Profile"]
-                                            Profile1=check_state(Profile1,"Profile")
 
                                             Enabled1=iz["Enabled"]
-                                            Enabled1=check_state(Enabled1,"Enabled")
 
                                             Protocol1=iz["Protocol"]
                                             LocalPort1=iz["LocalPort"]
@@ -1783,16 +1876,12 @@ Action: Block + Kill Program
 
                                 
                                             Direction=i["Direction"]
-                                            Direction=check_state(Direction,"Direction")
 
                                             Action=i["Action"]
-                                            Action=check_state(Action,"Action")
 
                                             Profile=i["Profile"]
-                                            Profile=check_state(Profile,"Profile")
 
                                             Enabled=i["Enabled"]
-                                            Enabled=check_state(Enabled,"Enabled")
 
                                             Protocol=i["Protocol"]
                                             LocalPort=i["LocalPort"]
@@ -1841,15 +1930,15 @@ Action: Block
                                                                     time.sleep(0.2)
                                                                 email_notif("UNKNOWN","UNKNOWN","MODIFING RULE","BLOCK",user_email)
                                                                     
-                                                            with open(r"C:\FS-File\loop-3.txt", "+a",encoding='utf-8') as f:
-                                                                f.write(pro_name+pro_path+Program+LocalPort+Protocol+Profile+Action+Direction+"\n")
+                                                            # with open(r"C:\FS-File\loop-3.txt", "+a",encoding='utf-8') as f:
+                                                            #     f.write(pro_name+pro_path+Program+LocalPort+Protocol+Profile+Action+Direction+"\n")
 
                                                         
                                                                 # not_loop=1
                                                             
                                                             if ii.lower() in ["direction","action","profile","enabled","displayName"]:
                                                                 if ii.lower() in ["direction","action","profile","enabled"]:
-                                                                    w=check_state(i[ii],ii)
+                                                                    w=i[ii]
                                                                     poewrshell(f'Set-NetFirewallRule -Name "{Name}" -{ii} {w}\n')
                                                                     
                                                                 else:
@@ -1862,7 +1951,7 @@ Action: Block
                                                             elif ii.lower() == "program":
                                                                 poewrshell(f'Get-NetFirewallRule -Name "{Name}" | Get-NetFirewallApplicationFilter | Set-NetFirewallApplicationFilter -Program "{i[ii]}"\n')
                                                                 w=i[ii]
-                                                            modefiy_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,ii,w,rtime)
+                                                            modefiy_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,ii,w,rtime,"NO")
 
 
 
@@ -1871,7 +1960,7 @@ Action: Block
                                                             if ricor <= 85 :
                                                                 # Allow + Log
                                                                 print("allow + log")
-                                                                pass
+                                                                poewrshell(ta)
                                                             
                                                             elif ricor <= 120 or ricor <= 180 or ricor>181:
                                                                 # Block + Alert
@@ -1895,14 +1984,14 @@ Action: Block
                                                                         time.sleep(0.2)
                                                                     
                                                                     email_notif("UNKNOWN","UNKNOWN","MODIFING RULE","BLOCK",user_email)    
-                                                                with open(r"C:\FS-File\loop-3.txt", "+a",encoding='utf-8') as f:
-                                                                    f.write(pro_name+pro_path+Program+LocalPort+Protocol+Profile+Action+Direction+"\n")
+                                                                # with open(r"C:\FS-File\loop-3.txt", "+a",encoding='utf-8') as f:
+                                                                #     f.write(pro_name+pro_path+Program+LocalPort+Protocol+Profile+Action+Direction+"\n")
 
                                                             
                                                                     # not_loop=1
                                                                 if ii.lower() in ["direction","action","profile","enabled","displayName"]:
                                                                     if ii.lower() in ["direction","action","profile","enabled"]:
-                                                                        w=check_state(i[ii],ii)
+                                                                        w=i[ii]
                                                                         poewrshell(f'Set-NetFirewallRule -Name "{Name}" -{ii} {w}\n')
                                                                         
                                                                     else:
@@ -1914,18 +2003,24 @@ Action: Block
                                                                 elif ii.lower() == "program":
                                                                     poewrshell(f'Get-NetFirewallRule -Name "{Name}" | Get-NetFirewallApplicationFilter | Set-NetFirewallApplicationFilter -Program "{i[ii]}"\n')
                                                                     w=i[ii]
-                                                            modefiy_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,ii,w,rtime)
+                                                            modefiy_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,ii,w,rtime,"NO")
 
                                                     if pro==1:
                                                         print(1)
                                                         path = f'''(Get-AuthenticodeSignature "{pro_path}").Status'''
                                                         vrifiy1, error = poewrshell(path)
+                                                        vrifiy1=list(vrifiy1)
+                                                        vrifiy1=''.join(vrifiy1)
+
 
                                                         if whi_ls==True:
                                                             vrifiy1="Valid"
                                                         
                                                         tre=rf'(Get-AuthenticodeSignature "{pro_path}").SignerCertificate.GetNameInfo("SimpleName",$false)'
                                                         compony_name,error=poewrshell(tre)
+                                                        compony_name=list(compony_name)
+                                                        compony_name=''.join(compony_name)
+                                                        #also here
                                                         if compony_name=="":
                                                             compony_name="unknwon"
 
@@ -1941,10 +2036,11 @@ Action: Block
                                                         if (compony_name=="Microsoft Windows" and Program =="System") or (compony_name=="Microsoft Windows" and "WINDOWS\system" in Program) or (compony==True and Program =="System") or (compony==True and "WINDOWS\system" in Program):
                                                             #Log
                                                             if ii.lower() in ["direction","action","profile","enabled"]:
-                                                                w=check_state(i[ii],ii)
+                                                                w=i[ii]
                                                             else:
                                                                 w=i[ii]
-                                                            modefiy_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,ii,w,rtime)
+                                                            modefiy_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,ii,w,rtime,"NO")
+                                                            poewrshell(ta)
                                                         elif (compony_name!="Microsoft Windows" and Program =="System") or (compony_name!="Microsoft Windows" and "WINDOWS\system" in Program) or (compony==False and Program =="System") or (compony==False and "WINDOWS\system" in Program):
                                                             # Block + Alert + log
                                                             print("resit + alert")
@@ -2004,7 +2100,7 @@ Action: Block + Kill Program
                                                             go=1
                                                             if ii.lower() in ["direction","action","profile","enabled","displayName"]:
                                                                 if ii.lower() in ["direction","action","profile","enabled"]:
-                                                                    w=check_state(i[ii],ii)
+                                                                    w=i[ii]
                                                                     poewrshell(f'Set-NetFirewallRule -Name "{Name}" -{ii} {w}\n')
                                                                     
                                                                 else:
@@ -2016,7 +2112,7 @@ Action: Block + Kill Program
                                                             elif ii.lower() == "program":
                                                                 poewrshell(f'Get-NetFirewallRule -Name "{Name}" | Get-NetFirewallApplicationFilter | Set-NetFirewallApplicationFilter -Program "{i[ii]}"\n')
                                                                 w=i[ii]
-                                                            modefiy_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,ii,w,rtime)
+                                                            modefiy_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,ii,w,rtime,"NO")
 
                                                         else:
                                                             print(2)
@@ -2024,11 +2120,19 @@ Action: Block + Kill Program
                                                             if whi_ls:
 
                                                                 print("allow + log") 
-
+                                                                dat=firecopy.index(iz)
+                                                                for iiz in iz:
+                                                                    if iz[iiz]!= firelight[dat][iiz]:
+                                                                        if iiz.lower() in ["direction","action","profile","enabled","displayName"]:
+                                                                            if iiz.lower() in ["direction","action","profile","enabled"]:
+                                                                                w=iz[iiz]
+                                                                        else:
+                                                                            w=iz[iiz]
+                                                                print(w)
                                                             elif compony_name.lower() in Program.lower():
                                                                 #log
                                                                 print(3)
-                                                                pass
+                                                                poewrshell(ta)
                                                             
 
                                                             elif vrifiy1!="Valid":
@@ -2089,24 +2193,24 @@ Action: Block + Kill Program
                                                                 go=1
                                                                 if ii.lower() in ["direction","action","profile","enabled","displayName"]:
                                                                     if ii.lower() in ["direction","action","profile","enabled"]:
-                                                                        w=check_state(i[ii],ii)
+                                                                        w=i[ii]
                                                                         poewrshell(f'Set-NetFirewallRule -Name "{Name}" -{ii} {w}\n')
                                                                         
                                                                     else:
                                                                         poewrshell(f'Set-NetFirewallRule -Name "{Name}" -{ii} "{i[ii]}"\n')
-                                                                        
+                                                                        w=i[ii]
                                                                 elif ii.lower() in ["protocol","localPort","remotePort"]:
                                                                     poewrshell(f'Get-NetFirewallRule -Name "{Name}" | Get-NetFirewallPortFilter | Set-NetFirewallPortFilter -{ii} {i[ii]}\n')
-                                                                    
+                                                                    w=i[ii]
                                                                 elif ii.lower() == "program":
                                                                     poewrshell(f'Get-NetFirewallRule -Name "{Name}" | Get-NetFirewallApplicationFilter | Set-NetFirewallApplicationFilter -Program "{i[ii]}"\n')
+                                                                    w=i[ii]
 
-                                                            
                                                             
                                                             elif vrifiy1=="Valid" and compony==True:
                                                                 #log
                                                                 print(5)
-                                                                pass
+                                                                poewrshell(ta)
                                                             
                                                             elif (vrifiy1=="Valid" and compony==False) and (Action=="Block" or Direction=="Inbound" or Enabled=="True" or Enabled=="False" or Direction=="Outbound" or Action=="Allow" or Program1!=Program):
                                                                 # check the program if it is the same 
@@ -2169,7 +2273,7 @@ Action: Block + Kill Program
                                                                 go=1
                                                                 if ii.lower() in ["direction","action","profile","enabled","displayName"]:
                                                                     if ii.lower() in ["direction","action","profile","enabled"]:
-                                                                        w=check_state(i[ii],ii)
+                                                                        w=i[ii]
                                                                         poewrshell(f'Set-NetFirewallRule -Name "{Name}" -{ii} {w}\n')
                                                                         
                                                                     else:
@@ -2181,7 +2285,12 @@ Action: Block + Kill Program
                                                                 elif ii.lower() == "program":
                                                                     poewrshell(f'Get-NetFirewallRule -Name "{Name}" | Get-NetFirewallApplicationFilter | Set-NetFirewallApplicationFilter -Program "{i[ii]}"\n')
                                                                     w=i[ii]
-                                                            modefiy_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,ii,w,rtime)
+                                                            whitelist="NO"
+                                                            if whi_ls: 
+                                                                whitelist="YES"
+                                                            modefiy_rule_logs(pro_name,pro_path,ips,mac,DisplayName,Name,ii,w,rtime,whitelist)
+                                                            
+
 
 
                                                     pro=1 
@@ -2189,9 +2298,8 @@ Action: Block + Kill Program
 
             th.Thread(target=thp).start()
             #keys to contrule
-            l=1
+            lkl=1
             ll=1
-            ed=0
             tr=0
             #function to conn to the seconed conn in the server
             def clos_fw():
@@ -2201,14 +2309,16 @@ Action: Block + Kill Program
                 c=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
                 c.connect((ip, 9991))
                 c.sendall("client".encode())
+                # تعديل
                 while True:
                     try:
                         
                         #the orders that admenstretor want to run
                         close=c.recv(1024).decode('utf-8')
+                        print("wwwwwwww")
                         tr=1
                         if close=="off":
-                            poewrshell(r"Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False")
+                            poewrshell("Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False")
                             with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 settings["FWS"]="off-all"
@@ -2216,13 +2326,20 @@ Action: Block + Kill Program
                                 with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
                         elif close=="on":
-                            poewrshell(r"Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True")
+                            poewrshell("Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True")
                             with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
                                 settings["FWS"]="null"
                                 settings["timerF"]="0"
                                 with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
+                        else:
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                settings = json.load(f)
+                                settings["newemailtese"]=close
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                    json.dump(settings,f,indent=4)
+
                         time.sleep(0.1)
                         tr=0
                     except Exception:
@@ -2230,65 +2347,12 @@ Action: Block + Kill Program
                         continue
 
 
-
-            #function to check the D:\FS-File\settings.json evry 10s
-            async def check_files():
-                global fws,ip,timer,rule,rulename,timerr,ips,constan,deleteR,enaply,disaply,mac,tr,ta,ta1,block,ere,pro,go
-                
-                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                    settings = json.load(f)
                     
-
-                    check=settings["IP-S"]
-                    
-                    ip = check
-                        
-                    ips=settings["IP-U"]
-
-                    rowFWS=["on","off","null"]
-                    check4=settings["FWS"]
-                    
-                    deleteR=settings["deleteR"]
-
-                    if check4 in rowFWS:
-                        fws= check4
-                            
-                        
-
-                    check5=settings["timerF"]
-                    
-                    timer=int(check5)      
-
-
-                    constan=settings["constan"]
-
-                    lens=settings["ruleName"]
-                    lens=len(lens)
-                    rule=settings["Rolue"]
-                    if lens!=0 and constan=="no":
-                        
-                        rulename=settings["ruleName"][0]
-                        timerr=settings["timerR"][0]
-                        timerr=int(timerr)
-
-
-
-                    enaply=settings["Enaply list"]
-                    disaply=settings["Disaply list"]
-                    
-                        
-                    
-                    
-                        
-
-                    
-
-                        
             #function to close the firewall
             def do_ruls():
-                global l,tr,ta,ta1,block,ere,pro,go,deleteR
-                if fws=="off" and l==1:
-                    l=0
+                global lkl,tr,ta,ta1,block,ere,pro,go,deleteR
+                if fws=="off" and lkl==1:
+                    lkl=0
                     tr=1
                     fs.fireOff(fws,timer)
                     with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
@@ -2297,7 +2361,7 @@ Action: Block + Kill Program
                         settings["timerF"]="0"
                         with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                             json.dump(settings,f,indent=4)
-                    l=1
+                    lkl=1
                     time.sleep(0.1)
                     tr=0
             #function to add rules to the firewall
@@ -2335,270 +2399,153 @@ Action: Block + Kill Program
                 tr=0 
                     
 
-            while True:
-                
-                # #the main function that contrule in evry things
-                async def main():
-                    # pass
-                    global l,ll,email_rvs,ips,email_rvs,ips,constan,rule,disaply,enaply,mac,ed,tr,ta,ta1,block,ere,pro,go,deleteR
-                    
-                    if ll==1:
-                        #run the seconed conn function
-                        th.Thread(target=clos_fw).start()
-                    #run the check D:\FS-File\settings.json function
-                    sa.gather(check_files())
-                    
-                    
-                    await sa.sleep(0)
-                    #check order from user
-                    if fws=="off" and l==1:
-                        #run close firewall function
-                        th.Thread(target=do_ruls).start()
-                    elif fws=="on":
-                        #open firewall
-                        tr=1
-                        poewrshell(r"Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True")
+            class Handler(FileSystemEventHandler):
+                def on_modified(self, event):
+                    global fws,ip,timer,rule,rulename,timerr,ips,constan,deleteR,modify_rule,mac,tr,ta,ta1,block,ere,pro,go,lkl,ll,email_rvs,ips,email_rvs,ips,constan,rule,modify_rule,mac,tr,ta,ta1,block,ere,pro,go,deleteR,bossemail
+
+                    if r"C:\FS-File\settings.json" in event.src_path:
                         with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
-                            settings["FWS"]="null"
-                            settings["timerF"]="0"
-                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                json.dump(settings,f,indent=4)
-                        l=1
-                        time.sleep(0.1)
-                        tr=0
-                    #check if the firewall state is off without the user send any ordurs
-                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                        settings = json.load(f)
-                        check=settings["FWS"]
-                    if check=="null":
-                        a=poewrshell(r'"Get-NetFirewallProfile | Select-Object Enabled"')
-                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                settings = json.load(f)
-                                firews=settings["FWS"]
-                                firews=str(firews)
-                        #run the belwo code if firewall is off without the user send any ordurs to return firewall on   
-                        if "False" in a and firews=="null" :
-                            tr=1
-                            poewrshell(r'Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True')
-                            #send to server to add to the csv file
-                            c.sendall("hackOff".encode())
-                            c.recv(1024).decode()
-                            ips=str(ips)
-                            c.sendall(ips.encode())
-                            c.recv(1024).decode()
-                            c.sendall(mac.encode())
-                            check1=c.recv(1024).decode()
-                            check1=check1.replace("1","")
-                            check1=check1.strip()
-                            time.sleep(0.1)
-                            tr=0
-                            if check1=="issue FWS.csv" or check1=="issue FWS.csv1":
+                            
+                            bossemail=settings["bossemail"]
+                            check=settings["IP-S"]
+                            
+                            ip = check
                                 
-                                msg= EmailMessage()
-                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
-                                msg["From"]="aofnotification@gmail.com"
-                                msg["To"]=email_rvs
-                                msg.set_content(f"Someone is reading the 'FirewallTamper.csv' file.\n you should check the server's status to see if it has been compromised or not.")
-                                email="aofnotification@gmail.com"
-                                password="oqgspkawnyeftyjw"
-                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                    smtp.login(email,password)
-                                    smtp.send_message(msg)
-                            #send email to the user
-                            msg= EmailMessage()
-                            msg["Subject"]=f"Detect stop attempt - ID({str(uuid.uuid4())[:8]})"
-                            msg["From"]="aofnotification@gmail.com"
-                            msg["To"]=email_rvs
-                            msg.set_content(f"your firewall state has been off,we rutern it to be open.\nTurn off the network to check if your device has been hacked or not")
-                            email="aofnotification@gmail.com"
-                            password="oqgspkawnyeftyjw"
-                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                smtp.login(email,password)
-                                smtp.send_message(msg)
+                            ips=settings["IP-U"]
+                            
+                            # rowFWS=["on","off","null"]
+                            fws=settings["FWS"]
+                            
+                            deleteR=settings["deleteR"]
+
+                            # if check4 in rowFWS:
+                            #     fws= check4
+                                    
+                                
+
+                            check5=settings["timerF"]
+                            
+                            timer=int(check5)      
 
 
-                    #delete rule from the firewall
-                    if deleteR!="null":
-                        tr=1
-                        z=deleteR.index("wevall")
-                        z=z+6
-                        ruletype=deleteR[z:]
-                        deleteR=deleteR.replace(deleteR[z:],"")
-                        deleteR=deleteR.replace("wevall","")
+                            constan=settings["constan"]
+
+                            lens=settings["ruleName"]
+                            lens=len(lens)
+                            rule=settings["Rolue"]
+                            if lens!=0 and constan=="no":
+                                
+                                rulename=settings["ruleName"][0]
+                                timerr=settings["timerR"][0]
+                                timerr=int(timerr)
+
+                            modify_rule=settings["modify_rule"]
+                        if ll==1:
+                            #run the seconed conn function
+                            th.Thread(target=clos_fw).start()
+                        #run the check D:\FS-File\settings.json function
                         
-                        poewrshell(f'Remove-NetFirewallRule -{ruletype} "{deleteR}"')
-                        
-                        poewrshell(ta)
-                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                            settings = json.load(f)
-                            settings["deleteR"]="null"
+                        #check order from user
+                        if fws=="off" and lkl==1:
+                            #run close firewall function
+                            th.Thread(target=do_ruls).start()
+                        elif fws=="on":
+                            #open firewall
+                            tr=1
+                            poewrshell(r"Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True")
+                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                settings = json.load(f)
+                                settings["FWS"]="null"
+                                settings["timerF"]="0"
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                    json.dump(settings,f,indent=4)
+                            lkl=1
                             time.sleep(0.1)
                             tr=0
-                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                json.dump(settings,f,indent=4)
                         
-
-
-                    #add rule to the firewall 
-                    if rule!="null":
-                        
-                        if constan=="yes":
+                        #delete rule from the firewall
+                        if deleteR!="null":
                             tr=1
-                            poewrshell(rule)
-
+                            z=deleteR.index("wevall")
+                            z=z+6
+                            ruletype=deleteR[z:]
+                            deleteR=deleteR.replace(deleteR[z:],"")
+                            deleteR=deleteR.replace("wevall","")
+                            
+                            poewrshell(f'Remove-NetFirewallRule -{ruletype} "{deleteR}"')
+                            
                             poewrshell(ta)
                             with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
-                                settings["Rolue"]="null"
-                                settings["constan"]="no"
+                                settings["deleteR"]="null"
                                 time.sleep(0.1)
                                 tr=0
-                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                json.dump(settings,f,indent=4)
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                    json.dump(settings,f,indent=4)
                             
-                        elif constan=="no":
-                            tr=1
-                            poewrshell(rule)
+
+
+                        #add rule to the firewall 
+                        if rule!="null":
                             
-                            poewrshell(ta)
-                            
-                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                            if constan=="yes":
+                                tr=1
+                                poewrshell(rule)
+
+                                poewrshell(ta)
+                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                     settings = json.load(f)
                                     settings["Rolue"]="null"
                                     settings["constan"]="no"
                                     time.sleep(0.1)
                                     tr=0
-                                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                        json.dump(settings,f,indent=4)
-                                     
-                            #run add rules function
-                            th.Thread(target=add__rule).start()
-
-
-                    if enaply !=[] :
-                        ed=1
-                        def enaply_action():
-                            global enaply,ed,ta,ta1,block,ere,pro,go,deleteR
-                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                settings = json.load(f)
-                                enaply=list(enaply)
-                                enaply1=enaply.pop(0)
-                                settings["Enaply list"]=enaply
-                                settings["edit_wait"]="1"
-                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                json.dump(settings,f,indent=4) 
-
-                            action="e"
-                            z=enaply1.index("wevall")
-                            z=z+6
-                            ruletype=enaply1[z:]
-                            enaply1=enaply1.replace(enaply1[z:],"")
-                            enaply1=enaply1.replace("wevall","")
-
-                            if enaply1.endswith("m") or enaply1.endswith("h"):
-                                z=enaply1.index("^")
-                                bb=enaply1[z:]
-                                aa=enaply1.replace(bb,"")
-                                bb=bb.replace("^","")
-                                if bb.endswith("m"):
-                                    lens=len(bb)
-                                    bb=bb[:lens-1]
-                                    bb=int(bb)
-                                    bb*=60
-                                    bb=str(bb)
-                                    
-
-
-                                elif bb.endswith("h"):
-                                    lens=len(bb)
-                                    bb=bb[:lens-1]
-                                    bb=int(bb)
-                                    bb*=3600
-                                    bb=str(bb)
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                    json.dump(settings,f,indent=4)
                                 
-
-                            fs.action_rule(bb,aa,action,ruletype)
-                            ed=1
-                            time.sleep(0.1)
-                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                settings = json.load(f)
-                                if settings["edit_wait"]=="1":
-                                    settings["edit_wait"]="0"
-                                    with open(r"C:\FS-File\settings.json", 'w',encoding='utf-8') as f:
-                                        json.dump(settings,f,indent=4)
-                        th.Thread(target=enaply_action).start()
-                    
-
-
-                    if disaply !=[] :
-                        ed=1
-                        def disaply_action():
-                            global disaply,ed,ta,ta1,block,ere,pro,go,deleteR
-                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                settings = json.load(f)
-                                disaply=list(disaply)
-                                disaply1=disaply.pop(0)
-                                settings["Disaply list"]=disaply
-                                settings["edit_wait"]="1"
-                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                json.dump(settings,f,indent=4) 
-                            action="d"
-                            z=disaply1.index("wevall")
-                            z=z+6
-                            ruletype=disaply1[z:]
-                            disaply1=disaply1.replace(disaply1[z:],"")
-                            disaply1=disaply1.replace("wevall","")
-
-                            if disaply1.endswith("m") or disaply1.endswith("h"):
-                                z=disaply1.index("^")
-                                bb=disaply1[z:]
-                                aa=disaply1.replace(bb,"")
-                                bb=bb.replace("^","")
-                                if bb.endswith("m"):
-                                    lens=len(bb)
-                                    bb=bb[:lens-1]
-                                    bb=int(bb)
-                                    bb*=60
-                                    bb=str(bb)
-                                    
-
-
-                                elif bb.endswith("h"):
-                                    lens=len(bb)
-                                    bb=bb[:lens-1]
-                                    bb=int(bb)
-                                    bb*=3600
-                                    bb=str(bb)
+                            elif constan=="no":
+                                tr=1
+                                poewrshell(rule)
                                 
+                                poewrshell(ta)
+                                
+                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                        settings = json.load(f)
+                                        settings["Rolue"]="null"
+                                        settings["constan"]="no"
+                                        time.sleep(0.1)
+                                        tr=0
+                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                            json.dump(settings,f,indent=4)
+                                        
+                                #run add rules function
+                                th.Thread(target=add__rule).start()
 
-                            fs.action_rule(bb,aa,action,ruletype)
-                            ed=1
-                            time.sleep(0.1)
+
+                        if modify_rule !="null" :
+                            tr=1
+                            poewrshell(modify_rule)
+                            poewrshell(ta)
+                            tr=0
                             with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
-                                if settings["edit_wait"]=="1":
-                                    settings["edit_wait"]="0"
-                                    with open(r"C:\FS-File\settings.json", 'w',encoding='utf-8') as f:
-                                        json.dump(settings,f,indent=4)
-                        th.Thread(target=disaply_action).start()
+                                settings["modify_rule"]="null"
+                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                    json.dump(settings,f,indent=4)
 
-                #run the main function
-                sa.run(main())
                 
-                #return to do this loop evry 10s
+            observer = Observer()
+            observer.schedule(Handler(), path=r"C:\FS-File", recursive=False)
+            observer.start()
+
+            try:
                 print(1)
-                time.sleep(5)
-                if ed==1:
-                    poewrshell(ta)
-                    time.sleep(0.1)
-                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                        settings = json.load(f)
-                        if settings["edit_wait"]=="1":
-                            settings["edit_wait"]="0"
-                            with open(r"C:\FS-File\settings.json", 'w',encoding='utf-8') as f:
-                                json.dump(settings,f,indent=4)
-                    ed=0
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                observer.stop()
+
+            observer.join()     
                     
         # except Exception:
         #     print("error")
