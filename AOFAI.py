@@ -282,7 +282,7 @@ while True:
                         if "#" in rule or "|" in rule or "%" in rule or "~" in rule or ";" in rule or "&" in rule or "\\" in rule or "@" in rule or "$" in rule or ")" in rule or "(" in rule:
                             return ("Your rule should not contain any of these symbols (# | % ~ ; & \\ @ $ ( ) )")
                         
-                        if "-or " in rule.lower() or "if " in rule.lower() or "try " in rule.lower() or "catch " in rule.lower():
+                        if "-or " in rule.lower() or "if " in rule.lower() or "try " in rule.lower() or "catch " in rule.lower() :
                             return ("The rule contains strange elements. Rewrite it correctly.")
                         
                         if "new-netfirewallrule"  in rule.lower()  or "-displayname"  in rule.lower():

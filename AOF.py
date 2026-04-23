@@ -17,7 +17,11 @@ import wmi
 import psutil
 from winotify import Notification
 import winsound
-import risk_score as rs
+from advanced_risk_engine import (
+    AdvancedRiskEngine,
+    get_process_role,
+    start_baseline_updater
+)
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -266,6 +270,10 @@ ere=0
 block=1  
 pas=0
 trw=1
+
+risk_engine = AdvancedRiskEngine()
+start_baseline_updater(risk_engine)
+
 pathfile=os.path.exists(r"C:\FS-File\loop.txt")
 if pathfile==False:
     with open(r"C:\FS-File\loop.txt","w",encoding='utf-8')as f:
@@ -2336,7 +2344,7 @@ Action: Block + Kill Program
                         else:
                             with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                                 settings = json.load(f)
-                                settings["newemailtese"]=close
+                                settings["bossemail"]=close
                                 with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(settings,f,indent=4)
 
