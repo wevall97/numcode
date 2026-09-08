@@ -2,38 +2,33 @@ import subprocess as su
 import time
 import json
 
+
+def poewrshell(ordar):
+    p = su.Popen(
+        ["powershell.exe", "-Command", ordar],  
+        stdin=su.PIPE,
+        stdout=su.PIPE,
+        stderr=su.PIPE,
+        text=True
+    )
+    
+    output, error = p.communicate()
+    return output, error
+
+
 def fireOff(states,timer):
     if states=="off":
-        states="powershell -Command Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False"
-        su.run(states,shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
+        states="Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False"
+        poewrshell(states)
         time.sleep(timer)
-        with open(r'C:\FWSH-files\settings.json', 'r',encoding='utf-8') as f:
+        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f)
             timerF=settings["timerF"]
             if timerF != "0":
-                su.run("powershell -Command Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True",shell=True,text=True)
+                poewrshell("Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True")
     return 0
 
 
-def add_rule(ruleName,timer):
-    
-    time.sleep(timer)
-    su.run(f'powershell -Command Remove-NetFirewallRule -DisplayName "{ruleName}"',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
-    return ruleName
-  
 
-
-def action_rule(timer,ruleN,action):
-    print("also in")
-    timer=int(timer)
-    if action =="e":
-        su.run(f'powershell -Command Set-NetFirewallRule -DisplayName "{ruleN}" -Enabled True',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
-    else:
-        su.run(f'powershell -Command Set-NetFirewallRule -DisplayName "{ruleN}" -Enabled False',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
-    time.sleep(timer)
-    if action =="d":
-        su.run(f'powershell -Command Set-NetFirewallRule -DisplayName "{ruleN}" -Enabled True',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
-    else:
-        su.run(f'powershell -Command Set-NetFirewallRule -DisplayName "{ruleN}" -Enabled False',shell=True,stdout=su.DEVNULL,stderr=su.DEVNULL)
     
     

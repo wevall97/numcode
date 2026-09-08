@@ -25,7 +25,8 @@ def poewrshell(ordar):
     output, error = p.communicate()
     return output, error
 
-
+#cheching email
+##########################################################################
 with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f)
     
@@ -45,7 +46,7 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
 with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
     settings = json.load(f)
     check4=settings["email"]
-
+##########################################################################
 
 def generate_password():
     password=random.randint(111111,999999)
@@ -53,7 +54,8 @@ def generate_password():
     return password
 
 
-
+#sending password
+##########################################################################
 ppp=generate_password()
 print("Preparing to send the password to your email.")
 msg= EmailMessage()
@@ -66,9 +68,18 @@ password="oqgspkawnyeftyjw"
 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
     smtp.login(email,password)
     smtp.send_message(msg)
-l=1
+##########################################################################
+
+
+
+l=1##########################################################################
+
+
+
 while True:
     try:
+        #making the ("C:\FS-File\settings.json") file
+        ##########################################################################
         try:
            
             os.mkdir(r"C:\FS-File")
@@ -82,10 +93,15 @@ while True:
             p=json.loads(s)
             with open(r"C:\FS-File\settings.json","w",encoding='utf-8')as f:
                 json.dump(p,f,indent=4)
+        ##########################################################################
+
+        #make the file unwritbale
+        ##########################################################################
         with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
             settings = json.load(f)         
-            
-            
+        ##########################################################################
+            #check password
+            ##########################################################################
             if l==1:
                 
                 
@@ -93,7 +109,7 @@ while True:
                 checkpass=input("Enter the password: ")
                 checkpass=checkpass.strip()
             if l==0 or checkpass==ppp:
-                
+            ##########################################################################    
                 
                 
                 with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
@@ -103,7 +119,8 @@ while True:
                     
                     check=settings["firstconn"]
                 
-
+                    #DELETE THIS
+                    ##########################################################################
                     if check=="0":
                         while True:
                             ip=input("Enter Server IP address: ")
@@ -159,13 +176,14 @@ while True:
                             settings["firstconn"] = "1"
                             json.dump(settings, f, indent=4)
                         
-
+                    ##########################################################################
                     with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                         settings = json.load(f)
                         check2=settings["firstconn"]
                     
                     
-                    
+                    #geting ip and mac
+                    ##########################################################################
                     if check2=="1":
                         try:
                             result, error = poewrshell("Get-NetAdapter | Select-Object MacAddress")
@@ -198,7 +216,9 @@ while True:
                             settings["MAC"] =mac
                             with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                 json.dump(settings, f, indent=4)
-        
+                    ##########################################################################
+                #DELETE THIS
+                ##########################################################################
                 if l==1:
                     print("Connecting to the server....")
                     time.sleep(1)
@@ -233,8 +253,9 @@ while True:
                         
                         continue
             
-                        
-                      
+                ##########################################################################        
+                #get the importan information
+                ##########################################################################     
                 with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
                     ips=settings["IP-U"]  
@@ -242,7 +263,9 @@ while True:
                     email_rvs=settings["email"]
                     bossemail=settings["bossemail"]  
                     
-                        
+                ##########################################################################
+                # i had taked
+                # ##########################################################################        
                 def check_inputs(rule,num,ruletype=any):
 
                     if num==1:
@@ -326,7 +349,7 @@ while True:
                         else:
                             return "1"
                        
-
+                ##########################################################################
 
 
                 print("enter (help) for help")
@@ -335,8 +358,13 @@ while True:
                         settings = json.load(f)
                         
                         email_rvs=settings["email"]
+                        #DELETE THIS
+                        ##########################################################################
                         bossemail=settings["bossemail"]  
-
+                        ##########################################################################
+                        
+                    #main body
+                    ##########################################################################
                     masge=input("Enter your message: ")
                     masge=masge.lower()
                     masge=masge.strip()
@@ -353,6 +381,8 @@ while True:
 7. Settings : To change your settings.
 '''
                         print(help)
+                        #EDIT IT
+                    ##########################################################################
                     if masge=="settings" or masge=="7":
                         with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
@@ -363,7 +393,7 @@ while True:
                             current_days_str = ", ".join([days_map[d] for d in current_days])
                             print(f"Work Hours: {settings.get('work_start',8)}:00 → {settings.get('work_end',18)}:00")
                             print(f"Work Days : {current_days_str}\n")
-                            print("\nOptions: 'email' | 'ip' | 'workhours' | 'workdays' | exit.")
+                            print("\nOptions: 'email' | 'ip-Server' | 'workhours' | 'workdays' | exit.")
                             while True:
                                 newstt = input("Enter your options: ").strip().lower()
                                 if newstt.lower()=="exit":
@@ -499,7 +529,10 @@ while True:
                                 else:
                                     print("Enter a valid option.")
                                     continue
+                    ##########################################################################
 
+                    #take it all
+                    ##########################################################################
                     if masge=="white list" or masge=="6":
                         m='''
 You can add programs to the white list to prevent them from being blocked by the System.
@@ -560,9 +593,10 @@ To exit the white list management, enter 'exit'.
                             else:
                                 print("You must enter 'add' or 'delete'")
                                 continue
-                                
+                    ##########################################################################
 
-
+                    #EDIT IT ALL
+                    ##########################################################################
                     if masge=="firewall mode" or masge=="1":
                         print("If you want to exit enter (exit)")
                         while True:
@@ -666,9 +700,10 @@ To exit the white list management, enter 'exit'.
                                 with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                                     json.dump(data,f,indent=4)
                             print("Firewall state has been changed.")
+                        ##########################################################################
                         
-                        
-
+                    #EDIT IT ALL
+                    ##########################################################################
                     elif masge=="add new rule" or masge=="2":
                         with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
@@ -758,9 +793,10 @@ FS System
                                 f.write(unique_id+"#"+rule+"~"+timer+"\n")
                             print("Wait until the official approves your request.\nYou will receive an email.")
                         
+                    ##########################################################################
 
-
-
+                    #EDIT IT ALL
+                    ##########################################################################
                     elif masge=="delete rule" or masge=="3":
                         print("If you want to exit enter (exit)")
                         
@@ -843,8 +879,10 @@ FS System
                             with open(r"C:\FS-File\email_ids.txt", "+a",encoding='utf-8') as f:
                                 f.write(unique_id+"|"+delrule+"wevall"+ruty+"\n")# check it when you check "AOF.py"
                             print("Wait until the official approves your request.\nYou will receive an email.\n")
-                    
-
+                    ##########################################################################
+                    #DELETE TI
+                    #edit the auther one
+                    ##########################################################################
                     elif masge=="advance mode" or masge=="4":
                         
                         with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
@@ -1092,8 +1130,9 @@ FS System
                                         print("Rule added successfully.")
 
 
-
-
+                    ##########################################################################
+                    #EDIT IT ALL
+                    ##########################################################################
                     elif masge=="rule state" or masge=="5":
                         with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                             settings = json.load(f)
@@ -1293,8 +1332,13 @@ FS System'''
                             with open(r"C:\FS-File\email_ids.txt", "a",encoding='utf-8') as f:
                                 f.write(unique_id+"&"+rulerow+"*"+delrule+"^"+component+"wevall"+newvalue+"\n")
                             print("Wait until the official approves your request.\nYou will receive an email.\n")
+            ##########################################################################
+            #if i enter the wrong password
+            ##########################################################################
             else:
                 print("Rewrite the correct code")
                 continue
+            ##########################################################################
+    
     except  Exception:
         continue

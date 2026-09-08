@@ -6,10 +6,11 @@ import threading as th
 import socket as so
 import os
 
-# type "Rule" instad of anythings sayed "rule name"
 # check all code
 # اذكر انك لازم في كتلوج المستخدمين انو netsh سوف يتم حذفها عبر مايكرسوفت عشان كده النظام بيدعم اوامر power shell يس
-
+# لو الشركات المستخدمه النسخه الضعيفه (FSP-FSC) و كانت دايره تشيل كل الملفات حقت (CSV) عشان تقرئهم 
+# بمشي اضيف خاصيه في العميل المراقب انو يدوني (ip-port) السيرفر الدايرنو نقلو فيه الملفات اخلي السيرفر اي نوع سيرفر عشان يستقبل الملفات و ليس سيرفر خاص انشىه 
+# make sure the name of all csv files are the same in the two system
 try:
     
     os.mkdir(r"C:\FS-Server")
@@ -107,9 +108,14 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
         def clos_fw(command):
             global clients
             dead = []
+            order=command[:1]
+            command=command[1:]
             for c in clients:
                 try:
+                    c.sendall(order.encode())
+                    c.recv(1024).decode()
                     c.sendall(command.encode())
+                    c.recv(1024).decode()
                 except Exception:
                     dead.append(c)
             with lock:
@@ -234,6 +240,9 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                         datafrme={
                             "IP":["IP"],
                             "MAC":["MAC"],
+                            "Program_Name":["Program_Name"],
+                            "Program_Path":["Program_Path"],
+                            "white list":["white list"],
                             "Delete_Rule":["Delete_Rule"],
                             "TIME":["TIME"]
                         }
@@ -245,6 +254,9 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
+                            "Program_Name":["FS System"],
+                            "Program_Path":["FS System"],
+                            "white list":["NO"],
                             "Delete_Rule":[deleteR],
                             "TIME":[timerlog]
                         }
@@ -310,10 +322,13 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                         datafrme={
                             "IP":["IP"],
                             "MAC":["MAC"],
+                            "Program_Name":["Program_Name"],
+                            "Program_Path":["Program_Path"],
                             "Rule_Name":["Rule_Name"],
                             "RULE":["RULE"],
                             "TIMER":["TIMER"],
                             "Permanent":["Permanent"],
+                            "White_list":["White_list"],
                             "TIME":["TIME"]
                         }
 
@@ -324,10 +339,13 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
+                            "Program_Name":["FS System"],
+                            "Program_Path":["FS System"],
                             "Rule_Name":[rulename],
                             "RULE":[RULE],
                             "TIMER":[timerlog],
                             "Permanent":[constan],# get for it a new name
+                            "White_list":["NO"],
                             "TIME":[T]
                         }
 
@@ -385,11 +403,241 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     time.sleep(1.5)
                     # writer.write("1".encode())
                     # await writer.drain()
-                    clos_fw(command="off")    
+                    clos_fw(command="4off")    
 
 
 
                 # delete it because it is not insasary
+                if dat=="CANR" :
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    control=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    rulename=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    T=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+
+                    try:
+                        s=pd.read_csv(r"C:\FS-Server\Add_rule_log.csv")
+                    except Exception:
+                        datafrme={
+                            "IP":["IP"],
+                            "MAC":["MAC"],
+                            "Program_Name":["Program_Name"],
+                            "Program_Path":["Program_Path"],
+                            "Rule_Name":["Rule_Name"],
+                            "RULE":["RULE"],
+                            "TIMER":["TIMER"],
+                            "Permanent":["Permanent"],
+                            "White_list":["White_list"],
+                            "TIME":["TIME"]
+                        }
+
+                        d=pd.DataFrame(datafrme)
+                        d.to_csv(r"C:\FS-Server\Add_rule_log.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+
+
+                    datafrme={
+                            "IP":["ALL"],
+                            "MAC":["ALL"],
+                            "Program_Name":["FS System"],
+                            "Program_Path":["FS System"],
+                            "Rule_Name":[rulename],
+                            "RULE":[control],
+                            "TIMER":["NULL"],
+                            "Permanent":["YES"],# get for it a new name
+                            "White_list":["NO"],
+                            "TIME":[T]
+                        }
+
+                    d=pd.DataFrame(datafrme)
+                    try:
+                        d.to_csv(r"C:\FS-Server\Add_rule_log.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                    except Exception:
+                        writer.write("add rule log.csv".encode())
+                        await writer.drain()
+
+                    # writer.write("1".encode())
+                    # await writer.drain()
+                    time.sleep(1.5)
+                    # writer.write("1".encode())
+                    # await writer.drain()
+                    clos_fw(command="1"+control)
+
+
+
+                if dat=="CDR" :
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    control=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    name=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    T=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+
+                    try:
+                        s=pd.read_csv(r"C:\FS-Server\Delete_rule.csv") 
+                    except Exception:
+                        datafrme={
+                            "IP":["IP"],
+                            "MAC":["MAC"],
+                            "Program_Name":["Program_Name"],
+                            "Program_Path":["Program_Path"],
+                            "white list":["white list"],
+                            "Delete_Rule":["Delete_Rule"],
+                            "TIME":["TIME"]
+                        }
+
+                        d=pd.DataFrame(datafrme)
+                        d.to_csv(r"C:\FS-Server\Delete_rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+
+
+                    datafrme={
+                            "IP":["ALL"],
+                            "MAC":["ALL"],
+                            "Program_Name":["FS System"],
+                            "Program_Path":["FS System"],
+                            "white list":["NO"],
+                            "Delete_Rule":[name],
+                            "TIME":[T]
+                        }
+
+                    d=pd.DataFrame(datafrme)
+                    try:
+                        d.to_csv(r"C:\FS-Server\Delete_rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                    except Exception:
+                        writer.write("delete rule log.csv".encode())
+                        await writer.drain()
+
+                    # writer.write("1".encode())
+                    # await writer.drain()
+                    time.sleep(1.5)
+                    # writer.write("1".encode())
+                    # await writer.drain()
+                    clos_fw(command="2"+control)
+
+
+                if dat=="CMR":
+                    writer.write("1".encode())
+                    await writer.drain()
+
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    control=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    rulename=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    component=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    newvalue=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    T=data.decode()
+
+                    writer.write("1".encode())
+                    await writer.drain()
+
+                    try:
+                        s=pd.read_csv(r"C:\FS-Server\State_rule.csv")
+                    except Exception:
+                        datafrme={
+                            "IP":["IP"],
+                            "MAC":["MAC"],
+                            "Program_Name":["Program_Name"],
+                            "Program_Path":["Program_Path"],
+                            "white list":["white list"],
+                            "RULE":["RULE"],
+                            "component":["Component"],
+                            "newvalue":["NewValue"],
+                            "TIME":["TIME"]
+                        }
+
+                        s=pd.DataFrame(datafrme)
+                        s.to_csv(r"C:\FS-Server\State_rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False)
+                    datafrme={
+                            "IP":["ALL"],
+                            "MAC":["ALL"],
+                            "Program_Name":["FS System"],
+                            "Program_Path":["FS System"],
+                            "white list":["NO"],
+                            "RULE":[rulename],
+                            "Component":[component],
+                            "NewValue":[newvalue],
+                            "TIME":[T]
+                        }
+
+                    d=pd.DataFrame(datafrme)
+                    try:
+                        d.to_csv(r"C:\FS-Server\State_rule.csv",index=False,encoding='utf-8-sig',mode='a',header=False) 
+                    except Exception:
+                        writer.write("action rule log.csv".encode())
+                        await writer.drain()
+
+                    # writer.write("1".encode())
+                    # await writer.drain()
+                    time.sleep(1.5)
+                    # writer.write("1".encode())
+                    # await writer.drain()
+                    clos_fw(command="3"+control)
+
+
+
                 if dat=="firewall state on all" or dat=="6" :
                     writer.write("1".encode())
                     await writer.drain()
@@ -433,7 +681,7 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     time.sleep(1.5)
                     # writer.write("1".encode())
                     # await writer.drain()
-                    clos_fw(command="on")
+                    clos_fw(command="5on")
 
                 
                 if dat=="hackOff":
@@ -885,6 +1133,9 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                         datafrme={
                             "IP":["IP"],
                             "MAC":["MAC"],
+                            "Program_Name":["Program_Name"],
+                            "Program_Path":["Program_Path"],
+                            "white list":["white list"],
                             "RULE":["RULE"],
                             "component":["Component"],
                             "newvalue":["NewValue"],
@@ -896,6 +1147,9 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                     datafrme={
                             "IP":[ips],
                             "MAC":[mac],
+                            "Program_Name":["FS System"],
+                            "Program_Path":["FS System"],
+                            "white list":["NO"],
                             "RULE":[rulename],
                             "Component":[component],
                             "NewValue":[newvalue],
@@ -927,8 +1181,72 @@ with open(r'C:\FS-Server\serverSetting.json', 'r',encoding='utf-8') as f:
                         with open(r'C:\FS-Server\serverSetting.json', 'w',encoding='utf-8') as f:
                             json.dump(serverSetting,f,indent=4)
                     time.sleep(1.5)
-                    clos_fw(command=email)
-                    
+                    clos_fw(command="6"+email)
+
+
+                if dat=="BL":
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    bl=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    time.sleep(1.5)
+                    clos_fw(command="7"+bl)
+
+                if dat=="BLL":
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    bl=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    time.sleep(1.5)
+                    clos_fw(command="8"+bl)
+
+
+                if dat=="BLB":
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    bl=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    time.sleep(1.5)
+                    clos_fw(command="9"+bl)
+
+
+                if dat=="BLBL":
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    bl=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    time.sleep(1.5)
+                    clos_fw(command="0"+bl)
+
+
+                if dat=="ip":
+                    writer.write("1".encode())
+                    await writer.drain()
+                    data= await reder.read(90000)
+                    if not data:
+                        break
+                    bl=data.decode()
+                    writer.write("1".encode())
+                    await writer.drain()
+                    time.sleep(1.5)
+                    clos_fw(command="#"+bl)
+
             except Exception:
             
                 break

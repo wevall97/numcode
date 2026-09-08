@@ -25,10 +25,12 @@ from advanced_risk_engine import (
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-# check "block=1"
+# check "block=1" اتاكد اناها شغاله حرفيا 
 # check all code
-# serish erorr: when i delete a rule without using the system the "aof.py" send to the server "delhac" but nothing alse hapen
-
+# serish erorr: when i delete a rule without using the system  "aof.py" send to the server "delhac" but nothing alse hapen
+# انقل كل شي جديد اضفته في نظام الفردي لي النظام الكامل
+#COPY
+##############################################################################
 ta=r'''$rules = Get-NetFirewallRule
 $ports = Get-NetFirewallPortFilter | Group-Object InstanceID -AsHashTable
 $apps  = Get-NetFirewallApplicationFilter | Group-Object InstanceID -AsHashTable
@@ -141,7 +143,136 @@ function Get-IPScope($ip) {
     }
 }) | ConvertTo-Json -Depth 3 | Out-File "C:\FS-File\firewallcopy.json" -Encoding utf8
 '''
+##############################################################################
 
+def email_alr():
+    toast = Notification(
+    app_id="FS Notification",
+    title="Offline Alert",
+    msg="Sending email alert and doing your order are stop ,because you are offline right now\n Check your internet connction.")
+    
+    toast.show()
+    for _ in range(2):
+        winsound.Beep(2000, 300)  
+        time.sleep(0.2)
+
+
+def on_off_line():
+   
+    try:
+        try:
+            server=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+            server.connect(("1.1.1.1",80))
+            ips=server.getsockname()[0]
+            server.close()
+        except Exception:
+            
+            server=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+            server.connect(("8.8.8.8",443))
+            ips=server.getsockname()[0]
+            server.close()
+    except Exception:
+        ips="null"
+
+    return ips
+
+
+def online_IP():
+    global arl,drl,mrl
+    while True:
+        try:
+            try:
+                server=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+                server.connect(("1.1.1.1",80))
+                ips=server.getsockname()[0]
+                server.close()
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                    settings = json.load(f)
+
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                            settings["IP-U"] =ips
+                            json.dump(settings,f,indent=4) 
+                break
+            except Exception:
+                
+                server=sk.socket(sk.AF_INET,sk.SOCK_STREAM)
+                server.connect(("8.8.8.8",443))
+                ips=server.getsockname()[0]
+                server.close()
+
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                    settings = json.load(f)
+
+                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                            settings["IP-U"] =ips
+                            json.dump(settings,f,indent=4) 
+                break
+        except Exception:
+            time.sleep(5)
+            continue
+
+    reconn_server()
+    time.sleep(1)
+    ars(arl)
+    drs(drl)
+    mrs(mrl)
+
+
+
+
+def reconn_server():
+    global c
+    MAX_RETRIES = 30   # حد أقصى للمحاولات
+    RETRY_DELAY = 5    # ثوانٍ بين كل محاولة
+    retry_count = 0
+
+
+    while True:
+        try:
+            c = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
+            c.settimeout(10)  # ← timeout 10 ثوانٍ
+            c.connect((ip, 9999))
+            chck = c.recv(1024).decode('utf-8')
+            if chck == '1':
+                c.sendall("add".encode())
+            break
+        except Exception as e:
+            retry_count += 1
+            if retry_count >= MAX_RETRIES:
+                exit(1)
+            time.sleep(RETRY_DELAY)
+
+
+def ars(a=list):
+    l=len(a)
+    if l !=0:
+        l=l/16
+        for _ in range(l):
+            add_rule_logs(a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0))
+            time.sleep(5)
+    
+
+
+def drs(a=list):
+    l=len(a)
+    if l !=0:
+        l=l/8
+        for _ in range(l):
+            delete_rule_logs(a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0))
+            time.sleep(5)
+
+
+def mrs(a=list):
+    l=len(a)
+    if l !=0:
+        l=l/10
+        for _ in range(l):
+            modefiy_rule_logs(a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0),a.pop(0))
+            time.sleep(5)
+
+
+#COPY
+##############################################################################
 def email_notif(PROGRAM_NAME,PROGRAM_PATH,RULE_ACTION,ACTION_TAKEN,email_rvs):
     
     notif_mas=f'''
@@ -162,21 +293,42 @@ If this activity is legitimate, please review the program and your firewall conf
 Security System:
 FS System
 '''
-    msg= EmailMessage()
-    msg["Subject"]=f"Security Alert - ID({str(uuid.uuid4())[:8]})"
-    msg["From"]="aofnotification@gmail.com"
-    msg["To"]=email_rvs
-    msg.set_content(notif_mas)
-    email="aofnotification@gmail.com"
-    password="oqgspkawnyeftyjw"
-    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-        smtp.login(email,password)
-        smtp.send_message(msg)  
+    try:
+        msg= EmailMessage()
+        msg["Subject"]=f"Security Alert - ID({str(uuid.uuid4())[:8]})"
+        msg["From"]="aofnotification@gmail.com"
+        msg["To"]=email_rvs
+        msg.set_content(notif_mas)
+        email="aofnotification@gmail.com"
+        password="oqgspkawnyeftyjw"
+        with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+            smtp.login(email,password)
+            smtp.send_message(msg)  
+    except Exception:
+        email_alr()
+        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+            data = json.load(f)
 
+        if data["IP-U"]!="0":
 
+            th.Thread(target=online_IP).start()
 
+            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                data = json.load(f)
+                data["IP-U"]="0"
+                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                    json.dump(data,f,indent=4)
+
+#EDIT
+##############################################################################
+arl=[]
+drl=[]
+mrl=[]
 def add_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,Direction,Action,Profile,Enabled,Protocol,LocalPort,RemotePort,Program,T,white_list):
     try:
+        # امشي اضيف باقي ملفات الcsv الموجوده في النسخه المنفصله
+
+        # 
         c.sendall("hackAdd".encode())
         c.recv(1024).decode()
         c.sendall(pro_name.encode())
@@ -214,8 +366,42 @@ def add_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,Direction,
         check1=check1.replace("1","")
         check1=check1.strip()
     except Exception:
-        pass
+        email_alr()
+        arl.append(pro_name)
+        arl.append(pro_path)
+        arl.append(ip_user)
+        arl.append(mac_user)
+        arl.append(DisplayName)
+        arl.append(Name)
+        arl.append(Direction)
+        arl.append(Action)
+        arl.append(Profile)
+        arl.append(Enabled)
+        arl.append(Protocol)
+        arl.append(LocalPort)
+        arl.append(RemotePort)
+        arl.append(Program)
+        arl.append(T)
+        arl.append(white_list)
 
+
+        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+            data = json.load(f)
+
+        if data["IP-U"]!="0":
+
+            th.Thread(target=online_IP).start()
+
+            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                data = json.load(f)
+                data["IP-U"]="0"
+                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                    json.dump(data,f,indent=4)
+
+##############################################################################
+
+#EDIT
+##############################################################################
 def delete_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,T,white_list):
     try:
         c.sendall("hackDel".encode())
@@ -239,7 +425,31 @@ def delete_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,T,white
         check1=check1.replace("1","")
         check1=check1.strip()
     except Exception:
-        pass
+        email_alr()
+        drl.append(pro_name)
+        drl.append(pro_path)
+        drl.append(ip_user)
+        drl.append(mac_user)
+        drl.append(DisplayName)
+        drl.append(Name)
+        drl.append(T)
+        drl.append(white_list)
+
+        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+            data = json.load(f)
+
+        if data["IP-U"]!="0":
+
+            th.Thread(target=online_IP).start()
+
+            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                data = json.load(f)
+                data["IP-U"]="0"
+                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                    json.dump(data,f,indent=4)
+
+#EDIT
+##############################################################################
 def modefiy_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,ii,gema,T,white_list ):
     
     try:
@@ -268,19 +478,177 @@ def modefiy_rule_logs(pro_name,pro_path,ip_user,mac_user,DisplayName,Name,ii,gem
         check1=check1.replace("1","")
         check1=check1.strip()
     except Exception:
-        pass
+        email_alr()
+        mrl.append(pro_name)
+        mrl.append(pro_path)
+        mrl.append(ip_user)
+        mrl.append(mac_user)
+        mrl.append(DisplayName)
+        mrl.append(Name)
+        mrl.append(ii)
+        mrl.append(gema)
+        mrl.append(T)
+        mrl.append(white_list)
+
+        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+            data = json.load(f)
+
+        if data["IP-U"]!="0":
+
+            th.Thread(target=online_IP).start()
+
+            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                data = json.load(f)
+                data["IP-U"]="0"
+                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                    json.dump(data,f,indent=4)
 
 
+
+
+def black_list():
+    # make csv file for it
+    # try to get the programe name and path to put it here 
+    global block1
+    s_p=1
+    bl=[]
+    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+        settings = json.load(f)
+        bl=list(settings["BL_Rule_Check"])
+        f_priority=list(settings["first_priority"])
+        s_priority=list(settings["second_priority"])
+        emai=settings["email"]
+
+        settings["BL_Rule_Check"]=""
+        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+            json.dump(settings,f,indent=4)
+
+    for i in range(bl):
+        if bl[i] in f_priority:
+            block1=1
+
+            s_p=0
+            if bl[1]!="":
+                poewrshell(f'Remove-NetFirewallRule -Name "{bl[1]}"')
+            else:
+                poewrshell(f'Remove-NetFirewallRule -DisplayName "{bl[0]}"')
+
+            poewrshell(ta)
+
+            block1=0
+            try:
+                msg= EmailMessage()
+                msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
+                msg["From"]="aofnotification@gmail.com"
+                msg["To"]=emai
+                msg.set_content(f"After checking the rule:\n\nDisplayName: {bl[0]}\nName: {bl[1]}\n\nThat has been add by the program:\n{bl[10]}\n\nWe found that the rule have items that not allowed to have, so it have been deleted.\n\n\nSecurity System:\nFS System")
+                email="aofnotification@gmail.com"
+                password="oqgspkawnyeftyjw"
+                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                    smtp.login(email,password)
+                    smtp.send_message(msg)
+            except Exception:
+                email_alr()
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                    data = json.load(f)
+
+                if data["IP-U"]!="0":
+
+                    th.Thread(target=online_IP).start()
+
+                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                        data = json.load(f)
+                        data["IP-U"]="0"
+                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                            json.dump(data,f,indent=4)
+
+            ms = f'''
+The rule that added by:
+Program Path: {bl[10]}
+
+Have been deleted because it have an allowed items 
+'''
+            toast = Notification(app_id="FS Notification",
+                                title="Black List Item Alert", msg=ms)
+            toast.show()
+            for _ in range(2):
+                winsound.Beep(2000, 300)
+                time.sleep(0.2)
+
+            break
+
+    if s_p==1:
+        if any(set(bl)==set(x) for x in s_priority):
+            block1=1
+            
+            if bl[1]!="":
+                poewrshell(f'Remove-NetFirewallRule -Name "{bl[1]}"')
+            else:
+                poewrshell(f'Remove-NetFirewallRule -DisplayName "{bl[0]}"')
+
+            poewrshell(ta)
+
+            block1=0
+            try:
+                msg= EmailMessage()
+                msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
+                msg["From"]="aofnotification@gmail.com"
+                msg["To"]=emai
+                msg.set_content(f"After checking the rule:\n\nDisplayName: {bl[0]}\nName: {bl[1]}\n\nThat has been add by the program:\n{bl[10]}\n\nWe found that the rule have items that not allowed to have, so it have been deleted.\n\n\nSecurity System:\nFS System")
+                email="aofnotification@gmail.com"
+                password="oqgspkawnyeftyjw"
+                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                    smtp.login(email,password)
+                    smtp.send_message(msg)
+            except Exception:
+                email_alr()
+                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                    data = json.load(f)
+
+                if data["IP-U"]!="0":
+
+                    th.Thread(target=online_IP).start()
+
+                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                        data = json.load(f)
+                        data["IP-U"]="0"
+                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                            json.dump(data,f,indent=4)
+
+
+            ms = f'''
+The rule that added by:
+Program Path: {bl[10]}
+
+Have been deleted because it have an allowed items 
+'''
+            toast = Notification(app_id="FS Notification",
+                                title="Black List Item Alert", msg=ms)
+            toast.show()
+            for _ in range(2):
+                winsound.Beep(2000, 300)
+                time.sleep(0.2)
+
+##############################################################################
+
+#CHECK
+##############################################################################
 go=1
 pro=1
 ere=0
 block=1  
-pas=0
 trw=1
+##############################################################################
 
+#COPY
+##############################################################################
 risk_engine = AdvancedRiskEngine()
 start_baseline_updater(risk_engine)
+##############################################################################
 
+
+#COPY
+##############################################################################
 pathfile=os.path.exists(r"C:\FS-File\loop.txt")
 if pathfile==False:
     with open(r"C:\FS-File\loop.txt","w",encoding='utf-8')as f:
@@ -305,12 +673,19 @@ if pathfile==False:
 else:
     with open(r"C:\FS-File\loop-3.txt","w",encoding='utf-8')as f:
         f.write("")
+##############################################################################
 
+#COPY: TO MAKE THE FILE UNEDIT
+##############################################################################
 with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
 
-    settings = json.load(f) 
+    settings = json.load(f)
+ 
     chck2=0
+##############################################################################
 
+#COPY: PUT IT IN THE TOP
+##############################################################################
     def poewrshell(ordar):
         p = su.Popen(
             ["powershell.exe", "-Command", ordar],  
@@ -324,7 +699,10 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
         return output, error
     
     poewrshell(ta)   
+##############################################################################
 
+#EDIT
+##############################################################################
     with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
         settings = json.load(f) 
 
@@ -378,7 +756,10 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
         
         with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
             json.dump(settings,f,indent=4)
+##############################################################################
 
+#COPY: IF I CAN IMPROVE IT DO IT
+##############################################################################
         email_rvs=settings["email"]
         user_state=settings["user-state"]
         mac=settings["MAC"]
@@ -424,9 +805,10 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
         
         return False
     
+##############################################################################
 
-
-
+#COPY: EDIT
+##############################################################################
     def mal_dit():
         global parent_name,chick_vil,ta,ta1,block,ere,pro,go,deleteR
         pythoncom.CoInitialize()   
@@ -499,20 +881,26 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
 
 
     th.Thread(target=mal_dit).start()
+##############################################################################
 
-
-    
+#COPY
+##############################################################################
     while True:
         try:
             
-            
+##############################################################################
+ 
+#COPY: IN TOP
+# ##############################################################################           
                      
             pathfile=os.path.exists(r"C:\FS-File\email_ids.txt")
             if pathfile==False:
                 with open(r"C:\FS-File\email_ids.txt","w",encoding='utf-8')as f:
                     f.write("")
+##############################################################################
 
-            #check firewall state    
+#COPY:IN TOP
+# ##############################################################################   
             a,error=poewrshell('Get-NetFirewallProfile | Select-Object Enabled')
             a=list(a)
             a=''.join(a)
@@ -521,7 +909,10 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
             if "False" in a: 
                 poewrshell(r"Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True")
 
+##############################################################################
 
+#COPY
+##############################################################################
             try:
                 result, error = poewrshell("Get-NetAdapter | Select-Object MacAddress")
                 result = ''.join(list(result))
@@ -552,10 +943,15 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                 settings["MAC"] =mac
                 with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
                     json.dump(settings, f, indent=4)
+##############################################################################
+
+#DELETE
+##############################################################################
             #conn with the praimry conn   
             MAX_RETRIES = 30   # حد أقصى للمحاولات
             RETRY_DELAY = 5    # ثوانٍ بين كل محاولة
             retry_count = 0
+
 
             while True:
                 try:
@@ -572,11 +968,12 @@ with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                         exit(1)
                     time.sleep(RETRY_DELAY)
                     
-                    
+##############################################################################    
                         
             #return D:\FS-File\settings.json to the defult
             
-
+#COPY: IN TOP
+##############################################################################
             ps_script = """
 $TARGET_IDS = @(2002, 2004, 2005, 2006, 2097, 2099, 2052, 2082)
 
@@ -596,6 +993,10 @@ Register-ObjectEvent $watcher EventRecordWritten -Action {
 $watcher.Enabled = $true
 while ($true) { Start-Sleep -Seconds 10 }
 """
+##############################################################################
+
+#COPY
+##############################################################################
 
             pp = su.Popen(
                 ["powershell", "-NoProfile", "-Command", ps_script],
@@ -603,10 +1004,11 @@ while ($true) { Start-Sleep -Seconds 10 }
                 stderr=su.PIPE,
                 text=True,
                 bufsize=1)
-            
+##############################################################################
 
             
-
+#EDIT: CHECK IF I NEED SOMTHING
+##############################################################################
             def ckeck_email():
                 
                 with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
@@ -679,44 +1081,46 @@ while ($true) { Start-Sleep -Seconds 10 }
                                         with open(r"C:\FS-File\email_ids.txt", "w",encoding='utf-8') as f:
                                             sent_id="".join(map(str,sent_ids))
                                             f.write(sent_id)     
-
-                                        if firest=="approved" and l2=="%": 
+###########################################################################
+#delete                                 
+                                        # ofl=="0"
+                                        # if firest=="approved" and l2=="%": 
                                             
-                                            ran = random.randint(100000, 999999)
-                                            ran=str(ran)
-                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                                settings = json.load(f)
-                                                settings["advance-password"]=ran
-                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                                    json.dump(settings,f,indent=4)
-                                            msg= EmailMessage()
-                                            msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
-                                            msg["From"]="aofnotification@gmail.com"
-                                            msg["To"]=email_rvs
-                                            msg.set_content(f"This is your password to verify your identity and connect to the server:\n{ran}\nIf you did not request this password, please check your account security immediately.\n\n\nSecurity System:\nFS System")
-                                            email="aofnotification@gmail.com"
-                                            password="oqgspkawnyeftyjw"
-                                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                                smtp.login(email,password)
-                                                smtp.send_message(msg)   
+                                        #     ran = random.randint(100000, 999999)
+                                        #     ran=str(ran)
+                                        #     with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                        #         settings = json.load(f)
+                                        #         settings["advance-password"]=ran
+                                        #         with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                        #             json.dump(settings,f,indent=4)
+                                        #     msg= EmailMessage()
+                                        #     msg["Subject"]=f"Identity verification - ID({str(uuid.uuid4())[:8]})"
+                                        #     msg["From"]="aofnotification@gmail.com"
+                                        #     msg["To"]=email_rvs
+                                        #     msg.set_content(f"This is your password to verify your identity and connect to the server:\n{ran}\nIf you did not request this password, please check your account security immediately.\n\n\nSecurity System:\nFS System")
+                                        #     email="aofnotification@gmail.com"
+                                        #     password="oqgspkawnyeftyjw"
+                                        #     with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                        #         smtp.login(email,password)
+                                        #         smtp.send_message(msg)   
                                             
-                                        elif firest!="approved"  and l2=="%": 
-                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                                settings = json.load(f)
-                                                settings["advance-mode"]="0"
-                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                                    json.dump(settings,f,indent=4)
-                                            msg= EmailMessage()
-                                            msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
-                                            msg["From"]="aofnotification@gmail.com"
-                                            msg["To"]=email_rvs
-                                            msg.set_content(f"The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
-                                            email="aofnotification@gmail.com"
-                                            password="oqgspkawnyeftyjw"
-                                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                                smtp.login(email,password)
-                                                smtp.send_message(msg)
-
+                                        # elif firest!="approved"  and l2=="%": 
+                                        #     with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                        #         settings = json.load(f)
+                                        #         settings["advance-mode"]="0"
+                                        #         with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                        #             json.dump(settings,f,indent=4)
+                                        #     msg= EmailMessage()
+                                        #     msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
+                                        #     msg["From"]="aofnotification@gmail.com"
+                                        #     msg["To"]=email_rvs
+                                        #     msg.set_content(f"The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
+                                        #     email="aofnotification@gmail.com"
+                                        #     password="oqgspkawnyeftyjw"
+                                        #     with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                        #         smtp.login(email,password)
+                                        #         smtp.send_message(msg)
+####################################################################################
 
                                         if firest=="approved" and l2=="&":
                                             
@@ -742,132 +1146,261 @@ while ($true) { Start-Sleep -Seconds 10 }
                                             component=component.replace("wevall","")
                                             newvalue=l[z:]
 
-                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                                settings = json.load(f)
-                                                settings["modify_rule"]=rowo
-                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                                    json.dump(settings,f,indent=4)
-                                                
-                                            on="rua"
-                                            c.sendall(on.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(rowo1.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(component.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(newvalue.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                                            c.recv(1024).decode()
-                                            ips=str(ips)
-                                            c.sendall(ips.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(mac.encode())
-                                            check1=c.recv(1024).decode()
-                                            check1=check1.replace("1","")
-                                            check1=check1.strip()
+                                            
+                                            # rulem 
+                                            check1="tt"
+                                            try: 
+                                                on="rua"
+                                                c.sendall(on.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(rowo1.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(component.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(newvalue.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                                                c.recv(1024).decode()
+                                                ips=str(ips)
+                                                c.sendall(ips.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(mac.encode())
+                                                check1=c.recv(1024).decode()
+                                                check1=check1.replace("1","")
+                                                check1=check1.strip()
+                                            except Exception:
+                                                ofl=on_off_line()
+
                                             if check1=="action rule log.csv" or check1=="action rule log.csv1":
-                                                
+                                                try:
+                                                    msg= EmailMessage()
+                                                    msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
+                                                    msg["From"]="aofnotification@gmail.com"
+                                                    msg["To"]=email_rvs
+                                                    msg.set_content(f"Someone is reading the 'State_rule.csv' file.\n you should check the server's status to see if it has been compromised or not.")
+                                                    email="aofnotification@gmail.com"
+                                                    password="oqgspkawnyeftyjw"
+                                                    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                        smtp.login(email,password)
+                                                        smtp.send_message(msg)
+                                                except Exception:
+                                                    email_alr()
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                            
+                                                    if data["IP-U"]!="0":
+                            
+                                                        th.Thread(target=online_IP).start()
+                            
+                                                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                            data = json.load(f)
+                                                            data["IP-U"]="0"
+                                                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                                json.dump(data,f,indent=4)
+
+                                            try:         
                                                 msg= EmailMessage()
-                                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
+                                                msg["Subject"]=f"Request approval - ID({str(uuid.uuid4())[:8]})"
                                                 msg["From"]="aofnotification@gmail.com"
                                                 msg["To"]=email_rvs
-                                                msg.set_content(f"Someone is reading the 'State_rule.csv' file.\n you should check the server's status to see if it has been compromised or not.")
+                                                msg.set_content("The base state was successfully changed.\n\n\nSecurity System:\nFS System")
                                                 email="aofnotification@gmail.com"
                                                 password="oqgspkawnyeftyjw"
                                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                                                     smtp.login(email,password)
                                                     smtp.send_message(msg)
-                                            msg= EmailMessage()
-                                            msg["Subject"]=f"Request approval - ID({str(uuid.uuid4())[:8]})"
-                                            msg["From"]="aofnotification@gmail.com"
-                                            msg["To"]=email_rvs
-                                            msg.set_content("The base state was successfully changed.\n\n\nSecurity System:\nFS System")
-                                            email="aofnotification@gmail.com"
-                                            password="oqgspkawnyeftyjw"
-                                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                                smtp.login(email,password)
-                                                smtp.send_message(msg)
+                                            except Exception:
+                                                email_alr()
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                        
+                                                if data["IP-U"]!="0":
+                        
+                                                    th.Thread(target=online_IP).start()
+                        
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                                                        data["IP-U"]="0"
+                                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                            json.dump(data,f,indent=4)
 
+                                            if ofl !="null":
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    settings = json.load(f)
+                                                    settings["modify_rule"]=rowo
+                                                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                        json.dump(settings,f,indent=4)
+                                            else:
+                                                email_alr()
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                        
+                                                if data["IP-U"]!="0":
+                        
+                                                    th.Thread(target=online_IP).start()
+                        
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                                                        data["IP-U"]="0"
+                                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                            json.dump(data,f,indent=4)
 
+                                                    
                                         elif firest!="approved"  and l2=="&":
-                                            
-                                            msg= EmailMessage()
-                                            msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
-                                            msg["From"]="aofnotification@gmail.com"
-                                            msg["To"]=email_rvs
-                                            msg.set_content("The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
-                                            email="aofnotification@gmail.com"
-                                            password="oqgspkawnyeftyjw"
-                                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                                smtp.login(email,password)
-                                                smtp.send_message(msg)
-
+                                            try:
+                                                msg= EmailMessage()
+                                                msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
+                                                msg["From"]="aofnotification@gmail.com"
+                                                msg["To"]=email_rvs
+                                                msg.set_content("The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
+                                                email="aofnotification@gmail.com"
+                                                password="oqgspkawnyeftyjw"
+                                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                    smtp.login(email,password)
+                                                    smtp.send_message(msg)
+                                            except Exception:
+                                                email_alr()
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                        
+                                                if data["IP-U"]!="0":
+                        
+                                                    th.Thread(target=online_IP).start()
+                        
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                                                        data["IP-U"]="0"
+                                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                            json.dump(data,f,indent=4)
 
                                         if firest=="approved" and l2=="|":
-
-                                            
-                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                                settings = json.load(f)
-                                                settings["deleteR"]=l
-                                                
-                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                                    json.dump(settings,f,indent=4)
 
                                             z=l.index("wevall")
                                             z=z+6
                                             l=l.replace(l[z:],"")
                                             l=l.replace("wevall","")
-
-                                            on="del"
-                                            c.sendall(on.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(l.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                                            c.recv(1024).decode()
-                                            ips=str(ips)
-                                            c.sendall(ips.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(mac.encode())
-                                            check1=c.recv(1024).decode()
-                                            check1=check1.replace("1","")
-                                            check1=check1.strip()
+                                            #ruled
+                                            check1="tt"
+                                            try:
+                                                on="del"
+                                                c.sendall(on.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(l.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                                                c.recv(1024).decode()
+                                                ips=str(ips)
+                                                c.sendall(ips.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(mac.encode())
+                                                check1=c.recv(1024).decode()
+                                                check1=check1.replace("1","")
+                                                check1=check1.strip()
+                                            except Exception:
+                                                ofl=on_off_line()
                                             if check1=="delete rule log.csv" or check1=="delete rule log.csv1":
-                                                
+                                                try:
+                                                    msg= EmailMessage()
+                                                    msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
+                                                    msg["From"]="aofnotification@gmail.com"
+                                                    msg["To"]=email_rvs
+                                                    msg.set_content(f"Someone is reading the 'Delete_rule.csv' file.\n you should check the server's status to see if it has been compromised or not.")
+                                                    email="aofnotification@gmail.com"
+                                                    password="oqgspkawnyeftyjw"
+                                                    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                        smtp.login(email,password)
+                                                        smtp.send_message(msg)
+                                                except Exception:
+                                                    email_alr()
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                            
+                                                    if data["IP-U"]!="0":
+                            
+                                                        th.Thread(target=online_IP).start()
+                            
+                                                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                            data = json.load(f)
+                                                            data["IP-U"]="0"
+                                                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                                json.dump(data,f,indent=4)
+
+                                            try:        
                                                 msg= EmailMessage()
-                                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
+                                                msg["Subject"]=f"Request approva - ID({str(uuid.uuid4())[:8]})"
                                                 msg["From"]="aofnotification@gmail.com"
                                                 msg["To"]=email_rvs
-                                                msg.set_content(f"Someone is reading the 'Delete_rule.csv' file.\n you should check the server's status to see if it has been compromised or not.")
+                                                msg.set_content("The rule was successfully deleted.\n\n\nSecurity System:\nFS System")
                                                 email="aofnotification@gmail.com"
                                                 password="oqgspkawnyeftyjw"
                                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                                                     smtp.login(email,password)
                                                     smtp.send_message(msg)
-                                            msg= EmailMessage()
-                                            msg["Subject"]=f"Request approva - ID({str(uuid.uuid4())[:8]})"
-                                            msg["From"]="aofnotification@gmail.com"
-                                            msg["To"]=email_rvs
-                                            msg.set_content("The rule was successfully deleted.\n\n\nSecurity System:\nFS System")
-                                            email="aofnotification@gmail.com"
-                                            password="oqgspkawnyeftyjw"
-                                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                                smtp.login(email,password)
-                                                smtp.send_message(msg)
+                                            except Exception:
+                                                email_alr()
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                        
+                                                if data["IP-U"]!="0":
+                        
+                                                    th.Thread(target=online_IP).start()
+                        
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                                                        data["IP-U"]="0"
+                                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                            json.dump(data,f,indent=4)
+
+
+                                            if ofl !="null":
+
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    settings = json.load(f)
+                                                    settings["deleteR"]=l
+                                                    
+                                                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                        json.dump(settings,f,indent=4)
+                                            else:
+                                                email_alr()
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                        
+                                                if data["IP-U"]!="0":
+                        
+                                                    th.Thread(target=online_IP).start()
+                        
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                                                        data["IP-U"]="0"
+                                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                            json.dump(data,f,indent=4)
+
                                         elif firest!="approved"  and l2=="|":
-                                            
-                                            msg= EmailMessage()
-                                            msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
-                                            msg["From"]="aofnotification@gmail.com"
-                                            msg["To"]=email_rvs
-                                            msg.set_content("The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
-                                            email="aofnotification@gmail.com"
-                                            password="oqgspkawnyeftyjw"
-                                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                                smtp.login(email,password)
-                                                smtp.send_message(msg)
-                                        
+                                            try:
+                                                msg= EmailMessage()
+                                                msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
+                                                msg["From"]="aofnotification@gmail.com"
+                                                msg["To"]=email_rvs
+                                                msg.set_content("The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
+                                                email="aofnotification@gmail.com"
+                                                password="oqgspkawnyeftyjw"
+                                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                    smtp.login(email,password)
+                                                    smtp.send_message(msg)
+                                            except Exception:
+                                                email_alr()
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                        
+                                                if data["IP-U"]!="0":
+                        
+                                                    th.Thread(target=online_IP).start()
+                        
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                                                        data["IP-U"]="0"
+                                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                            json.dump(data,f,indent=4)
 
 
                                         if firest=="approved"  and l2=="#":
@@ -925,88 +1458,139 @@ while ($true) { Start-Sleep -Seconds 10 }
                                                     break
                                             if rulename.startswith(("'",'"')) and rulename.endswith(("'",'"')):
                                                 rulename=rulename[1:-1]
+                                            # rulea
+                                            check1="tt"
+                                            try:
+                                                on="addrule"
+                                                c.sendall(on.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(rulename.encode())
+                                                c.recv(1024).decode()
+                                                timerlog=timer
+                                                c.sendall(timerlog.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
+                                                c.recv(1024).decode()
+                                                ips=str(ips)
+                                                c.sendall(ips.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(l.encode())
+                                                c.recv(1024).decode()
+                                                c.sendall("no".encode())
+                                                c.recv(1024).decode()
+                                                c.sendall(mac.encode())
+                                                check1=c.recv(1024).decode()
+                                                check1=check1.replace("1","")
+                                                check1=check1.strip()
+                                            except Exception:
+                                                ofl=on_off_line()
 
-                                            on="addrule"
-                                            c.sendall(on.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(rulename.encode())
-                                            c.recv(1024).decode()
-                                            timerlog=timer
-                                            c.sendall(timerlog.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(str(time.strftime('%Y-%m-%d %H:%M:%S')).encode())
-                                            c.recv(1024).decode()
-                                            ips=str(ips)
-                                            c.sendall(ips.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(l.encode())
-                                            c.recv(1024).decode()
-                                            c.sendall("no".encode())
-                                            c.recv(1024).decode()
-                                            c.sendall(mac.encode())
-                                            check1=c.recv(1024).decode()
-                                            check1=check1.replace("1","")
-                                            check1=check1.strip()
                                             if check1=="add rule log.csv" or check1=="add rule log.csv1":
+                                                try:
+                                                    msg= EmailMessage()
+                                                    msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
+                                                    msg["From"]="aofnotification@gmail.com"
+                                                    msg["To"]=email_rvs
+                                                    msg.set_content(f"Someone is reading the 'Add_rule_log.csv' file.\n you should check the server's status to see if it has been compromised or not.")
+                                                    email="aofnotification@gmail.com"
+                                                    password="oqgspkawnyeftyjw"
+                                                    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                        smtp.login(email,password)
+                                                        smtp.send_message(msg)
+                                                except Exception:
+                                                    email_alr()
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                            
+                                                    if data["IP-U"]!="0":
+                            
+                                                        th.Thread(target=online_IP).start()
+                            
+                                                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                            data = json.load(f)
+                                                            data["IP-U"]="0"
+                                                            with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                                json.dump(data,f,indent=4)
+
+                                            if ofl !="null":
+                                                
+                                                if timer.endswith("m"):
+                                                    lens=len(timer)
+                                                    timer=timer[:lens-1]
+                                                    timer=int(timer)
+                                                    timer*=60
+                                                    timer=str(timer)
+                                                    
+
+
+                                                elif timer.endswith("h"):
+                                                    lens=len(timer)
+                                                    timer=timer[:lens-1]
+                                                    timer=int(timer)
+                                                    timer*=3600
+                                                    timer=str(timer)
+                                                    
+                                                
                                             
+                                                    
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    settings = json.load(f)
+                                                    
+                                                    s=settings["checkrulename"]
+                                                    s=list(s)
+                                                    s.append(rulename)
+                                                    settings["checkrulename"]=s 
+                                                    s=settings["ruleName"]
+                                                    s=list(s)
+                                                    s.append(rulename)
+                                                    settings["ruleName"]=s 
+                                                    s=settings["timerR"]
+                                                    s=list(s)
+                                                    s.append(timer)
+                                                    settings["timerR"]=s
+                                                    settings["Rolue"]=l
+                                                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                        json.dump(settings,f,indent=4)
+                                            else:
+                                                email_alr()
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                        
+                                                if data["IP-U"]!="0":
+                        
+                                                    th.Thread(target=online_IP).start()
+                        
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                                                        data["IP-U"]="0"
+                                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                            json.dump(data,f,indent=4)
+
+                                            try:
                                                 msg= EmailMessage()
-                                                msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
+                                                msg["Subject"]=f"Request approval - ID({str(uuid.uuid4())[:8]})"
                                                 msg["From"]="aofnotification@gmail.com"
                                                 msg["To"]=email_rvs
-                                                msg.set_content(f"Someone is reading the 'Add_rule_log.csv' file.\n you should check the server's status to see if it has been compromised or not.")
+                                                msg.set_content("The rule was successfully added.\n\n\nSecurity System:\nFS System")
                                                 email="aofnotification@gmail.com"
                                                 password="oqgspkawnyeftyjw"
                                                 with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                                                     smtp.login(email,password)
                                                     smtp.send_message(msg)
-                                            if timer.endswith("m"):
-                                                lens=len(timer)
-                                                timer=timer[:lens-1]
-                                                timer=int(timer)
-                                                timer*=60
-                                                timer=str(timer)
-                                                
-
-
-                                            elif timer.endswith("h"):
-                                                lens=len(timer)
-                                                timer=timer[:lens-1]
-                                                timer=int(timer)
-                                                timer*=3600
-                                                timer=str(timer)
-                                                
-                                            
-                                        
-                                                
-                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
-                                                settings = json.load(f)
-                                                
-                                                s=settings["checkrulename"]
-                                                s=list(s)
-                                                s.append(rulename)
-                                                settings["checkrulename"]=s 
-                                                s=settings["ruleName"]
-                                                s=list(s)
-                                                s.append(rulename)
-                                                settings["ruleName"]=s 
-                                                s=settings["timerR"]
-                                                s=list(s)
-                                                s.append(timer)
-                                                settings["timerR"]=s
-                                                settings["Rolue"]=l
-                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
-                                                    json.dump(settings,f,indent=4)
-                                            msg= EmailMessage()
-                                            msg["Subject"]=f"Request approval - ID({str(uuid.uuid4())[:8]})"
-                                            msg["From"]="aofnotification@gmail.com"
-                                            msg["To"]=email_rvs
-                                            msg.set_content("The rule was successfully added.\n\n\nSecurity System:\nFS System")
-                                            email="aofnotification@gmail.com"
-                                            password="oqgspkawnyeftyjw"
-                                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                                smtp.login(email,password)
-                                                smtp.send_message(msg)
-
+                                            except Exception:
+                                                email_alr()
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                        
+                                                if data["IP-U"]!="0":
+                        
+                                                    th.Thread(target=online_IP).start()
+                        
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                                                        data["IP-U"]="0"
+                                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                            json.dump(data,f,indent=4)
 
 
                                         elif firest!="approved" and l2=="#":
@@ -1022,18 +1606,31 @@ while ($true) { Start-Sleep -Seconds 10 }
                                             with open(r"C:\FS-File\email_ids.txt", "w",encoding='utf-8') as f:
                                                 sent_id="".join(map(str,sent_ids))
                                                 f.write(sent_id) 
-
-                                            msg= EmailMessage()
-                                            msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
-                                            msg["From"]="aofnotification@gmail.com"
-                                            msg["To"]=email_rvs
-                                            msg.set_content("The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
-                                            email="aofnotification@gmail.com"
-                                            password="oqgspkawnyeftyjw"
-                                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                                smtp.login(email,password)
-                                                smtp.send_message(msg)
-
+                                            try:
+                                                msg= EmailMessage()
+                                                msg["Subject"]=f"Request rejection - ID({str(uuid.uuid4())[:8]})"
+                                                msg["From"]="aofnotification@gmail.com"
+                                                msg["To"]=email_rvs
+                                                msg.set_content("The official did not approve your request.\nIf you have any questions, please contact support.\n\n\nSecurity System:\nFS System")
+                                                email="aofnotification@gmail.com"
+                                                password="oqgspkawnyeftyjw"
+                                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                    smtp.login(email,password)
+                                                    smtp.send_message(msg)
+                                            except Exception:
+                                                email_alr()
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                        
+                                                if data["IP-U"]!="0":
+                        
+                                                    th.Thread(target=online_IP).start()
+                        
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                                                        data["IP-U"]="0"
+                                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                            json.dump(data,f,indent=4)
 
                                         mail.store(num,"+FLAGS","\\Deleted")
                                         mail.expunge()
@@ -1051,11 +1648,12 @@ while ($true) { Start-Sleep -Seconds 10 }
                             json.dump(settings,f,indent=4)
                 th.Thread(target=ckeck_email).start()
                 chck2=1
+##############################################################################
 
-
-
+#EDIT: REMOVE EVERY THING I DONT NEED
+##############################################################################
             def thp():
-                rtime=str(time.strftime('%Y-%m-%d %H:%M:%S'))
+                rtime=str(time.strftime('%Y-%m-%d %H:%M:%S'))#put the time in it real place
                 global tr,pp,output,error,ta,ta1,block,ere,pro,go,deleteR,fws,user_email
                 with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
                     settings = json.load(f)
@@ -1086,40 +1684,89 @@ while ($true) { Start-Sleep -Seconds 10 }
                                 if "False" in a and fws=="null" :
                                     poewrshell('Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True')
                                     #send to server to add to the csv file
-                                    c.sendall("hackOff".encode())
-                                    c.recv(1024).decode()
-                                    ips=str(ips)
-                                    c.sendall(ips.encode())
-                                    c.recv(1024).decode()
-                                    c.sendall(mac.encode())
-                                    check1=c.recv(1024).decode()
-                                    check1=check1.replace("1","")
-                                    check1=check1.strip()
+                                    check1="tt"
+                                    try:
+                                        c.sendall("hackOff".encode())
+                                        c.recv(1024).decode()
+                                        ips=str(ips)
+                                        c.sendall(ips.encode())
+                                        c.recv(1024).decode()
+                                        c.sendall(mac.encode())
+                                        check1=c.recv(1024).decode()
+                                        check1=check1.replace("1","")
+                                        check1=check1.strip()
+                                    except Exception:
+                                        email_alr()
+                                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                            data = json.load(f)
+                
+                                        if data["IP-U"]!="0":
+                
+                                            th.Thread(target=online_IP).start()
+                
+                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                data = json.load(f)
+                                                data["IP-U"]="0"
+                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                    json.dump(data,f,indent=4)
+
                                     time.sleep(0.1)
+
                                     
                                     if check1=="issue FWS.csv" or check1=="issue FWS.csv1":
-                                        
+                                        try:
+                                            msg= EmailMessage()
+                                            msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
+                                            msg["From"]="aofnotification@gmail.com"
+                                            msg["To"]=email_rvs
+                                            msg.set_content(f"Someone is reading the 'FirewallTamper.csv' file.\n you should check the server's status to see if it has been compromised or not.")
+                                            email="aofnotification@gmail.com"
+                                            password="oqgspkawnyeftyjw"
+                                            with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                smtp.login(email,password)
+                                                smtp.send_message(msg)
+                                        except Exception :
+                                            email_alr()
+                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                data = json.load(f)
+                    
+                                            if data["IP-U"]!="0":
+                    
+                                                th.Thread(target=online_IP).start()
+                    
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                                                    data["IP-U"]="0"
+                                                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                        json.dump(data,f,indent=4)
+
+                                    #send email to the user
+                                    try:
                                         msg= EmailMessage()
-                                        msg["Subject"]=f"FOR TEST - ID({str(uuid.uuid4())[:8]})"
+                                        msg["Subject"]=f"Detect stop attempt - ID({str(uuid.uuid4())[:8]})"
                                         msg["From"]="aofnotification@gmail.com"
                                         msg["To"]=email_rvs
-                                        msg.set_content(f"Someone is reading the 'FirewallTamper.csv' file.\n you should check the server's status to see if it has been compromised or not.")
+                                        msg.set_content(f"An attempt was made to disable the firewall on your device, but it was blocked by FS System.\nIf you did not make this change, please check your device's security immediately.\n\n\nSecurity System:\nFS System")
                                         email="aofnotification@gmail.com"
                                         password="oqgspkawnyeftyjw"
                                         with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
                                             smtp.login(email,password)
                                             smtp.send_message(msg)
-                                    #send email to the user
-                                    msg= EmailMessage()
-                                    msg["Subject"]=f"Detect stop attempt - ID({str(uuid.uuid4())[:8]})"
-                                    msg["From"]="aofnotification@gmail.com"
-                                    msg["To"]=email_rvs
-                                    msg.set_content(f"An attempt was made to disable the firewall on your device, but it was blocked by FS System.\nIf you did not make this change, please check your device's security immediately.\n\n\nSecurity System:\nFS System")
-                                    email="aofnotification@gmail.com"
-                                    password="oqgspkawnyeftyjw"
-                                    with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
-                                        smtp.login(email,password)
-                                        smtp.send_message(msg)
+                                    except Exception:
+                                        email_alr()
+                                        with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                            data = json.load(f)
+                
+                                        if data["IP-U"]!="0":
+                
+                                            th.Thread(target=online_IP).start()
+                
+                                            with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                data = json.load(f)
+                                                data["IP-U"]="0"
+                                                with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                    json.dump(data,f,indent=4)
+
 
                         if ("2004" in linep or "2005" in linep or "2006" in linep or "2097" in linep or "2099" in linep or "2052" in linep)and (tr==0):
                             op1=0
@@ -1215,22 +1862,32 @@ while ($true) { Start-Sleep -Seconds 10 }
                                     ere=1
                                 for i in firecopy:
                                     if i not in firelight:
+                                        bl=[]
                                         DisplayName=i["DisplayName"]
+                                        bl.append(DisplayName)
                                         Name=i["Name"]
+                                        bl.append(Name)
                                         Direction=i["Direction"]
-
+                                        bl.append(Direction)
                                         Action=i["Action"]
-
+                                        bl.append(Action)
                                         Profile=i["Profile"]
-
+                                        bl.append(Profile)
                                         Enabled=i["Enabled"]
-
+                                        bl.append(Enabled)
                                         Protocol=i["Protocol"]
+                                        bl.append(Protocol)
                                         LocalPort=i["LocalPort"]
+                                        bl.append(LocalPort)
                                         LocalPort=str(LocalPort)
-                                        RemotePort=i["RemotePort"]
+                                        RemotePort=i["RemotePort"]# ليه انا ماخليت الريموت بورت زي لوكل بورت         هل انا اصلا ما بعمل تحقق منه في نظام التحققمن القاعده
+                                        bl.append(RemotePort)
                                         Program=i["Program"]
+                                        bl.append(Program)
                                         IPScope=i["IPScope"]
+                                        bl.append(IPScope)
+
+                                        
                                         # if not_loop==0:
                                         with open(r"C:\FS-File\loop.txt", "r",encoding='utf-8') as f:
                                             loop=f.readlines()
@@ -1291,11 +1948,30 @@ while ($true) { Start-Sleep -Seconds 10 }
                                                             LocalPort,RemotePort,Program,rtime,"NO")
                                                 poewrshell(ta)
 
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    settings = json.load(f)
+                                                    settings["BL_Rule_Check"]=bl
+                                                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                        json.dump(settings,f,indent=4) 
+        
+                                                th.Thread(target=black_list).start()
+
+
+
                                             elif risk_level == "MEDIUM":
                                                 add_rule_logs("UNKNOWN","UNKNOWN",ips,mac,DisplayName,Name,
                                                             Direction,Action,Profile,Enabled,Protocol,
                                                             LocalPort,RemotePort,Program,rtime,"NO")
                                                 poewrshell(ta)
+
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    settings = json.load(f)
+                                                    settings["BL_Rule_Check"]=bl
+                                                    with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                        json.dump(settings,f,indent=4) 
+        
+                                                th.Thread(target=black_list).start()
+                                                
 
                                             elif risk_level in ("HIGH", "CRITICAL"):
                                                 poewrshell(f'Remove-NetFirewallRule -Name "{i["Name"]}"')
@@ -2096,23 +2772,34 @@ Action: Block + Kill Program [{pat_str}]
 
 
             th.Thread(target=thp).start()
+
+##############################################################################
+
+#COPY: CHECK IF I NEEDED
+##############################################################################
             lkl = 1
             tr  = 0
+##############################################################################
 
+#DELETE
+##############################################################################
             def clos_fw():
                 global tr, ta, ta1, block, ere, pro, go, deleteR
                 
                 while True:  # ← loop لإعادة الاتصال إذا انقطع
                     try:
-                        c = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
-                        c.connect((ip, 9991))
-                        c.sendall("client".encode())
+                        cc = sk.socket(sk.AF_INET, sk.SOCK_STREAM)
+                        cc.connect((ip, 9991))
+                        cc.sendall("client".encode())
                         
                         while True:
                             try:
-                                close = c.recv(1024).decode('utf-8')
+                                order = cc.recv(1024).decode('utf-8')
+                                cc.sendall("1".encode())
+                                close = cc.recv(1024).decode('utf-8')
+                                cc.sendall("1".encode())
                                 tr = 1
-                                if close == "off":
+                                if order == "4":
                                     
                                     with open(r'C:\FS-File\settings.json', 'r', encoding='utf-8') as f:
                                         settings = json.load(f)
@@ -2122,7 +2809,7 @@ Action: Block + Kill Program [{pat_str}]
                                         json.dump(settings, f, indent=4)
                                     poewrshell("Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False")
 
-                                elif close == "on":
+                                elif order == "5":
                                     
                                     with open(r'C:\FS-File\settings.json', 'r', encoding='utf-8') as f:
                                         settings = json.load(f)
@@ -2133,7 +2820,7 @@ Action: Block + Kill Program [{pat_str}]
                                     poewrshell("Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True")
 
                                     
-                                else:
+                                elif order == "6":
                                     
                                     with open(r'C:\FS-File\settings.json', 'r', encoding='utf-8') as f:
                                         settings = json.load(f)
@@ -2141,8 +2828,160 @@ Action: Block + Kill Program [{pat_str}]
                                             settings["bossemail"] = close
                                             with open(r'C:\FS-File\settings.json', 'w', encoding='utf-8') as f:
                                                 json.dump(settings, f, indent=4)
+
+                                elif order == "1":
+                                    #check the rule in the (FSA) to make it allwas end in the displayname or name with ((contrlize-FS))
+                                    # maybe the adminstrator send a rule with a name (not displayname) 
+                                    #check if i have two rules with the same name but defrent elemintes
+                                    # stop the user or the admin if they want to add arule the name or displayname end with ((contrlize-FS))
+                                    poewrshell(close)
+                                    poewrshell(ta)
+
+
+                                elif order == "2":
                                     
-                                time.sleep(0.1)
+                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                        settings = json.load(f)
+                                        v=settings["checkrulename"]
+     
+                                    z=close.index("wevall")
+                                    z=z+6
+                                    ruletype=close[z:]
+                                    close=close.replace(close[z:],"")
+                                    close=close.replace("wevall","")
+
+                                    if close not in v:
+                                        vrifiy1, error =poewrshell(f'Remove-NetFirewallRule -{ruletype} "{close}"')
+                                        if not error:
+                                            poewrshell(ta)
+
+
+                                elif order == "3":
+                                    vrifiy1, error =poewrshell(close)
+                                    if not error:
+                                        poewrshell(ta)
+
+
+                                elif order == "7":
+                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                        settings = json.load(f)
+                                        f_priority=settings["first_priority"]
+                                        f_priority=list(f_priority)
+                                        f_priority.remove(close)
+                                        settings["first_priority"]=f_priority
+                            
+                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                json.dump(settings,f,indent=4)
+
+
+                                elif order == "8":
+                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                        settings = json.load(f)
+                                        s_priority=settings["second_priority"]
+                                        s_priority=list(s_priority)
+                                        s_priority.pop(int(close)-1)
+                                        settings["second_priority"]=s_priority
+                            
+                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                json.dump(settings,f,indent=4)
+
+
+                                elif order == "9":
+                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                        settings = json.load(f)
+                                        s_priority=settings["second_priority"]
+                                        s_priority=list(s_priority)
+                                        s_priority.append(list(close))
+                                        settings["second_priority"]=s_priority
+                            
+                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                json.dump(settings,f,indent=4)
+
+
+                                elif order == "0":
+                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                        settings = json.load(f)
+                                        f_priority=settings["first_priority"]
+                                        f_priority=list(f_priority)
+                                        for i in range(list(close)):
+                                            f_priority.append(i)
+                                        settings["first_priority"]=f_priority
+                            
+                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                json.dump(settings,f,indent=4)
+
+
+                                elif order == "#":
+                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                        settings = json.load(f)
+                                        settings["IP-S"]=close
+
+                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                            json.dump(settings,f,indent=4)
+
+                                        if settings["user-state"]=="USER":
+
+                                            toast = Notification(
+                                            app_id="FS Notification",
+                                            title="Restart PC",
+                                            msg="The adminstoretor has change the IP-Server, you need to restart your PC.")
+                                            
+                                            toast.show()
+                                            for _ in range(2):
+                                                winsound.Beep(2000, 300)  
+                                                time.sleep(0.2)
+
+
+                                            notif_mas='''
+    Hello,
+
+    The adminstoretor has change the IP-Server, you need to restart your PC.  
+
+    Security System:
+    FS System
+
+    '''
+
+                                            try:
+                                                msg= EmailMessage()
+                                                msg["Subject"]=f"Security Alert - ID({str(uuid.uuid4())[:8]})"
+                                                msg["From"]="aofnotification@gmail.com"
+                                                msg["To"]=email_rvs
+                                                msg.set_content(notif_mas)
+                                                email="aofnotification@gmail.com"
+                                                password="oqgspkawnyeftyjw"
+                                                with smtplib.SMTP_SSL("smtp.gmail.com",465) as smtp:
+                                                    smtp.login(email,password)
+                                                    smtp.send_message(msg)  
+                                            except Exception:
+                                                email_alr()
+                                                with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                    data = json.load(f)
+                                        
+                                                if data["IP-U"]!="0":
+                                        
+                                                    th.Thread(target=online_IP).start()
+                                        
+                                                    with open(r'C:\FS-File\settings.json', 'r',encoding='utf-8') as f:
+                                                        data = json.load(f)
+                                                        data["IP-U"]="0"
+                                                        with open(r'C:\FS-File\settings.json', 'w',encoding='utf-8') as f:
+                                                            json.dump(data,f,indent=4)
+                            
+                                        else:
+
+                                            toast = Notification(
+                                            app_id="FS Notification",
+                                            title="Restart PC",
+                                            msg="You can now restart your PC.")
+                                            
+                                            toast.show()
+                                            for _ in range(2):
+                                                winsound.Beep(2000, 300)  
+                                                time.sleep(0.2)        
+
+
+                                time.sleep(1)
                                 tr = 0
 
                             except Exception as e:
@@ -2151,13 +2990,15 @@ Action: Block + Kill Program [{pat_str}]
                                 break  # ← اخرج من الحلقة الداخلية لإعادة الاتصال
 
                     except Exception as e:
+                        #tr = 0  if anything happend just let it work
                         time.sleep(5)  # ← انتظر قبل إعادة المحاولة
 
             # شغّله مرة واحدة عند البدء مباشرة
             th.Thread(target=clos_fw, daemon=True).start()
+##############################################################################
 
-
-                    
+#COPY
+# ##############################################################################       
             #function to close the firewall
             def do_ruls():
                 global lkl,tr,ta,ta1,block,ere,pro,go,deleteR
@@ -2174,6 +3015,10 @@ Action: Block + Kill Program [{pat_str}]
                     lkl=1
                     time.sleep(0.1)
                     tr=0
+##############################################################################
+
+#COPY
+##############################################################################
             #function to add rules to the firewall
             def add__rule():
                 global rulename,timerr,tr,ta,ta1,block,ere,pro,go,deleteR
@@ -2207,8 +3052,10 @@ Action: Block + Kill Program [{pat_str}]
                         json.dump(settings,f,indent=4)
                 time.sleep(0.1)   
                 tr=0 
-                    
+##############################################################################   
 
+#COPY: CHECK IF I NEED
+##############################################################################
             class Handler(FileSystemEventHandler):
                 def on_modified(self, event):
                     global fws,ip,timer,rule,rulename,timerr,ips,constan,deleteR,modify_rule,mac,tr,ta,ta1,block,ere,pro,go,lkl,ll,email_rvs,ips,ips,constan,rule,modify_rule,mac,tr,ta,ta1,block,ere,pro,go,deleteR,bossemail,user_email
@@ -2362,3 +3209,4 @@ Action: Block + Kill Program [{pat_str}]
         except Exception:
             tr=0
             continue
+##############################################################################
